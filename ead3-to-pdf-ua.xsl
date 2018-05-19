@@ -70,7 +70,9 @@
 
     <!-- global parameters -->
     <xsl:param name="primary-language-of-finding-aid" select="'en'"/>
-    <xsl:param name="primary-font-for-pdf" select="'PT_Sans'"/>
+    <xsl:param name="primary-font-for-pdf" select="'Yale'"/>
+    <xsl:param name="serif-font" select="'Yale'"/>
+    <xsl:param name="sans-serif-font" select="'Mallory'"/>
     <xsl:param name="include-audience-equals-internal" select="false()"/>
     <xsl:param name="start-page-1-after-table-of-contents" select="false()"/>
     

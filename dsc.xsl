@@ -20,12 +20,39 @@
             and add a container-inventory section at the end that's a real table, with box, folder, etc., plus title,
             date, etc., sorted by container numbers.
             
-            try one with desc, date, container... 
+           try one with container, desc, date (since that's the YFAD way)... 
+            
+           Container               Description	                 Date	    
+           
+	                               Caleb Marsh
+	       box 37, folder 1;          Brown, Anson	             1827	   
+	       microfilm reel 2a
+	       
+	       box 37, folder 2           Brown, Daniel B.	         1827	 
+           
+           
+           or like this, for the current ASpace way...
            
            Description	               Date	       Container
-	         Caleb Marsh
-	             Brown, Anson	       1827	       Box 37, Folder 1
+	       
+	       Caleb Marsh
+	             Brown, Anson	       1827	       Box 37, Folder 1;
+	                                               Microfilm reel 2a
+	                                               
 	             Brown, Daniel B.	   1827	       Box 37, Folder 2
+	             
+	       
+	       But this would be too long... I think:
+	       
+	       Description                                 Date
+	       
+	       Caleb Marsh
+	            Brown, Anson	                       1827
+	            -Box 37, Folder 1; Microfilm reel 2a
+	                                               
+	            Brown, Daniel B.	                   1827
+	            -Box 37, Folder 2
+	       
               
      -->
     
@@ -130,8 +157,9 @@
                 or parent::*[@level=$dsc-first-c-levels-to-process-before-a-table]
                 or parent::*[@otherlevel=$otherlevels-to-force-a-page-break-and-process-before-a-table])
             )
-            then true() else false()"/>     
-        
+            then true() else false()"/>
+        <xsl:param name="no-children" select="if (not(ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c'])) then true() else false()"/>
+        <xsl:param name="last-row" select="if (position() eq last() and $no-children) then true() else false()"/>
         <xsl:variable name="depth" select="count(ancestor::*) - 3"/> <!-- e.g. c01 = 0, c02 = 1, etc. -->
         <xsl:variable name="cell-margin" select="concat(xs:string($depth * 8), 'pt')"/> <!-- e.g. 0, 8pt for c02, 16pt for c03, etc.-->
         <xsl:variable name="container-groupings">
@@ -152,6 +180,19 @@
         </xsl:variable>
         <fo:table-row>
             <fo:table-cell>
+                <xsl:if test="$last-row or $no-children">
+                    <xsl:attribute name="border-bottom-style">solid</xsl:attribute>
+                    <xsl:attribute name="border-bottom-width">0.1mm</xsl:attribute>
+                    <xsl:attribute name="padding-bottom">2px</xsl:attribute>
+                </xsl:if>
+                <xsl:choose>
+                    <xsl:when test="$last-row">
+                        <xsl:attribute name="border-bottom-color">#222222</xsl:attribute>
+                    </xsl:when>
+                    <xsl:when test="$no-children">
+                        <xsl:attribute name="border-bottom-color">#dddddd</xsl:attribute>
+                    </xsl:when>
+                </xsl:choose>
                 <fo:block>
                     <xsl:choose>
                         <xsl:when test="$first-row eq true()">
@@ -183,6 +224,37 @@
                 </fo:block>
             </fo:table-cell>
             <fo:table-cell>
+                <xsl:if test="$last-row or $no-children">
+                    <xsl:attribute name="border-bottom-style">solid</xsl:attribute>
+                    <xsl:attribute name="border-bottom-width">0.1mm</xsl:attribute>
+                    <xsl:attribute name="padding-bottom">2px</xsl:attribute>
+                </xsl:if>
+                <xsl:choose>
+                    <xsl:when test="$last-row">
+                        <xsl:attribute name="border-bottom-color">#222222</xsl:attribute>
+                    </xsl:when>
+                    <xsl:when test="$no-children">
+                        <xsl:attribute name="border-bottom-color">#dddddd</xsl:attribute>
+                    </xsl:when>
+                </xsl:choose>
+                <fo:block>
+                    <xsl:apply-templates select="if (ead3:did/ead3:unitdatestructured) then ead3:did/ead3:unitdatestructured else ead3:did/ead3:unitdate" mode="dsc"/>
+                </fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+                <xsl:if test="$last-row or $no-children">
+                    <xsl:attribute name="border-bottom-style">solid</xsl:attribute>
+                    <xsl:attribute name="border-bottom-width">0.1mm</xsl:attribute>
+                    <xsl:attribute name="padding-bottom">2px</xsl:attribute>
+                </xsl:if>
+                <xsl:choose>
+                    <xsl:when test="$last-row">
+                        <xsl:attribute name="border-bottom-color">#222222</xsl:attribute>
+                    </xsl:when>
+                    <xsl:when test="$no-children">
+                        <xsl:attribute name="border-bottom-color">#dddddd</xsl:attribute>
+                    </xsl:when>
+                </xsl:choose>
                 <xsl:call-template name="container-layout">
                     <xsl:with-param name="containers-sorted-by-localtype" select="$containers-sorted-by-localtype"/>
                 </xsl:call-template>
@@ -195,8 +267,9 @@
         <xsl:param name="cell-margin"/>
         <fo:table inline-progression-dimension="100%" table-layout="fixed" font-size="10pt"
             border-collapse="separate" border-spacing="5pt 8pt" keep-with-previous.within-page="always">
-            <fo:table-column column-number="1" column-width="proportional-column-width(75)"/>
-            <fo:table-column column-number="2" column-width="proportional-column-width(25)"/>
+            <fo:table-column column-number="1" column-width="proportional-column-width(60)"/>
+            <fo:table-column column-number="2" column-width="proportional-column-width(15)"/>
+            <fo:table-column column-number="3" column-width="proportional-column-width(25)"/>
             <xsl:call-template name="tableHeaders">
                 <xsl:with-param name="cell-margin" select="$cell-margin"/>
             </xsl:call-template>
@@ -210,7 +283,7 @@
         <xsl:param name="cell-margin"/>
         <fo:table-header>
             <fo:table-row>
-                <fo:table-cell number-columns-spanned="2">
+                <fo:table-cell number-columns-spanned="3">
                     <fo:block>
                         <fo:retrieve-table-marker retrieve-class-name="continued-text" 
                             retrieve-position-within-table="first-starting" 
@@ -220,7 +293,7 @@
                 </fo:table-cell>
             </fo:table-row>
             <fo:table-row>
-                <fo:table-cell number-columns-spanned="2">
+                <fo:table-cell number-columns-spanned="3">
                     <fo:block>
                         &#x00A0;
                     </fo:block>
@@ -228,10 +301,13 @@
             </fo:table-row>
             <fo:table-row>
                 <fo:table-cell padding-left="{if ($cell-margin) then $cell-margin else '0pt'}">
-                    <fo:block text-decoration="underline">Description</fo:block>
+                    <fo:block font-weight="700">Description</fo:block>
                 </fo:table-cell>
                 <fo:table-cell>
-                    <fo:block text-decoration="underline">Physical Storage Information</fo:block>
+                    <fo:block font-weight="700">Date</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                    <fo:block font-weight="700">Container</fo:block>
                 </fo:table-cell>    
             </fo:table-row>
         </fo:table-header>
@@ -250,22 +326,11 @@
         <xsl:choose>
             <!-- the middle step, i.e. *, in these cases is the localtype (e.g. box, volume, etc.) -->
             <xsl:when test="count($containers-sorted-by-localtype/*/container-group) gt 1">
-                <fo:list-block provisional-distance-between-starts="0.3cm" provisional-label-separation="0.15cm">
-                    <xsl:for-each select="$containers-sorted-by-localtype/*/container-group">
-                        <fo:list-item>
-                            <fo:list-item-label end-indent="label-end()">
-                                <fo:block>
-                                    <fo:inline>•</fo:inline>
-                                </fo:block>
-                            </fo:list-item-label>
-                            <fo:list-item-body start-indent="body-start()">
-                                <fo:block>
-                                    <xsl:apply-templates/>
-                                </fo:block> 
-                            </fo:list-item-body>
-                        </fo:list-item>
-                    </xsl:for-each>
-                </fo:list-block>
+                <xsl:for-each select="$containers-sorted-by-localtype/*/container-group">
+                    <fo:block>
+                        <xsl:apply-templates/>
+                    </fo:block> 
+                </xsl:for-each>                
             </xsl:when>
             <xsl:otherwise>
                 <fo:block>
@@ -276,7 +341,26 @@
     </xsl:template>
     
     <xsl:template match="ead3:container">
-        <xsl:value-of select="concat(lower-case(@localtype), ' ', .)"/>
+        <xsl:variable name="use-fontawesome" as="xs:boolean">
+            <xsl:value-of select="if (lower-case(@localtype) = ('box', 'volume', 'item_barcode')) then true() else false()"/>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="$use-fontawesome eq false()">
+                <xsl:value-of select="lower-case(@localtype)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <fo:inline font-family="FontAwesome" color="#4A4A4A">
+                    <xsl:value-of select="if (lower-case(@localtype) eq 'box') then '&#xf187; '
+                        else if (lower-case(@localtype) eq 'folder') then '&#xf07b; '
+                        else if (lower-case(@localtype) eq 'volume') then '&#xf02d; '
+                        else if (lower-case(@localtype) eq 'item_barcode') then '&#xf02a;'
+                        else '&#xf0a0; '"/>
+                </fo:inline>
+                <xsl:value-of select="if (lower-case(@localtype) eq 'item_barcode') then '' else lower-case(@localtype)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+        <xsl:text> </xsl:text>
+        <xsl:apply-templates/>
         <xsl:if test="position() ne last()">
             <xsl:text>, </xsl:text>
         </xsl:if>
