@@ -75,6 +75,7 @@
     <xsl:param name="sans-serif-font" select="'Mallory'"/>
     <xsl:param name="include-audience-equals-internal" select="false()"/>
     <xsl:param name="start-page-1-after-table-of-contents" select="false()"/>
+    <xsl:param name="dsc-omit-table-header-at-break" select="false()"/>
     
     <xsl:param name="archdesc-did-title" select="'Collection Overview'"/>
     <xsl:param name="admin-info-title" select="'Administrative Information'"/>
@@ -84,8 +85,7 @@
     <xsl:param name="levels-to-include-in-toc" select="('series', 'subseries', 'collection', 'fonds', 'recordgrp', 'subgrp')"/>
     <xsl:param name="otherlevels-to-include-in-toc" select="('accession', 'acquisition')"/>
     
-    
-
+   
     <!-- document-based variables -->
     <xsl:variable name="finding-aid-title" select="ead3:ead/ead3:control/ead3:filedesc/ead3:titlestmt/ead3:titleproper[1][not(@localtype = 'filing')]"/>
     <xsl:variable name="finding-aid-author" select="ead3:ead/ead3:control/ead3:filedesc/ead3:titlestmt/ead3:author"/>
@@ -102,6 +102,7 @@
     <!-- do i need a variable for the repository code, or can we trust that the repository names won't be edited in ASpace?
     probably shouldn't trust that... so....-->
     <xsl:variable name="repository-code" select="ead3:ead/ead3:control/ead3:recordid[1]/substring-before(., '.')"/>
+    <xsl:variable name="collection-title" select="ead3:ead/ead3:archdesc/ead3:did/ead3:unittitle[1]"/>
     <xsl:variable name="collection-identifier" select="ead3:ead/ead3:archdesc/ead3:did/ead3:unitid[not(@audience = 'internal')][1]"/>
     <!-- last page options are controlacces, odd/head contains index, index, dsc, archdesc -->
     <xsl:variable name="last-page" select="if (ead3:ead/ead3:archdesc/ead3:controlaccess) then 'controlaccess'
@@ -138,51 +139,51 @@
         <!-- Page master for Cover Page -->
         <fo:simple-page-master master-name="cover" page-height="11in" page-width="8.5in" margin="0.2in">
             <fo:region-body margin="1.5in 0.3in 0.3in 0.3in"/>
-            <fo:region-before extent="1.5in" background-color="lightblue"/>
-            <fo:region-after extent="0.3in" background-color="lightblue"/>
-            <fo:region-start extent="0.3in" background-color="lightgreen"/>
-            <fo:region-end extent="0.3in" background-color="lightgreen"/>
+            <fo:region-before extent="1.5in"/>
+            <fo:region-after extent="0.3in"/>
+            <fo:region-start extent="0.3in"/>
+            <fo:region-end extent="0.3in"/>
         </fo:simple-page-master>
         <!-- Page master for Table of Contents -->
         <fo:simple-page-master master-name="table-of-contents" page-height="11in" page-width="8.5in" margin="0.2in">
             <fo:region-body margin="0.5in 0.3in 0.3in 0.3in"/>
-            <fo:region-before extent="0.5in" background-color="yellow"/>
-            <fo:region-after extent="0.3in" background-color="lightblue"/>
-            <fo:region-start extent="0.3in" background-color="lightgreen"/>
-            <fo:region-end extent="0.3in" background-color="orange"/>
+            <fo:region-before extent="0.5in"/>
+            <fo:region-after extent="0.3in"/>
+            <fo:region-start extent="0.3in"/>
+            <fo:region-end extent="0.3in"/>
         </fo:simple-page-master>
         <!-- Page master for Archdesc -->
         <fo:simple-page-master master-name="archdesc" page-height="11in" page-width="8.5in" margin="0.2in">
             <fo:region-body margin="0.5in 0.3in 0.3in 0.3in"/>
-            <fo:region-before extent="0.5in" background-color="lightblue"/>
-            <fo:region-after extent="0.3in" background-color="lightblue"/>
-            <fo:region-start extent="0.3in" background-color="lightgreen"/>
-            <fo:region-end extent="0.3in" background-color="lightgreen"/>
+            <fo:region-before extent="0.5in"/>
+            <fo:region-after extent="0.3in"/>
+            <fo:region-start extent="0.3in"/>
+            <fo:region-end extent="0.3in"/>
         </fo:simple-page-master>
         <!-- Page master for DSC -->
         <fo:simple-page-master master-name="contents" page-height="11in" page-width="8.5in" margin="0.2in">
             <fo:region-body margin="0.5in 0.3in 0.3in 0.3in"/>
-            <fo:region-before extent="0.5in" background-color="lightblue"/>
-            <fo:region-after extent="0.3in" background-color="lightblue"/>
-            <fo:region-start extent="0.3in" background-color="lightgreen"/>
-            <fo:region-end extent="0.3in" background-color="lightgreen"/>
+            <fo:region-before extent="0.5in"/>
+            <fo:region-after extent="0.3in"/>
+            <fo:region-start extent="0.3in"/>
+            <fo:region-end extent="0.3in"/>
         </fo:simple-page-master>
         <!-- Page master for Index -->
         <fo:simple-page-master master-name="index" page-height="11in" page-width="8.5in" margin="0.2in">
             <fo:region-body column-count="2" column-gap=".5in" margin="0.5in 0.3in 0.3in 0.3in"/>
-            <fo:region-before extent="0.5in" background-color="lightblue"/>
-            <fo:region-after extent="0.3in" background-color="lightblue"/>
-            <fo:region-start extent="0.3in" background-color="lightgreen"/>
-            <fo:region-end extent="0.3in" background-color="lightgreen"/>
+            <fo:region-before extent="0.5in"/>
+            <fo:region-after extent="0.3in"/>
+            <fo:region-start extent="0.3in"/>
+            <fo:region-end extent="0.3in"/>
         </fo:simple-page-master>
         <!-- Page master for Control Accession -->
         <fo:simple-page-master master-name="control-access" page-height="11in" page-width="8.5in" margin="0.2in">
             <fo:region-body column-count="2" column-gap=".5in" margin="0.5in 0.3in 0.3in 0.3in"
              />
-            <fo:region-before extent="0.5in" background-color="lightblue"/>
-            <fo:region-after extent="0.3in" background-color="lightblue"/>
-            <fo:region-start extent="0.3in" background-color="lightgreen"/>
-            <fo:region-end extent="0.3in" background-color="lightgreen"/>
+            <fo:region-before extent="0.5in"/>
+            <fo:region-after extent="0.3in"/>
+            <fo:region-start extent="0.3in"/>
+            <fo:region-end extent="0.3in"/>
         </fo:simple-page-master>
 
     </xsl:template>

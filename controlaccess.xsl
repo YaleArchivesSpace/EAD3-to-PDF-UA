@@ -9,17 +9,12 @@
     <xsl:template match="ead3:archdesc" mode="control-access-section">
         <fo:page-sequence master-reference="control-access">
             <!-- Page header -->
-            <fo:static-content flow-name="xsl-region-before">
-                <fo:block/>
+            <fo:static-content flow-name="xsl-region-before" role="artifact">
+                <xsl:call-template name="header-right"/>
             </fo:static-content>
             <!-- Page footer-->
             <fo:static-content flow-name="xsl-region-after" role="artifact">
-                <fo:block xsl:use-attribute-sets="page-number" text-align="center">
-                    <xsl:text>Page </xsl:text>
-                    <fo:page-number/>
-                    <xsl:text> of </xsl:text>
-                    <fo:page-number-citation ref-id="last-page"/>
-                </fo:block>
+                <xsl:call-template name="footer"/>
             </fo:static-content>
             <fo:flow flow-name="xsl-region-body">
                 <xsl:call-template name="section-start"/>

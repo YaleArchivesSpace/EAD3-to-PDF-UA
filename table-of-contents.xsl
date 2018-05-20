@@ -14,7 +14,7 @@
         <fo:page-sequence master-reference="table-of-contents">
             <!-- Page header -->
             <fo:static-content flow-name="xsl-region-before">
-                <fo:block/>
+                <xsl:call-template name="header-right"/>
             </fo:static-content>
             <!-- Page footer-->
             <fo:static-content flow-name="xsl-region-after">

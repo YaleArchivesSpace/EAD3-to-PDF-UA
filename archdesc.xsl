@@ -13,17 +13,12 @@
                 <xsl:attribute name="initital-page-number" select="1"/>
             </xsl:if>
             <!-- Page header -->
-            <fo:static-content flow-name="xsl-region-before">
-                <fo:block/>
+            <fo:static-content flow-name="xsl-region-before" role="artifact">
+                <xsl:call-template name="header-right"/>
             </fo:static-content>
             <!-- Page footer-->
             <fo:static-content flow-name="xsl-region-after" role="artifact">
-                <fo:block xsl:use-attribute-sets="page-number" text-align="center">
-                    <xsl:text>Page </xsl:text>
-                    <fo:page-number/>
-                    <xsl:text> of </xsl:text>
-                    <fo:page-number-citation ref-id="last-page"/>
-                </fo:block>
+                <xsl:call-template name="footer"/>
             </fo:static-content>
             <!-- Content of page -->
             <fo:flow flow-name="xsl-region-body">
@@ -171,89 +166,4 @@
         </fo:list-item>
     </xsl:template>
 
-    <xsl:template name="holding-repository">
-        <fo:list-item xsl:use-attribute-sets="collection-overview-list-item">
-            <fo:list-item-label xsl:use-attribute-sets="collection-overview-list-label">
-                <fo:block>
-                    <xsl:text>Repository: </xsl:text>
-                </fo:block>
-            </fo:list-item-label>
-            <fo:list-item-body xsl:use-attribute-sets="collection-overview-list-body">
-                <fo:block>
-                    <xsl:value-of select="$holding-repository/normalize-space()"/>
-                </fo:block>
-                <xsl:apply-templates select="ancestor::ead3:ead/ead3:control/ead3:filedesc/ead3:publicationstmt/ead3:address"/>
-            </fo:list-item-body>
-        </fo:list-item>
-    </xsl:template>
-    
-    <xsl:template name="finding-aid-summary">
-        <fo:list-item xsl:use-attribute-sets="collection-overview-list-item">
-            <fo:list-item-label xsl:use-attribute-sets="collection-overview-list-label">
-                <fo:block>
-                    <xsl:text>Summary: </xsl:text>
-                </fo:block>
-            </fo:list-item-label>
-            <fo:list-item-body xsl:use-attribute-sets="collection-overview-list-body">
-                <fo:block>
-                    <xsl:apply-templates select="$finding-aid-summary"/>
-                </fo:block>
-            </fo:list-item-body>
-        </fo:list-item>
-    </xsl:template>
-    
-    <xsl:template name="finding-aid-link">
-        <fo:list-item xsl:use-attribute-sets="collection-overview-list-item">
-            <fo:list-item-label xsl:use-attribute-sets="collection-overview-list-label">
-                <fo:block>
-                    <xsl:text>Online Finding Aid: </xsl:text>
-                </fo:block>
-            </fo:list-item-label>
-            <fo:list-item-body xsl:use-attribute-sets="collection-overview-list-body">
-                <fo:block>
-                    <xsl:text>To cite or bookmark this finding aid, please use the following link: </xsl:text>
-                    <fo:basic-link xsl:use-attribute-sets="ref" external-destination="{$finding-aid-identifier/@instanceurl/normalize-space()}"
-                        fox:alt-text="Permanent finding aid link">
-                        <xsl:value-of select="$finding-aid-identifier/@instanceurl/normalize-space()"/>
-                    </fo:basic-link>
-                </fo:block>
-            </fo:list-item-body>
-        </fo:list-item>
-    </xsl:template>
-    
-    <xsl:template name="select-header">
-        <!-- i'd like to add a map here instead but i think that we'd need to upgrade saxon he to do that -->
-        <fo:block>
-            <xsl:choose>
-                <xsl:when test="self::ead3:unitid">
-                    <xsl:text>Call Number: </xsl:text>
-                </xsl:when>
-                <xsl:when test="self::ead3:origination">
-                    <xsl:text>Creator: </xsl:text>
-                </xsl:when>
-                <xsl:when test="self::ead3:unittitle">
-                    <xsl:text>Title: </xsl:text>
-                </xsl:when>
-                <xsl:when test="self::ead3:unitdatestructured[not(@unitdatetype='bulk')]">
-                    <xsl:text>Dates: </xsl:text>
-                </xsl:when>
-                <xsl:when test="self::ead3:unitdatestructured[@unitdatetype='bulk']">
-                    <xsl:text>Bulk Dates: </xsl:text>
-                </xsl:when>
-                <xsl:when test="self::ead3:physdescstructured">
-                    <xsl:text>Physical Description: </xsl:text>
-                </xsl:when>
-                <xsl:when test="self::ead3:langmaterial">
-                    <xsl:text>Language: </xsl:text>
-                </xsl:when>
-                <xsl:when test="self::ead3:physloc">
-                    <xsl:text>Location: </xsl:text>
-                </xsl:when>
-                <xsl:when test="self::ead3:materialspec">
-                    <xsl:text>Technical: </xsl:text>
-                </xsl:when>
-            </xsl:choose>
-        </fo:block>
-    </xsl:template>
-    
 </xsl:stylesheet>

@@ -23,7 +23,7 @@
         <xsl:attribute name="padding-bottom">8pt</xsl:attribute>
         <xsl:attribute name="keep-with-next.within-page">always</xsl:attribute>
     </xsl:attribute-set>
-    <xsl:attribute-set name="h3">
+    <xsl:attribute-set name="h3"> <!-- used for series-level titles outside of the dsc table -->
         <xsl:attribute name="role">H3</xsl:attribute>
         <xsl:attribute name="font-size">16pt</xsl:attribute>
         <xsl:attribute name="font-weight">bold</xsl:attribute>
@@ -55,6 +55,7 @@
     
     <xsl:attribute-set name="toc-block">
         <xsl:attribute name="margin">30pt 10pt 10pt 10pt</xsl:attribute>
+        <xsl:attribute name="font-size">10pt</xsl:attribute>
     </xsl:attribute-set>
     
     <xsl:attribute-set name="center-text">
@@ -101,6 +102,9 @@
         <xsl:attribute name="text-align">end</xsl:attribute>
     </xsl:attribute-set>
     
+    <xsl:attribute-set name="dsc-table-cells">
+        <xsl:attribute name="padding">5pt 2pt</xsl:attribute>
+    </xsl:attribute-set>
      
 </xsl:stylesheet>
     
