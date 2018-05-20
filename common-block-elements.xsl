@@ -90,10 +90,10 @@
         </xsl:if>
     </xsl:template>
       
-    <xsl:template match="ead3:unittype">
+    <xsl:template match="ead3:unittype" mode="#all">
         <xsl:text> </xsl:text>
         <!-- add something here to convert to singular extent types, when quantity = 1-->
-        <xsl:apply-templates/>
+        <xsl:value-of select="lower-case(.)"/>
     </xsl:template>
     
     <xsl:template match="ead3:physdesc[@localtype='container_summary']">
