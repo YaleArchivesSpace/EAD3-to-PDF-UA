@@ -213,8 +213,8 @@
     </xsl:template>
     
     <xsl:template match="ead3:did" mode="dsc">
-        <xsl:apply-templates select="ead3:abstract, ead3:physdesc, 
-            ead3:physdestructured, ead3:physdescset, ead3:physloc, 
+        <xsl:apply-templates select="ead3:abstract, ead3:physdesc, ead3:physdescstructured, 
+            ead3:physdescset, ead3:physloc, 
             ead3:langmaterial, ead3:materialspec, ead3:origination, ead3:repository" mode="#current"/>
     </xsl:template>
     
