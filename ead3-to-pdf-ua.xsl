@@ -27,9 +27,7 @@
     <!-- common inline elements? -->
     <!-- shared functions? -->
     <!-- to do:
-          write a combine title and date function. (or just put dates on a new line when a title is present.  this would help best for scanning, i think, 
-          unless we wanted dates in another column...  )
-          test container groupings (present as a list when there's more than 1 group).
+          decide on what gets added to table of contents and bookmarks. always the same?  skip a c01 really if it's labelled an item?, etc.
           consider using https://www.w3.org/TR/xsl11/#fo_retrieve-table-marker to update "description section" with more info. 
                 e.g. Series 1 (Continued) / Subseries (Continued) / whatever. Unfortunately, this would require an update to FOP
 				if we wanted the headers to change size based on the depth of the hierarchy.
@@ -51,6 +49,8 @@
 		 
 		 future dev (also dependent on dev in another system):
 		 - test out request links, passing last-updated-date info so as to ensure the data that's passed is up-to-date.
+		 
+		 refactor, refactor, refactor.
          
       -->
 

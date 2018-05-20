@@ -34,7 +34,7 @@
         <fo:block keep-with-previous.within-page="always">
             <xsl:choose>
                 <xsl:when test="self::ead3:unitid">
-                    <fo:inline font-style="italic">Identifier: </fo:inline>
+                    <fo:inline font-style="italic">Call Number: </fo:inline>
                 </xsl:when>
             </xsl:choose>
             <xsl:apply-templates/>
@@ -61,7 +61,7 @@
     </xsl:template>
     
     <xsl:template match="ead3:p" mode="#all">
-        <fo:block space-after="10pt"><xsl:apply-templates/></fo:block>
+        <fo:block space-after="8pt"><xsl:apply-templates/></fo:block>
     </xsl:template>
     
     <xsl:template match="ead3:blockquote">

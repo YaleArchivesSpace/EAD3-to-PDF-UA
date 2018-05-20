@@ -18,42 +18,7 @@
             
             take the regular DSC out of a table, and put the container information inline.
             and add a container-inventory section at the end that's a real table, with box, folder, etc., plus title,
-            date, etc., sorted by container numbers.
-            
-           try one with container, desc, date (since that's the YFAD way)... 
-            
-           Container               Description	                 Date	    
-           
-	                               Caleb Marsh
-	       box 37, folder 1;          Brown, Anson	             1827	   
-	       microfilm reel 2a
-	       
-	       box 37, folder 2           Brown, Daniel B.	         1827	 
-           
-           
-           or like this, for the current ASpace way...
-           
-           Description	               Date	       Container
-	       
-	       Caleb Marsh
-	             Brown, Anson	       1827	       Box 37, Folder 1;
-	                                               Microfilm reel 2a
-	                                               
-	             Brown, Daniel B.	   1827	       Box 37, Folder 2
-	             
-	       
-	       But this would be too long... I think:
-	       
-	       Description                                 Date
-	       
-	       Caleb Marsh
-	            Brown, Anson	                       1827
-	            -Box 37, Folder 1; Microfilm reel 2a
-	                                               
-	            Brown, Daniel B.	                   1827
-	            -Box 37, Folder 2
-	       
-              
+            date, etc., sorted by container numbers.   
      -->
     
     <xsl:param name="dsc-first-c-levels-to-process-before-a-table" select="('series', 'collection', 'fonds', 'recordgrp')"/>
@@ -125,9 +90,12 @@
                 <xsl:attribute name="break-before" select="'page'"/>
             </xsl:if>
             
-            <!-- change to a combine title and date function later on, or keep in 3 columns? -->
-            <xsl:apply-templates select="if (ead3:did/ead3:unittitle) then ead3:did/ead3:unittitle else ead3:did/ead3:unitdatestructured" mode="dsc"/>
-            <xsl:apply-templates select="ead3:did/ead3:unitid" mode="dsc"/>
+            <xsl:if test="ead3:did/ead3:unitid/normalize-space()">
+                <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), '. ')"/>
+            </xsl:if>
+            <xsl:apply-templates select="if (ead3:did/ead3:unittitle) then ead3:did/ead3:unittitle 
+                else if (ead3:did/ead3:unitdatestructured) then ead3:did/ead3:unitdatestructured
+                else ead3:did/ead3:unitdate" mode="dsc"/>
 
             <!-- still need ot add the other did elements, and select an order -->
             <xsl:apply-templates select="ead3:did" mode="dsc"/>
