@@ -180,19 +180,10 @@
         </xsl:variable>
         <fo:table-row>
             <fo:table-cell>
-                <xsl:if test="$last-row or $no-children">
-                    <xsl:attribute name="border-bottom-style">solid</xsl:attribute>
-                    <xsl:attribute name="border-bottom-width">0.1mm</xsl:attribute>
-                    <xsl:attribute name="padding-bottom">2px</xsl:attribute>
-                </xsl:if>
-                <xsl:choose>
-                    <xsl:when test="$last-row">
-                        <xsl:attribute name="border-bottom-color">#222222</xsl:attribute>
-                    </xsl:when>
-                    <xsl:when test="$no-children">
-                        <xsl:attribute name="border-bottom-color">#dddddd</xsl:attribute>
-                    </xsl:when>
-                </xsl:choose>
+                <xsl:call-template name="dsc-table-row-border">
+                    <xsl:with-param name="last-row" select="$last-row"/>
+                    <xsl:with-param name="no-children" select="$no-children"/>
+                </xsl:call-template>
                 <fo:block>
                     <xsl:choose>
                         <xsl:when test="$first-row eq true()">
@@ -224,37 +215,19 @@
                 </fo:block>
             </fo:table-cell>
             <fo:table-cell>
-                <xsl:if test="$last-row or $no-children">
-                    <xsl:attribute name="border-bottom-style">solid</xsl:attribute>
-                    <xsl:attribute name="border-bottom-width">0.1mm</xsl:attribute>
-                    <xsl:attribute name="padding-bottom">2px</xsl:attribute>
-                </xsl:if>
-                <xsl:choose>
-                    <xsl:when test="$last-row">
-                        <xsl:attribute name="border-bottom-color">#222222</xsl:attribute>
-                    </xsl:when>
-                    <xsl:when test="$no-children">
-                        <xsl:attribute name="border-bottom-color">#dddddd</xsl:attribute>
-                    </xsl:when>
-                </xsl:choose>
+                <xsl:call-template name="dsc-table-row-border">
+                    <xsl:with-param name="last-row" select="$last-row"/>
+                    <xsl:with-param name="no-children" select="$no-children"/>
+                </xsl:call-template>
                 <fo:block>
                     <xsl:apply-templates select="if (ead3:did/ead3:unitdatestructured) then ead3:did/ead3:unitdatestructured else ead3:did/ead3:unitdate" mode="dsc"/>
                 </fo:block>
             </fo:table-cell>
             <fo:table-cell>
-                <xsl:if test="$last-row or $no-children">
-                    <xsl:attribute name="border-bottom-style">solid</xsl:attribute>
-                    <xsl:attribute name="border-bottom-width">0.1mm</xsl:attribute>
-                    <xsl:attribute name="padding-bottom">2px</xsl:attribute>
-                </xsl:if>
-                <xsl:choose>
-                    <xsl:when test="$last-row">
-                        <xsl:attribute name="border-bottom-color">#222222</xsl:attribute>
-                    </xsl:when>
-                    <xsl:when test="$no-children">
-                        <xsl:attribute name="border-bottom-color">#dddddd</xsl:attribute>
-                    </xsl:when>
-                </xsl:choose>
+                <xsl:call-template name="dsc-table-row-border">
+                    <xsl:with-param name="last-row" select="$last-row"/>
+                    <xsl:with-param name="no-children" select="$no-children"/>
+                </xsl:call-template>
                 <xsl:call-template name="container-layout">
                     <xsl:with-param name="containers-sorted-by-localtype" select="$containers-sorted-by-localtype"/>
                 </xsl:call-template>
@@ -430,6 +403,24 @@
                 </xsl:if>
             </fo:inline>
         </xsl:for-each>
+    </xsl:template>
+    
+    <xsl:template name="dsc-table-row-border">
+        <xsl:param name="last-row"/>
+        <xsl:param name="no-children"/>
+        <xsl:if test="$last-row or $no-children">
+            <xsl:attribute name="border-bottom-style">solid</xsl:attribute>
+            <xsl:attribute name="border-bottom-width">0.1mm</xsl:attribute>
+            <xsl:attribute name="padding-bottom">2px</xsl:attribute>
+        </xsl:if>
+        <xsl:choose>
+            <xsl:when test="$last-row">
+                <xsl:attribute name="border-bottom-color">#222222</xsl:attribute>
+            </xsl:when>
+            <xsl:when test="$no-children">
+                <xsl:attribute name="border-bottom-color">#dddddd</xsl:attribute>
+            </xsl:when>
+        </xsl:choose>
     </xsl:template>
 
 </xsl:stylesheet>
