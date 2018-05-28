@@ -40,7 +40,7 @@
                         , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan"/>
                 </fo:block>
                 <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
-                    , ead3:odd[not(contains(lower-case(ead3:head), 'index'))]
+                    , ead3:odd[not(matches(lower-case(normalize-space(ead3:head)), $odd-headings-to-add-at-end))]
                     , ead3:bibliography, ead3:arrangement" mode="collection-overview"/>
                 
                 <!-- display after container list

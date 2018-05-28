@@ -7,7 +7,7 @@
 
     <!-- this file is imported by "ead3-to-pdf-ua.xsl" -->
     
-    <!-- 
+    <!-- block elements:
     table
     bibliography
     chronlist

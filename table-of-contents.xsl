@@ -43,10 +43,10 @@
                         </xsl:apply-templates>
                     </xsl:if>
                     <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
-                        , ead3:odd[not(contains(lower-case(ead3:head), 'index'))]
+                        , ead3:odd[not(matches(lower-case(normalize-space(ead3:head)), $odd-headings-to-add-at-end))]
                         , ead3:bibliography, ead3:arrangement" mode="toc"/>
                     <xsl:apply-templates select="ead3:dsc" mode="toc"/>
-                    <xsl:apply-templates select="ead3:odd[contains(lower-case(ead3:head), 'index')]
+                    <xsl:apply-templates select="ead3:odd[matches(lower-case(normalize-space(ead3:head)), $odd-headings-to-add-at-end)]
                         , ead3:index
                         , ead3:controlaccess" mode="toc"/>
                 </fo:block>
