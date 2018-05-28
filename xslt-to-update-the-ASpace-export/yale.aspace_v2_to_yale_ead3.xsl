@@ -6,6 +6,9 @@
   updated to conform with ASpace versions 2.x
   
   to do:
+  
+  most importantly:  add the rightsdeclaraction element since we've now got EAD3 1.1 !!!
+  
   adjust how ASpace exports unitdatestructure and unitdate in EAD3 (and report some JIRA issues).
     notes:
       1) if you create a date subrecord and give it an end date, do NOT give it a begin date, and give it a date expression...  
@@ -71,7 +74,7 @@
           to compare, i'll only look at the numeric contents of the unitdate and the unitdatestructured.
           if those match exactly, then I will remove the unitdatestructured.
           if they don't match, then we'll keep everything and process whatever's in the output during the PDF process.
-                this isn't perfect ,but as long as folks don't type in month names into date expressions, etc. (since we've said not to, according to your guidelines),
+                this isn't perfect ,but as long as folks don't type in month names into date expressions, etc. (since we've said not to, according to our guidelines),
                 then it should be good enough.
               
   
@@ -201,6 +204,11 @@
   <!-- if it's listed "unpublished" in ASpace, let's keep it unpublished no matter how the file is serialized into EAD
   (and we'll change the paraemter as needed for previewing PDF files) -->
   <xsl:template match="*[@audience = 'internal'][$suppressInternalComponents = true()]" priority="5"/>
+  
+  <!-- rather than fix the formatting (e.g. adding a paragraph element within controlnote), 
+    let's just keep this note internal only -->
+  <xsl:template match="ead3:notestmt"/>
+
 
   <!-- in the cases when we've migrated "ref_" id and target values from the AT, we need to preserve those as is;
     ASpace, however, will always prepend "aspace_"-->
