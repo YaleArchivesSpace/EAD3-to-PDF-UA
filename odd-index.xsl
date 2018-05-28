@@ -22,8 +22,7 @@
                 <fo:block xsl:use-attribute-sets="h3" id="{@id-for-link}">
                     <xsl:apply-templates select="ead3:head"/>
                 </fo:block>
-                <!-- etc -->
-                
+                <xsl:apply-templates select="* except ead3:head"/>
                 <xsl:apply-templates select="../ead3:odd[matches(lower-case(normalize-space(ead3:head)), $odd-headings-to-add-at-end)][position() gt 1]"/>
                 <!-- adding this to grab the last page number-->
                 <xsl:if test="$last-page eq 'odd-index'">
@@ -39,8 +38,7 @@
         <fo:block xsl:use-attribute-sets="h3" id="{@id-for-link}">
             <xsl:apply-templates select="ead3:head"/>
         </fo:block>
-        <!-- etc -->
-        
+        <xsl:apply-templates select="* except ead3:head"/>
     </xsl:template>
 
 </xsl:stylesheet>

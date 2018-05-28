@@ -22,7 +22,7 @@
                 <fo:block xsl:use-attribute-sets="h3" id="{@id-for-link}">
                     <xsl:apply-templates select="ead3:head"/>
                 </fo:block>
-                <!-- etc. -->
+                <xsl:apply-templates select="* except ead3:head"/>
                 
                 <xsl:apply-templates select="../ead3:index[position() gt 1]"/>
                 
@@ -40,8 +40,7 @@
         <fo:block xsl:use-attribute-sets="h3" id="{@id-for-link}">
             <xsl:apply-templates select="ead3:head"/>
         </fo:block>
-        <!-- etc -->
-        
+        <xsl:apply-templates select="* except ead3:head"/>
     </xsl:template>
 
 </xsl:stylesheet>
