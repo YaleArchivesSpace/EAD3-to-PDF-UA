@@ -4,6 +4,8 @@
     xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"
     xmlns:ead3="http://ead3.archivists.org/schema/" exclude-result-prefixes="xs ead3 fox"
     version="2.0">
+    
+    <!-- still need to update this to work if the unit dates are NOT structured -->
 
     <!-- this file is imported by "ead3-to-pdf-ua.xsl" -->
 

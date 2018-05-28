@@ -23,11 +23,14 @@
     <xsl:include href="controlaccess.xsl"/>
     
     <!-- to do:
-          add Odd (index), Index
-          
+          do NOT assume that colleciton-level dates will be normalized (including bulk dates).  ours are, but i should anticipate both cases.
+            in other words, we may need to process unitdate elements at the collection level.
+        
           fix up block and inline stylings.
           
           test Digital Object links. any way to get thumbnails?
+          
+          add a method to singularize extent types, unless that's handled in the transformation process.
           
           check that the use of "modes" is consistent and makes sense.
           
@@ -77,9 +80,10 @@
     <xsl:param name="control-access-title" select="'Names and Subjects'"/>
     
     <xsl:param name="odd-headings-to-add-at-end" select="'index|appendix'"/>
-    
     <xsl:param name="levels-to-include-in-toc" select="('series', 'subseries', 'collection', 'fonds', 'recordgrp', 'subgrp')"/>
     <xsl:param name="otherlevels-to-include-in-toc" select="('accession', 'acquisition')"/>
+    
+    <xsl:param name="staff-preview" select="false()"/>
      
     <!-- document-based variables -->
     <xsl:variable name="finding-aid-title" select="ead3:ead/ead3:control/ead3:filedesc/ead3:titlestmt/ead3:titleproper[1][not(@localtype = 'filing')]"/>

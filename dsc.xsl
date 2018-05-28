@@ -181,8 +181,7 @@
                     <fo:block-container keep-with-next.within-page="always">
                         <fo:block>
                             <xsl:apply-templates select="if (ead3:did/ead3:unittitle/normalize-space()) then ead3:did/ead3:unittitle
-                                else if (ead3:did/ead3:unitdatestructured) then ead3:did/ead3:unitdatestructured
-                                else ead3:did/ead3:unitdate"/>
+                                else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate"/>
                             <xsl:apply-templates select="ead3:did/ead3:unitid" mode="dsc"/>
                         </fo:block>
                         <!-- still need to add the other did elements, and select an order -->
@@ -200,7 +199,7 @@
             </fo:table-cell>
             <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
                 <fo:block>
-                    <xsl:apply-templates select="if (ead3:did/ead3:unitdatestructured) then ead3:did/ead3:unitdatestructured else ead3:did/ead3:unitdate" mode="dsc"/>
+                    <xsl:apply-templates select="ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate" mode="dsc"/>
                 </fo:block>
             </fo:table-cell>
             <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
