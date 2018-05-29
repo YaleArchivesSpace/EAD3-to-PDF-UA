@@ -18,7 +18,7 @@
                 <fo:bookmark-title>Table of Contents</fo:bookmark-title>
             </fo:bookmark>
             <fo:bookmark internal-destination="contents">
-                <fo:bookmark-title><xsl:value-of select="$dsc-title"/></fo:bookmark-title>
+                <fo:bookmark-title><xsl:value-of select="$archdesc-did-title"/></fo:bookmark-title>
             </fo:bookmark>
             <fo:bookmark internal-destination="admin-info">
                 <xsl:attribute name="starting-state">hide</xsl:attribute>
