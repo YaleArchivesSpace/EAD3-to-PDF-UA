@@ -4,6 +4,8 @@
     xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"
     xmlns:ead3="http://ead3.archivists.org/schema/" exclude-result-prefixes="xs ead3 fox"
     version="2.0">
+    
+    <!-- still need to update this to work if the unit dates are NOT structured -->
 
     <!-- this file is imported by "ead3-to-pdf-ua.xsl" -->
 
@@ -40,7 +42,7 @@
                         , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan"/>
                 </fo:block>
                 <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
-                    , ead3:odd[not(contains(lower-case(ead3:head), 'index'))]
+                    , ead3:odd[not(matches(lower-case(normalize-space(ead3:head)), $odd-headings-to-add-at-end))]
                     , ead3:bibliography, ead3:arrangement" mode="collection-overview"/>
                 
                 <!-- display after container list

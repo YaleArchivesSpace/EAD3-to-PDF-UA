@@ -105,6 +105,57 @@
     <xsl:attribute-set name="dsc-table-cells">
         <xsl:attribute name="padding">5pt 2pt</xsl:attribute>
     </xsl:attribute-set>
+    
+    <!-- from EAD2002 stylesheets -->
+    
+    <!-- <list> Attribute Set -->
+    <xsl:attribute-set name="list">
+        <xsl:attribute name="font-weight">normal</xsl:attribute>
+        <xsl:attribute name="margin-bottom">10pt</xsl:attribute>
+    </xsl:attribute-set>
+    
+    <!-- <listhead> Attribute Set -->
+    <xsl:attribute-set name="listhead">
+        <xsl:attribute name="font-weight">bold</xsl:attribute>
+    </xsl:attribute-set>
+    
+    <!-- <item> Attribute Set -->
+    <xsl:attribute-set name="list.item">
+        <xsl:attribute name="font-weight">normal</xsl:attribute>
+        <xsl:attribute name="space-after">3pt</xsl:attribute>
+    </xsl:attribute-set>
+    
+    <!-- <chronlist> Head Attribute Set -->
+    <xsl:attribute-set name="head.chronlist">
+        <xsl:attribute name="font-weight">bold</xsl:attribute>
+        <xsl:attribute name="text-align">start</xsl:attribute>
+        <xsl:attribute name="margin-bottom">10pt</xsl:attribute>
+    </xsl:attribute-set>
+    
+    <!-- Table  <table> Attribute Set -->
+    <xsl:attribute-set name="table">
+        <xsl:attribute name="table-layout">fixed</xsl:attribute>
+        <xsl:attribute name="table-omit-header-at-break">false</xsl:attribute>
+        <xsl:attribute name="margin-bottom">20pt</xsl:attribute>
+        <xsl:attribute name="inline-progression-dimension.optimum">100%</xsl:attribute>
+    </xsl:attribute-set>
+    
+    <!-- Table Head (<thead> and elsewhere) Attribute Set -->
+    <xsl:attribute-set name="table.head">
+        <xsl:attribute name="font-weight">bold</xsl:attribute>
+    </xsl:attribute-set>
+    
+    <!-- Table Cell Attribute Set -->
+    <xsl:attribute-set name="table.cell">
+        <xsl:attribute name="padding" select="'5pt'"/>
+    </xsl:attribute-set>
+    
+    <!-- Table Cell Block Attribute Set -->
+    <xsl:attribute-set name="table.cell.block">
+        <xsl:attribute name="margin-top">
+            <xsl:text>10pt</xsl:text>
+        </xsl:attribute>
+    </xsl:attribute-set>
      
 </xsl:stylesheet>
     

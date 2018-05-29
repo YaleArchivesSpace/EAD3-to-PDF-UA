@@ -18,7 +18,7 @@
                 <fo:bookmark-title>Table of Contents</fo:bookmark-title>
             </fo:bookmark>
             <fo:bookmark internal-destination="contents">
-                <fo:bookmark-title><xsl:value-of select="$dsc-title"/></fo:bookmark-title>
+                <fo:bookmark-title><xsl:value-of select="$archdesc-did-title"/></fo:bookmark-title>
             </fo:bookmark>
             <fo:bookmark internal-destination="admin-info">
                 <xsl:attribute name="starting-state">hide</xsl:attribute>
@@ -29,11 +29,11 @@
                     , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan" mode="bookmarks"/>
             </fo:bookmark>
             <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
-                , ead3:odd[not(contains(lower-case(ead3:head), 'index'))]
+                , ead3:odd[not(matches(lower-case(normalize-space(ead3:head)), $odd-headings-to-add-at-end))]
                 , ead3:bibliography, ead3:arrangement" mode="bookmarks"/>
             <xsl:apply-templates select="ead3:dsc[*[local-name()=('c', 'c01')]]" mode="bookmarks"/>
             
-            <xsl:apply-templates select="ead3:odd[contains(lower-case(ead3:head), 'index')]
+            <xsl:apply-templates select="ead3:odd[matches(lower-case(normalize-space(ead3:head)), $odd-headings-to-add-at-end)]
                 , ead3:index
                 , ead3:controlaccess" mode="bookmarks"/>
         </fo:bookmark-tree>

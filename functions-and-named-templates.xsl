@@ -9,6 +9,9 @@
     exclude-result-prefixes="xs math mdc fox"
     version="2.0">
     
+    <!-- also need to make sure that the top-level dates display if those are NOT normalized
+        -->
+    
     <xsl:function name="mdc:container-to-number" as="xs:decimal">
         <xsl:param name="current-container" as="node()*"/>
         <xsl:variable name="primary-container-number" select="if (contains($current-container, '-')) then replace(substring-before($current-container, '-'), '\D', '') else replace($current-container, '\D', '')"/>
@@ -170,8 +173,7 @@
             <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), '. ')"/>
         </xsl:if>
         <xsl:apply-templates select="if (ead3:did/ead3:unittitle) then ead3:did/ead3:unittitle 
-            else if (ead3:did/ead3:unitdatestructured) then ead3:did/ead3:unitdatestructured
-            else ead3:did/ead3:unitdate" mode="dsc"/>
+            else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate" mode="dsc"/>
     </xsl:template>
     
     <!-- still neeed options for when dates and/or containers aren't present in a table -->
