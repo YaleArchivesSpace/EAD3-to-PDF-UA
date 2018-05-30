@@ -217,6 +217,48 @@
       <xsl:value-of select="substring-after(., 'aspace_')"/>
     </xsl:attribute>
   </xsl:template>
+  
+  <!--EAD3 doesn't allow launguge elements within launguage elements, so we'll just take the text of any lanuage element instead.
+  Need to follow up with ASpace to see if it will support languageset and descriptivenote elements.
+  -->
+  <xsl:template match="ead3:language">
+    <xsl:value-of select="."/>
+  </xsl:template>
+  
+  <!-- we might get something like this:
+          <physloc>Some files include photographs; negatives for some prints are stored in
+            <title localtype="simple" render="italic">
+              <part>Restricted Fragile</part>
+             </title>
+           </physloc>
+           
+          That needs to change to:
+          <physloc>Some files include photographs; negatives for some prints are stored in
+            <emph render="italic">Restricted Fragile</emph>
+           </physloc>
+     
+    Review the EAD3 schema to abstract this rule, so that we know where else this can happen.
+    -->
+  <xsl:template match="ead3:physloc/ead3:title">
+    <xsl:element name="emph" namespace="http://ead3.archivists.org/schema/">
+      <xsl:apply-templates select="@render"/>
+      <!-- not good to assume, but our best practice has been to always italicize a title element, even when no @render was specified-->
+      <xsl:if test="not(@render)">
+        <xsl:attribute name="render" select="'italic'"/>
+      </xsl:if>
+      <xsl:value-of select="."/>
+    </xsl:element>
+  </xsl:template>
+  
+  
+  <!-- we're hacking our way to better subjects/agents in ASpace.
+    one problem with that is that we're adding subfield delimerts like "$t:"
+    to ASpace's qualifier field.  Here's where we strip those values out, since they're pointless for the display
+    -->
+  <xsl:template match="ead3:part/text()">
+    <xsl:value-of select="replace(., '\$\w:', '')"/>
+  </xsl:template>
+ 
 
   <!-- in ASpace, we don't want to include links that start with "aspace_".  
     Therefore, if the link is to a note or a component of a finding aid that was created 
