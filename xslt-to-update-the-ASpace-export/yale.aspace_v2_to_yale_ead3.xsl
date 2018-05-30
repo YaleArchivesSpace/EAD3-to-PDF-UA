@@ -218,6 +218,11 @@
     </xsl:attribute>
   </xsl:template>
   
+  <!-- first attempt to deal with duplicate language "notes"
+  exploiting the fact that ASpace includes an @id on the note, but not on the language code element
+  -->
+  <xsl:template match="ead3:archdesc/ead3:did/ead3:langmaterial[not(@id)][../ead3:langmaterial[@id]]"/>
+  
   <!--EAD3 doesn't allow launguge elements within launguage elements, so we'll just take the text of any lanuage element instead.
   Need to follow up with ASpace to see if it will support languageset and descriptivenote elements.
   -->
