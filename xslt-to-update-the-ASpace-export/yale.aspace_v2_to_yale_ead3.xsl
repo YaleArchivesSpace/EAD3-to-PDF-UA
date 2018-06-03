@@ -7,7 +7,12 @@
   
   to do:
   
-  most importantly:  add the rightsdeclaraction element since we've now got EAD3 1.1 !!!
+  add the rightsdeclaraction element since we've now got EAD3 1.1 !!!
+    How best to place this, since the order matters?
+    Obviously, this needs to be in ASpace (or exported from a rights subrecord?), but until then
+     we'll add it here.
+     
+   ...
   
   adjust how ASpace exports unitdatestructure and unitdate in EAD3 (and report some JIRA issues).
     notes:
@@ -147,6 +152,10 @@
   <xsl:param name="repository">
     <xsl:value-of select="substring-before(normalize-space(/ead3:ead/ead3:control/ead3:recordid), '.')"/>
   </xsl:param>
+  
+  <xsl:param name="include-rights-statement">
+    <xsl:value-of select="if ($repository = ('mssa', 'beinecke', 'divinity', 'music', 'med', 'arts', 'vrc', 'lwl', 'ycba')) then true() else false()"/>
+  </xsl:param>
 
   <!-- Repository Code.
   make sure that these are all in ASpace, and then remove from here -->
@@ -209,6 +218,43 @@
     let's just keep this note internal only -->
   <xsl:template match="ead3:notestmt"/>
 
+  
+  <xsl:template match="ead3:conventiondeclaration[$include-rights-statement]">
+    <xsl:copy>
+      <xsl:apply-templates select="@* | node()"/>
+    </xsl:copy>
+    <xsl:call-template name="rights-statement"/>
+  </xsl:template>
+  
+  <xsl:template match="ead3:languagedeclaration[$include-rights-statement][not(following-sibling::ead3:conventiondeclaration)]">
+    <xsl:copy>
+      <xsl:apply-templates select="@* | node()"/>
+    </xsl:copy>
+    <xsl:call-template name="rights-statement"/>
+  </xsl:template>
+  
+  <xsl:template match="ead3:maintenanceagency[$include-rights-statement][not(following-sibling::ead3:languagedeclaration)][not(following-sibling::ead3:conventiondeclaration)]">
+    <xsl:copy>
+      <xsl:apply-templates select="@* | node()"/>
+    </xsl:copy>
+    <xsl:call-template name="rights-statement"/>
+  </xsl:template>
+
+  <xsl:template name="rights-statement">
+    <xsl:element name="rightsdeclaration" namespace="http://ead3.archivists.org/schema/">
+      <xsl:element name="abbr" namespace="http://ead3.archivists.org/schema/">
+        <xsl:text>CC0</xsl:text>
+      </xsl:element>
+      <xsl:element name="citation" namespace="http://ead3.archivists.org/schema/">
+        <xsl:attribute name="href" select="'https://creativecommons.org/publicdomain/zero/1.0/'"/>
+      </xsl:element>
+      <xsl:element name="descriptivenote" namespace="http://ead3.archivists.org/schema/">
+        <xsl:element name="p" namespace="http://ead3.archivists.org/schema/">
+          <xsl:text>CC0 1.0 Universal (CC0 1.0)</xsl:text>
+        </xsl:element>
+      </xsl:element>
+    </xsl:element>
+  </xsl:template>
 
   <!-- in the cases when we've migrated "ref_" id and target values from the AT, we need to preserve those as is;
     ASpace, however, will always prepend "aspace_"-->
