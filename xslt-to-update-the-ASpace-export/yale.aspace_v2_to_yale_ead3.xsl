@@ -7,6 +7,8 @@
   
   to do:
   
+  decide on how to handle multiple creators.  just take the first for the overview?  use beinecke.frkoch as a test case.
+  
   add the rightsdeclaraction element since we've now got EAD3 1.1 !!!
     How best to place this, since the order matters?
     Obviously, this needs to be in ASpace (or exported from a rights subrecord?), but until then
@@ -85,7 +87,7 @@
   
   strip any notes that only have a head element, and no text otheriwse.
   
-  decide on how to handle EAD3 head elements.
+  decide on how to handle EAD3 head elements (e.g. should we replace or accept ASpace defaults?)
   
   update all repo records in ASpace and remove the "respository_code" parameter from this file.
   
@@ -139,6 +141,7 @@
   </xsl:function>
   
   <xsl:function name="mdc:remove-this-date" as="xs:boolean">
+    <!-- update this to compare with the display form -->
     <xsl:param name="unitdate" as="node()"/>
     <xsl:variable name="first-date" select="string-join($unitdate//@standarddate, '')"/>
     <xsl:variable name="second-date" select="$unitdate/following-sibling::*[1]/replace(text(), '[^0-9]', '')"/>
@@ -153,7 +156,8 @@
     <xsl:value-of select="substring-before(normalize-space(/ead3:ead/ead3:control/ead3:recordid), '.')"/>
   </xsl:param>
   
-  <xsl:param name="include-rights-statement">
+  <xsl:param name="include-cc0-rights-statement">
+    <!-- need to get the okay from Peabody.  anyone else?-->
     <xsl:value-of select="if ($repository = ('mssa', 'beinecke', 'divinity', 'music', 'med', 'arts', 'vrc', 'lwl', 'ycba')) then true() else false()"/>
   </xsl:param>
 
@@ -219,28 +223,28 @@
   <xsl:template match="ead3:notestmt"/>
 
   
-  <xsl:template match="ead3:conventiondeclaration[$include-rights-statement]">
+  <xsl:template match="ead3:conventiondeclaration[$include-cc0-rights-statement]">
     <xsl:copy>
       <xsl:apply-templates select="@* | node()"/>
     </xsl:copy>
-    <xsl:call-template name="rights-statement"/>
+    <xsl:call-template name="cc0-rights-statement"/>
   </xsl:template>
   
-  <xsl:template match="ead3:languagedeclaration[$include-rights-statement][not(following-sibling::ead3:conventiondeclaration)]">
+  <xsl:template match="ead3:languagedeclaration[$include-cc0-rights-statement][not(following-sibling::ead3:conventiondeclaration)]">
     <xsl:copy>
       <xsl:apply-templates select="@* | node()"/>
     </xsl:copy>
-    <xsl:call-template name="rights-statement"/>
+    <xsl:call-template name="cc0-rights-statement"/>
   </xsl:template>
   
-  <xsl:template match="ead3:maintenanceagency[$include-rights-statement][not(following-sibling::ead3:languagedeclaration)][not(following-sibling::ead3:conventiondeclaration)]">
+  <xsl:template match="ead3:maintenanceagency[$include-cc0-rights-statement][not(following-sibling::ead3:languagedeclaration)][not(following-sibling::ead3:conventiondeclaration)]">
     <xsl:copy>
       <xsl:apply-templates select="@* | node()"/>
     </xsl:copy>
-    <xsl:call-template name="rights-statement"/>
+    <xsl:call-template name="cc0-rights-statement"/>
   </xsl:template>
 
-  <xsl:template name="rights-statement">
+  <xsl:template name="cc0-rights-statement">
     <xsl:element name="rightsdeclaration" namespace="http://ead3.archivists.org/schema/">
       <xsl:element name="abbr" namespace="http://ead3.archivists.org/schema/">
         <xsl:text>CC0</xsl:text>
@@ -268,13 +272,6 @@
   exploiting the fact that ASpace includes an @id on the note, but not on the language code element
   -->
   <xsl:template match="ead3:archdesc/ead3:did/ead3:langmaterial[not(@id)][../ead3:langmaterial[@id]]"/>
-  
-  <!--EAD3 doesn't allow launguge elements within launguage elements, so we'll just take the text of any lanuage element instead.
-  Need to follow up with ASpace to see if it will support languageset and descriptivenote elements.
-  -->
-  <xsl:template match="ead3:language">
-    <xsl:value-of select="."/>
-  </xsl:template>
   
   <!-- we might get something like this:
           <physloc>Some files include photographs; negatives for some prints are stored in
@@ -448,9 +445,7 @@
         <xsl:value-of select="substring-after(ead3:head, ') ')"/>
       </xsl:element>
       <xsl:apply-templates select="ead3:* except ead3:head"/>
-      <xsl:apply-templates
-        select="../ead3:*[local-name() = $grouping-element-name][matches(ead3:head, '^\d\)')][position() gt 1]/ead3:*[not(local-name() = 'head')]"
-      />
+      <xsl:apply-templates select="../ead3:*[local-name() = $grouping-element-name][matches(ead3:head, '^\d\)')][position() gt 1]/ead3:*[not(local-name() = 'head')]"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="ead3:*[matches(ead3:head, '^\d\)')][position() gt 1]" priority="2"/>
@@ -492,10 +487,17 @@
       <xsl:value-of select="."/>
     </xsl:copy>
   </xsl:template>
+  
+  <!--EAD3 doesn't allow launguge elements within launguage elements, so we'll just take the text of any lanuage element instead.
+  Need to follow up with ASpace to see if it will support languageset and descriptivenote elements.
+  -->
+  <xsl:template match="ead3:language/ead3:language">
+    <xsl:value-of select="."/>
+  </xsl:template>
 
 
   <!-- you can't designate an "unordered" list in ASpace, but if no enumeration attriibute is supplied,
-    we can (and should) assume it's just an unordered, or "simple" list.-->
+    we can (and should) assume it's just an unordered list.-->
   <xsl:template match="ead3:list[@listtype = 'ordered'][not(@numeration)] | ead3:list[@listtype = 'ordered'][@numeration eq '']">
     <xsl:copy>
       <xsl:apply-templates select="@* except @numeration"/>
@@ -508,7 +510,7 @@
 
   
 
-  <!-- hack to remove the extra paragraph element that ASpace inserts before hard-code table elements 
+  <!-- hack to remove the extra paragraph element that ASpace inserts before hard-coded table elements 
     (see beinecke.sok, appendix 5, as an example)
   is this still required???
   -->
