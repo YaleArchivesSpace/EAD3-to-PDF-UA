@@ -23,10 +23,17 @@
     <xsl:include href="controlaccess.xsl"/>
     
     <!-- to do:
+          fix up block and inline stylings.
+          
+          add red boxes around anything that has audience = internal. (also flag in table of contents / bookmarks?)
+            update oXygen project for staff.
+          
+          embiggen subseries titles when they're a direct child of series?
+          
+          add running page headers for appendices (why should series get all the fun?)
+          
           do NOT assume that colleciton-level dates will be normalized (including bulk dates).  ours are, but i should anticipate both cases.
             in other words, we may need to process unitdate elements at the collection level.
-        
-          fix up block and inline stylings.
           
           test Digital Object links. any way to get thumbnails?
           
@@ -39,8 +46,7 @@
           create a list of other fonts needed for other languages that will be present (e.g. arabic, cjk languages, etc)
           then add those as secondary font options when/where needed, such as the following example:
            <fo:block font-family="Helvetica, SimSun">Paul 你好</fo:block>
-                   
-          add red boxes around anything that has audience = internal. (also flag in table of contents / bookmarks?)
+          
 		 
 		  future dev:
 		  - upgrade to FOP 2.3
@@ -175,7 +181,7 @@
         </fo:simple-page-master>
         <!-- Page master for Index -->
         <fo:simple-page-master master-name="index" page-height="11in" page-width="8.5in" margin="0.2in">
-            <fo:region-body column-count="2" column-gap=".5in" margin="0.5in 0.3in 0.3in 0.3in"/>
+            <fo:region-body margin="0.5in 0.3in 0.3in 0.3in"/>
             <fo:region-before extent="0.5in"/>
             <fo:region-after extent="0.3in"/>
             <fo:region-start extent="0.3in"/>
