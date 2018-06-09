@@ -189,12 +189,14 @@
                             <xsl:apply-templates select="ead3:did" mode="dsc"/>
                         </fo:block>
                     </fo:block-container>
-                    <fo:block margin-left="{$cell-margin}">          
-                        <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
-                            , ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
-                            , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
-                            , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement" mode="dsc"/>
-                    </fo:block>
+                    <fo:block-container>
+                        <fo:block>
+                            <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
+                                , ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
+                                , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
+                                , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement" mode="dsc"/>
+                        </fo:block>
+                    </fo:block-container>
                 </fo:block-container>
             </fo:table-cell>
             <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
@@ -226,7 +228,7 @@
                 <xsl:value-of select="lower-case(@localtype)"/>
             </xsl:when>
             <xsl:otherwise>
-                <fo:inline font-family="FontAwesome" color="#4A4A4A">
+                <fo:inline font-family="FontAwesomeSolid" color="#4A4A4A">
                     <xsl:value-of select="if (lower-case(@localtype) eq 'box') then '&#xf187; '
                         else if (lower-case(@localtype) eq 'folder') then '&#xf07b; '
                         else if (lower-case(@localtype) eq 'volume') then '&#xf02d; '

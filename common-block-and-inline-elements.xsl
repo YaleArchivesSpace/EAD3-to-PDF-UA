@@ -9,7 +9,6 @@
 
   <!-- block elements:
     bibliography
-    chronlist
     deflist
     index
     what else?
@@ -21,6 +20,20 @@
       <xsl:apply-templates select="@* | node()" mode="#current"/>
     </xsl:copy>
   </xsl:template>
+  
+  <!-- first attempt to remove linebreaks and whitespace from elements 
+    like title, which should only have a part child now, rather than mixed content.
+  see https://www.loc.gov/ead/EAD3taglib/index.html#elem-part
+  example encoding:
+                  <unittitle>
+                     <title localtype="simple" render="italic">
+                        <part>The Fire in the Flint</part>
+                     </title>, galley proofs, corrected (Series II)
+                  </unittitle>
+  without moving the whitespace text node, then the above would result in:
+    The Fire in the Flint , galley...
+  -->
+  <xsl:template match="text()[../ead3:part]"/>
 
   <!-- stand-alone block elements go here (not adding values like unitid and unittitle, however, since those will be handled differently
     a lot of these are handled differently as a LIST, however, when at the colleciton level.-->
@@ -47,6 +60,12 @@
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>
+  
+  <xsl:template match="ead3:head | ead3:head01 | ead3:head02 | ead3:head03" mode="list-header">
+    <fo:block font-weight="700">
+      <xsl:apply-templates/>
+    </fo:block>
+  </xsl:template>
 
   <xsl:template match="ead3:head" mode="collection-overview">
     <xsl:call-template name="section-start"/>
@@ -60,7 +79,7 @@
   </xsl:template>
 
   <xsl:template match="ead3:p" mode="#all">
-    <fo:block space-after="8pt">
+    <fo:block space-after="8pt" space-before="4pt">
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>
@@ -158,7 +177,7 @@
     <fo:list-item space-after="1em">
       <fo:list-item-label>
         <xsl:choose>
-          <xsl:when test="$numeration-type"></xsl:when>
+          <xsl:when test="$numeration-type"/>
         </xsl:choose>
       </fo:list-item-label>
       <fo:list-item-body start-indent="body-start()" end-indent="5mm">
@@ -171,28 +190,36 @@
 
   <!-- Block <chronlist> Template -->
   <xsl:template match="ead3:chronlist" mode="#all">
+    <xsl:variable name="columns"
+      select="if (ead3:listhead) then count(ead3:listhead/*)
+        else if (descendant::ead3:geogname) then 3
+        else 2"/>
     <fo:table table-layout="fixed" width="100%" space-after.optimum="15pt">
-      <!-- need a test still to determine if we're going to create a
-        2 column table (dates, events), or a 
-        3 column table (dates, events, geographic locations)...
-        or handle those geographic locations another way.
-      -->
-      <fo:table-column column-width="3cm"/>
-      <fo:table-column column-width="10cm"/>
-      <fo:table-column column-width="3cm"/>
+      <xsl:choose>
+        <!-- or just add the geogname info to the second column -->
+        <xsl:when test="$columns eq 3">
+          <fo:table-column column-number="1" column-width="20%"/>
+          <fo:table-column column-number="2" column-width="20%"/>
+          <fo:table-column column-number="3" column-width="60%"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <fo:table-column column-number="1" column-width="20%"/>
+          <fo:table-column column-number="2" column-width="80%"/>
+        </xsl:otherwise>
+      </xsl:choose>
       <xsl:if test="ead3:head or ead3:listhead">
         <fo:table-header>
           <fo:table-row>
             <xsl:choose>
               <xsl:when test="ead3:head">
-                <fo:table-cell number-columns-spanned="3">
-                  <xsl:apply-templates select="ead3:head"/>
+                <fo:table-cell number-columns-spanned="{if ($columns eq 3) then 3 else 2}">
+                  <xsl:apply-templates select="ead3:head" mode="list-header"/>
                 </fo:table-cell>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:for-each select="ead3:listhead/*">
                   <fo:table-cell number-columns-spanned="1">
-                    <xsl:apply-templates/>
+                     <xsl:apply-templates select="." mode="list-header"/>   
                   </fo:table-cell>
                 </xsl:for-each>
               </xsl:otherwise>
@@ -201,39 +228,49 @@
         </fo:table-header>
       </xsl:if>
       <fo:table-body>
-        <xsl:apply-templates select="ead3:chronitem"/>
+        <xsl:apply-templates select="ead3:chronitem">
+          <xsl:with-param name="columns" select="$columns"/>
+        </xsl:apply-templates>
       </fo:table-body>
     </fo:table>
   </xsl:template>
-  
+
 
   <!-- Block <chronitem> Template -->
   <xsl:template match="ead3:chronitem">
-    <!--chronitemset, daterange, dateset, datesingle, event, geogname -->
+    <xsl:param name="columns"/>
     <fo:table-row>
       <fo:table-cell>
-        <fo:block space-before.optimum="10pt" text-align="start">
+        <fo:block text-align="start">
           <xsl:apply-templates select="ead3:datesingle | ead3:daterange | ead3:dateset"/>
         </fo:block>
       </fo:table-cell>
-      <fo:table-cell>
-        <fo:block space-before.optimum="10pt" text-align="start"/>
-      </fo:table-cell>
-      <fo:table-cell>
-        <fo:block space-before.optimum="10pt" text-align="start">
-          <xsl:for-each select="ead3:eventgrp/ead3:event">
+      <xsl:if test="$columns eq 3">
+        <fo:table-cell>
+          <fo:block text-align="start">
             <fo:block>
-              <xsl:apply-templates/>
+              <xsl:apply-templates select="ead3:geogname | ead3:chronitemset/ead3:geogname"/>
             </fo:block>
-          </xsl:for-each>
-          <xsl:for-each select="ead3:event">
-            <fo:block>
-              <xsl:apply-templates/>
-            </fo:block>
-          </xsl:for-each>
+          </fo:block>
+        </fo:table-cell>
+      </xsl:if>
+      <fo:table-cell>
+        <fo:block text-align="start">
+          <fo:block>
+            <xsl:apply-templates select="ead3:event | ead3:chronitemset/ead3:event"/>
+          </fo:block>
         </fo:block>
       </fo:table-cell>
     </fo:table-row>
+  </xsl:template>
+
+  <xsl:template match="ead3:chronitemset/ead3:geogname | ead3:chronitemset/ead3:event">
+    <fo:block>
+      <fo:inline font-family="FontAwesomeRegular" color="#4A4A4A" font-size=".5em">
+        <xsl:value-of select="'&#xf111; '"/>
+      </fo:inline>
+      <xsl:apply-templates/>
+    </fo:block>
   </xsl:template>
 
   <!-- Block <table> Template -->
@@ -324,8 +361,7 @@
           </xsl:choose>
         </xsl:attribute>
       </xsl:if>
-      <xsl:if
-        test="@valign | parent::ead3:row/@valign | parent::ead3:row/parent::ead3:tbody/@valign | parent::ead3:row/parent::ead3:thead/@valign">
+      <xsl:if test="@valign | parent::ead3:row/@valign | parent::ead3:row/parent::ead3:tbody/@valign | parent::ead3:row/parent::ead3:thead/@valign">
         <xsl:attribute name="display-align">
           <xsl:choose>
             <xsl:when test="@valign">
