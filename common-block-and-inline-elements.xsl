@@ -30,18 +30,15 @@
                         <part>The Fire in the Flint</part>
                      </title>, galley proofs, corrected (Series II)
                   </unittitle>
-  without moving the whitespace text node, then the above would result in:
+  without removing the whitespace text node, then the above would result in:
     The Fire in the Flint , galley...
   -->
   <xsl:template match="text()[../ead3:part]"/>
 
   <!-- stand-alone block elements go here (not adding values like unitid and unittitle, however, since those will be handled differently
     a lot of these are handled differently as a LIST, however, when at the colleciton level.-->
-  <xsl:template
-    match="
-      ead3:unitid | ead3:abstract | ead3:addressline | ead3:langmaterial | ead3:materialspec | ead3:origination | ead3:physdesc[not(@localtype = 'container_summary')]
-      | ead3:physloc | ead3:repository"
-    mode="dsc">
+  <xsl:template match="ead3:unitid | ead3:abstract | ead3:addressline | ead3:langmaterial | ead3:materialspec | ead3:origination | ead3:physdesc[not(@localtype = 'container_summary')]
+      | ead3:physloc | ead3:repository" mode="dsc">
     <fo:block keep-with-previous.within-page="always">
       <xsl:choose>
         <xsl:when test="self::ead3:unitid">
@@ -62,7 +59,7 @@
   </xsl:template>
   
   <xsl:template match="ead3:head | ead3:head01 | ead3:head02 | ead3:head03" mode="list-header">
-    <fo:block font-weight="700">
+    <fo:block xsl:use-attribute-sets="head.chronlist">
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>
@@ -80,6 +77,12 @@
 
   <xsl:template match="ead3:p" mode="#all">
     <fo:block space-after="8pt" space-before="4pt">
+      <xsl:apply-templates/>
+    </fo:block>
+  </xsl:template>
+  
+  <xsl:template match="ead3:archref | ead3:bibref" mode="#all">
+    <fo:block>
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>
@@ -240,13 +243,13 @@
   <xsl:template match="ead3:chronitem">
     <xsl:param name="columns"/>
     <fo:table-row>
-      <fo:table-cell>
+      <fo:table-cell xsl:use-attribute-sets="table.cell">
         <fo:block text-align="start">
           <xsl:apply-templates select="ead3:datesingle | ead3:daterange | ead3:dateset"/>
         </fo:block>
       </fo:table-cell>
       <xsl:if test="$columns eq 3">
-        <fo:table-cell>
+        <fo:table-cell xsl:use-attribute-sets="table.cell">
           <fo:block text-align="start">
             <fo:block>
               <xsl:apply-templates select="ead3:geogname | ead3:chronitemset/ead3:geogname"/>
@@ -254,7 +257,7 @@
           </fo:block>
         </fo:table-cell>
       </xsl:if>
-      <fo:table-cell>
+      <fo:table-cell xsl:use-attribute-sets="table.cell">
         <fo:block text-align="start">
           <fo:block>
             <xsl:apply-templates select="ead3:event | ead3:chronitemset/ead3:event"/>
@@ -274,8 +277,8 @@
   </xsl:template>
 
   <!-- Block <table> Template -->
-  <xsl:template match="ead3:table">
-    <fo:table use-attribute-sets="table">
+  <xsl:template match="ead3:table" mode="#all">
+    <fo:table xsl:use-attribute-sets="table">
       <xsl:apply-templates/>
     </fo:table>
   </xsl:template>
@@ -318,7 +321,7 @@
 
   <!-- Block <thead> Template -->
   <xsl:template match="ead3:thead">
-    <fo:table-header use-attribute-sets="table.head">
+    <fo:table-header xsl:use-attribute-sets="table.head">
       <xsl:apply-templates/>
     </fo:table-header>
   </xsl:template>
@@ -339,7 +342,7 @@
 
   <!-- Block <entry> Template -->
   <xsl:template match="ead3:entry">
-    <fo:table-cell use-attribute-sets="table.cell">
+    <fo:table-cell xsl:use-attribute-sets="table.cell">
       <xsl:if test="@align">
         <xsl:attribute name="text-align">
           <xsl:choose>
@@ -393,7 +396,7 @@
           </xsl:choose>
         </xsl:attribute>
       </xsl:if>
-      <fo:block use-attribute-sets="table.cell.block">
+      <fo:block xsl:use-attribute-sets="table.cell.block">
         <xsl:apply-templates/>
       </fo:block>
     </fo:table-cell>

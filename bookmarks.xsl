@@ -47,6 +47,11 @@
     </xsl:template>
     
     <xsl:template match="ead3:*" mode="bookmarks">
+        <xsl:if test="not(ead3:head)">
+            <xsl:message terminate="yes">
+                <xsl:text>No head element. Need to update the post-process to include a header, otherwise the links won't work.</xsl:text>
+            </xsl:message>
+        </xsl:if>
         <fo:bookmark internal-destination="{if (@id) then @id else generate-id(.)}">
             <fo:bookmark-title><xsl:value-of select="ead3:head"/></fo:bookmark-title>
         </fo:bookmark>

@@ -45,11 +45,6 @@
                     , ead3:odd[not(matches(lower-case(normalize-space(ead3:head)), $odd-headings-to-add-at-end))]
                     , ead3:bibliography, ead3:arrangement" mode="collection-overview"/>
                 
-                <!-- display after container list
-                odd (if "index" in head)
-                index
-                controlaccess (or put this in it's own section, prior to the container list???)
-                -->
                 <!-- adding this to grab the last page number-->
                 <xsl:if test="$last-page eq 'archdesc'">
                     <fo:wrapper id="last-page"/>

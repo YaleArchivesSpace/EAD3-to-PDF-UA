@@ -129,6 +129,7 @@
     <xsl:attribute-set name="head.chronlist">
         <xsl:attribute name="font-weight">bold</xsl:attribute>
         <xsl:attribute name="text-align">start</xsl:attribute>
+        <xsl:attribute name="margin-top">10pt</xsl:attribute>
         <xsl:attribute name="margin-bottom">10pt</xsl:attribute>
     </xsl:attribute-set>
     
