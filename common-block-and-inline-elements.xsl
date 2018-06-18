@@ -11,7 +11,7 @@
     bibliography
     deflist
     index
-    what else?
+    pretty up the lists
     -->
 
   <!-- not used often, but used by the container-grouping and sorting method -->
@@ -58,10 +58,23 @@
     </fo:block>
   </xsl:template>
   
-  <xsl:template match="ead3:head | ead3:head01 | ead3:head02 | ead3:head03" mode="list-header">
-    <fo:block xsl:use-attribute-sets="head.chronlist">
+  <xsl:template match="ead3:head | ead3:head01 | ead3:head02 | ead3:head03" mode="table-header">
+    <fo:block xsl:use-attribute-sets="table.head">
       <xsl:apply-templates/>
     </fo:block>
+  </xsl:template>
+  
+  <xsl:template match="ead3:head | ead3:listhead" mode="list-header">
+    <fo:list-item space-before="1em">
+      <fo:list-item-label>
+        <fo:block/>
+      </fo:list-item-label>
+      <fo:list-item-body end-indent="5mm">
+        <fo:block>
+          <xsl:apply-templates/>
+        </fo:block>
+      </fo:list-item-body>
+    </fo:list-item>
   </xsl:template>
 
   <xsl:template match="ead3:head" mode="collection-overview">
@@ -74,7 +87,7 @@
   <xsl:template match="ead3:head" mode="toc">
     <xsl:apply-templates/>
   </xsl:template>
-
+ 
   <xsl:template match="ead3:p" mode="#all">
     <fo:block space-after="8pt" space-before="4pt">
       <xsl:apply-templates/>
@@ -160,28 +173,50 @@
   </xsl:template>
 
 
+
   <!-- Block <list> Template -->
-  <xsl:template match="ead3:list">
+  <xsl:template match="ead3:list" mode="#all">
     <xsl:variable name="numeration-type" select="@numeration"/>
-    <!-- valid options in EAD3 (although a few, like Armenian, would require a fair bit of work to support, I think):
-      armenian, decimal, decimal-leading-zero, georgian, inherit, lower-alpha, lower-greek, 
-      lower-latin, lower-roman, upper-alpha, upper-latin, upper-roman
-      -->
-    <fo:list-block start-indent="5mm" provisional-distance-between-starts="35mm">
-      <xsl:apply-templates select="ead3:head | ead3:listhead"/>
+    <fo:list-block>
+      <xsl:apply-templates select="ead3:head | ead3:listhead" mode="list-header"/>
       <xsl:apply-templates select="ead3:item | ead3:defitem">
-        <xsl:with-param name="numeration-type"/>
+        <xsl:with-param name="numeration-type" select="$numeration-type"/>
       </xsl:apply-templates>
     </fo:list-block>
   </xsl:template>
-
+  
   <xsl:template match="ead3:item">
+    <!-- valid options in EAD3 (although a few, like Armenian, would require a fair bit of work to support, I think):
+      armenian, decimal, decimal-leading-zero, georgian, inherit, lower-alpha, lower-greek, 
+      lower-latin, lower-roman, upper-alpha, upper-latin, upper-roman
+      options available in ASpace:
+      null, arabic, lower-alpha, lower-roman, upper-alpha, upper-roman.
+      -->
     <xsl:param name="numeration-type"/>
-    <fo:list-item space-after="1em">
+    <fo:list-item>
       <fo:list-item-label>
-        <xsl:choose>
-          <xsl:when test="$numeration-type"/>
-        </xsl:choose>
+        <fo:block>
+          <xsl:choose>
+            <xsl:when test="$numeration-type eq 'arabic'">
+              <xsl:number value="position()" format="1"/>
+            </xsl:when>
+            <xsl:when test="$numeration-type eq 'lower-alpha'">
+              <xsl:number value="position()" format="a"/>
+            </xsl:when>
+            <xsl:when test="$numeration-type eq 'upper-alpha'">
+              <xsl:number value="position()" format="A"/>
+            </xsl:when>
+            <xsl:when test="$numeration-type eq 'lower-roman'">
+              <xsl:number value="position()" format="i"/>
+            </xsl:when>
+            <xsl:when test="$numeration-type eq 'upper-roman'">
+              <xsl:number value="position()" format="I"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:text>&#x2022;</xsl:text>
+            </xsl:otherwise>
+          </xsl:choose>
+        </fo:block>
       </fo:list-item-label>
       <fo:list-item-body start-indent="body-start()" end-indent="5mm">
         <fo:block>
@@ -216,13 +251,13 @@
             <xsl:choose>
               <xsl:when test="ead3:head">
                 <fo:table-cell number-columns-spanned="{if ($columns eq 3) then 3 else 2}">
-                  <xsl:apply-templates select="ead3:head" mode="list-header"/>
+                  <xsl:apply-templates select="ead3:head" mode="table-header"/>
                 </fo:table-cell>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:for-each select="ead3:listhead/*">
                   <fo:table-cell number-columns-spanned="1">
-                     <xsl:apply-templates select="." mode="list-header"/>   
+                     <xsl:apply-templates select="." mode="table-header"/>   
                   </fo:table-cell>
                 </xsl:for-each>
               </xsl:otherwise>

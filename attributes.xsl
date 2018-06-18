@@ -106,8 +106,7 @@
         <xsl:attribute name="padding">5pt 2pt</xsl:attribute>
     </xsl:attribute-set>
     
-    <!-- from EAD2002 stylesheets -->
-    
+
     <!-- <list> Attribute Set -->
     <xsl:attribute-set name="list">
         <xsl:attribute name="font-weight">normal</xsl:attribute>
@@ -115,7 +114,7 @@
     </xsl:attribute-set>
     
     <!-- <listhead> Attribute Set -->
-    <xsl:attribute-set name="listhead">
+    <xsl:attribute-set name="list.head">
         <xsl:attribute name="font-weight">bold</xsl:attribute>
     </xsl:attribute-set>
     
@@ -126,7 +125,7 @@
     </xsl:attribute-set>
     
     <!-- <chronlist> Head Attribute Set -->
-    <xsl:attribute-set name="head.chronlist">
+    <xsl:attribute-set name="chronlist.head">
         <xsl:attribute name="font-weight">bold</xsl:attribute>
         <xsl:attribute name="text-align">start</xsl:attribute>
         <xsl:attribute name="margin-top">10pt</xsl:attribute>

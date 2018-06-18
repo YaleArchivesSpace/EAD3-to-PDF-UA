@@ -24,6 +24,14 @@
                 </fo:block>
                 <xsl:apply-templates select="* except ead3:head"/>
                 
+                <xsl:apply-templates select="* except (ead3:indexentry, ead3:head)"/>
+                <!-- need to check and see if EAD3 enforces -->
+                <xsl:if test="ead3:indexentry">
+                    <fo:list-block start-indent="5mm" provisional-distance-between-starts="35mm">
+                        <xsl:apply-templates select="ead3:indexentry"/>
+                    </fo:list-block>
+                </xsl:if>
+                
                 <xsl:apply-templates select="../ead3:index[position() gt 1]"/>
                 
                 <!-- adding this to grab the last page number-->
@@ -40,7 +48,29 @@
         <fo:block xsl:use-attribute-sets="h3" id="{@id-for-link}">
             <xsl:apply-templates select="ead3:head"/>
         </fo:block>
-        <xsl:apply-templates select="* except ead3:head"/>
+        <xsl:apply-templates select="* except (ead3:indexentry, ead3:head)"/>
+        <!-- need to check and see if EAD3 enforces -->
+        <xsl:if test="ead3:indexentry">
+            <fo:list-block start-indent="5mm" provisional-distance-between-starts="35mm">
+                <xsl:apply-templates select="ead3:indexentry"/>
+            </fo:list-block>
+        </xsl:if>
+    </xsl:template>
+    
+    <xsl:template match="ead3:indexentry">
+        <!-- gotta update this once i'm online again, with a copy of the schema -->
+        <fo:list-item space-after="1em">
+            <fo:list-item-label>
+                <fo:block>
+                    <xsl:apply-templates select="ead3:name"/>
+                </fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="body-start()" end-indent="5mm">
+                <fo:block>
+                    <xsl:apply-templates select="ead3:ref"/>
+                </fo:block>
+            </fo:list-item-body>
+        </fo:list-item>
     </xsl:template>
 
 </xsl:stylesheet>
