@@ -71,6 +71,14 @@
                   </unitdatestructured>    
                   <unitdate unitdatetype="inclusive">undated</unitdate>
         
+        
+        4     <unitdatestructured unitdatetype="inclusive"> 
+                  <daterange> 
+                     <fromdate standarddate="1942-04-21">1942-04-21</fromdate> 
+                  </daterange> 
+              </unitdatestructured> 
+              <unitdate unitdatetype="inclusive">1942 Apr 21</unitdate>
+        
         In the first two cases, it would be best to just process the sibling unitdate element by itself,
         but in the last case we need to process all 3 of the date subrecords.
         
@@ -84,6 +92,9 @@
                 this isn't perfect ,but as long as folks don't type in month names into date expressions, etc. (since we've said not to, according to our guidelines),
                 then it should be good enough.
               
+          however, i should probably convert those date expressions to iso dates for comparison (due to example 4).
+          that's probably the only way to handle this unfortunate issue without just updating the EAD3 exporter
+          to not try and serialize structured dates (in fact, that would be the best approach, but i'm up for a challenge).
   
   strip any notes that only have a head element, and no text otheriwse.
   
@@ -140,11 +151,100 @@
     </xsl:analyze-string>
   </xsl:function>
   
+  
+
+  <xsl:function name="mdc:month-name-2-number" as="xs:string">
+    <xsl:param name="month-name" as="xs:string"/>
+    <xsl:variable name="months" as="xs:string*" select="'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'"/>
+    <xsl:sequence select="format-number(index-of($months, $month-name), '00')"/>
+  </xsl:function>
+  
+  <xsl:function name="mdc:date-expression-2-iso-date" as="xs:string*">
+    <xsl:param name="date-expression" as="xs:string"/>
+  <!-- (1 year, 2 months, 2 days... repeat the year value)
+  1942 Apr 21 - Jun 9
+  needs to become
+  1942042119420609
+  
+  1942 Apr 21 - 1946 Jun 9 (2 years, 2 months, 2 days)
+  needs to become
+  1942042119460609
+  
+  1942 Apr 21 - 25 (1 year, 1 month, 2 days.... repeat the month)
+  needs to become
+  1942042119420425
+  
+  1945 April 5 (1 year, 1 month, 1 day)
+  to become
+  19450405
+  
+  1945 April (1 year, 1 month)
+  to become
+  194504
+  
+  1945, undated (1 year, extra text)
+  to become
+  1945
+  
+  -->
+    <!-- steps:
+    get the years
+    get the months (change to numbers)
+    get the days (pad 0 if needed)
+    remove non numerica characters
+    contstruct the return value...
+      depending on number of years, months, days in original input.
+    -->
+    <xsl:variable name="years">
+      <xsl:analyze-string select="$date-expression" regex="(\d{{4}})">
+        <xsl:matching-substring>
+          <xsl:sequence select="regex-group(1)"/>
+        </xsl:matching-substring>
+      </xsl:analyze-string>
+    </xsl:variable>
+    <xsl:variable name="months">
+      <xsl:analyze-string select="lower-case($date-expression)" regex="(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)">
+        <xsl:matching-substring>
+          <xsl:sequence select="mdc:month-name-2-number(regex-group(1))"/>
+        </xsl:matching-substring>
+      </xsl:analyze-string>
+    </xsl:variable>
+    <xsl:variable name="days">
+      <xsl:analyze-string select="$date-expression" regex="[^\d](\d{{1,2}})($|[^\d])">
+        <xsl:matching-substring>
+          <xsl:sequence select="regex-group(1)"/>
+        </xsl:matching-substring>
+      </xsl:analyze-string>
+    </xsl:variable>
+    
+    <!-- sure there's a better way to do this, but next
+            we'll tokenize the sequence to find out if we have more than one year, month, and/or day to deal with
+            -->
+    <xsl:variable name="year1" select="tokenize($years, ' ')[1]"/>
+    <xsl:variable name="year2" select="tokenize($years, ' ')[2]"/>
+    <xsl:variable name="month1" select="tokenize($months, ' ')[1]"/>
+    <xsl:variable name="month2" select="tokenize($months, ' ')[2]"/>
+    <xsl:variable name="day1" select="tokenize($days, ' ')[1]"/>
+    <xsl:variable name="day2" select="tokenize($days, ' ')[2]"/>
+    
+    <xsl:value-of select="concat(
+      $year1, 
+      $month1, 
+      if (string-length($day1)=1) then concat('0', $day1) else $day1,
+      if ($month2 and not($year2)) then $year1 else $year2, 
+      if ($month1 and $day2 and not($month2)) then $month1 else $month2, 
+      if (string-length($day2)=1) then concat('0', $day2) else $day2
+      )"/>
+    
+  </xsl:function>
+  
   <xsl:function name="mdc:remove-this-date" as="xs:boolean">
     <!-- update this to compare with the display form -->
     <xsl:param name="unitdate" as="node()"/>
-    <xsl:variable name="first-date" select="string-join($unitdate//@standarddate, '')"/>
-    <xsl:variable name="second-date" select="$unitdate/following-sibling::*[1]/replace(text(), '[^0-9]', '')"/>
+    <xsl:variable name="first-date" select="string-join($unitdate//replace(@standarddate, '-', ''), '')"/>
+    
+    <xsl:variable name="second-date" select="$unitdate/following-sibling::*[1]/mdc:date-expression-2-iso-date(text())"/>
+    
     <xsl:value-of select="if ($first-date eq $second-date) then true() else false()"/>
   </xsl:function>
 
