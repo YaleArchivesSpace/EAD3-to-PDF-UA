@@ -7,15 +7,51 @@
   
   to do:
   
+  1) 
+  add a method to singularize extent types when necessary.
+  
+  2)
+  consider grouping multiple containers into a single span.
+    e.g. box 1, box 2, box 3, box6 in output, then transform to:
+        box 1-3
+        box 6
+    sorting etc. is handled in the display, but if there were a series with 10 boxes
+    in order, then it would be better to list that in a single line
+    rather than 10 lines!
+  
+  3)
   decide on how to handle multiple creators.  just take the first for the overview?  use beinecke.frkoch as a test case.
   
-  add the rightsdeclaraction element since we've now got EAD3 1.1 !!!
-    How best to place this, since the order matters?
-    Obviously, this needs to be in ASpace (or exported from a rights subrecord?), but until then
-     we'll add it here.
-     
-   ...
+ 
+  4)
+  strip any notes that only have a head element, and no text otheriwse.
   
+  5)
+  decide on how to handle EAD3 head elements (e.g. should we replace or accept ASpace defaults?)
+  
+  
+  6)
+  update all repo records in ASpace and remove the "respository_code" parameter from this file.
+  
+  
+  7)
+  remove elements that aren't legal in EAD3...  e.g. linebreaks in title elements.
+  e.g. 
+  <title localtype="simple" render="italic">
+                <part>Bumarap:</part>
+                <lb/>
+                <part>the Story of a Male Virgin</part>
+              </title>
+    there should only be one <part> element!
+  
+  figure out how to handle titles that are exported incorrectly in EAD3 from ASpace
+  if a note has two title elements, those get exported as a single one!
+  ead2002 example:
+  
+  ead3 example:
+ 
+ 
+ Done:
   adjust how ASpace exports unitdatestructure and unitdate in EAD3 (and report some JIRA issues).
     notes:
       1) if you create a date subrecord and give it an end date, do NOT give it a begin date, and give it a date expression...  
@@ -34,8 +70,7 @@
         then the ASpace EAD2002 exporter does fine, but it's a bit repetitious since you wind up with normal="1945-04-01/1945-04-01" instead of normal="1945-04-01"
         and the ASpace EAD3 exporter will export the date but ignore the date expression altogether.  that's not good. 
           ...but if if you go back and change the date type to "single", you're golden.   
- 
-      4)  And there are other problems to deal with for now regarding the EAD3 exporter, such as:
+       4)  And there are other problems to deal with for now regarding the EAD3 exporter, such as:
       
           1 ASpace subrecord, which looks like 2 in the export:
           
@@ -95,28 +130,6 @@
           however, i should probably convert those date expressions to iso dates for comparison (due to example 4).
           that's probably the only way to handle this unfortunate issue without just updating the EAD3 exporter
           to not try and serialize structured dates (in fact, that would be the best approach, but i'm up for a challenge).
-  
-  strip any notes that only have a head element, and no text otheriwse.
-  
-  decide on how to handle EAD3 head elements (e.g. should we replace or accept ASpace defaults?)
-  
-  update all repo records in ASpace and remove the "respository_code" parameter from this file.
-  
-  remove elements that aren't legal in EAD3...  e.g. linebreaks in title elements.
-  e.g. 
-  <title localtype="simple" render="italic">
-                <part>Bumarap:</part>
-                <lb/>
-                <part>the Story of a Male Virgin</part>
-              </title>
-    there should only be one <part> element!
-  
-  figure out how to handle titles that are exported incorrectly in EAD3 from ASpace
-  if a note has two title elements, those get exported as a single one!
-  ead2002 example:
-  
-  ead3 example:
- 
   
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ead3="http://ead3.archivists.org/schema/"
@@ -187,14 +200,6 @@
   1945
   
   -->
-    <!-- steps:
-    get the years
-    get the months (change to numbers)
-    get the days (pad 0 if needed)
-    remove non numerica characters
-    contstruct the return value...
-      depending on number of years, months, days in original input.
-    -->
     <xsl:variable name="years">
       <xsl:analyze-string select="$date-expression" regex="(\d{{4}})">
         <xsl:matching-substring>
@@ -216,10 +221,8 @@
         </xsl:matching-substring>
       </xsl:analyze-string>
     </xsl:variable>
-    
     <!-- sure there's a better way to do this, but next
-            we'll tokenize the sequence to find out if we have more than one year, month, and/or day to deal with
-            -->
+            we'll tokenize the sequence to find out if we have more than one year, month, and/or day to deal with -->
     <xsl:variable name="year1" select="tokenize($years, ' ')[1]"/>
     <xsl:variable name="year2" select="tokenize($years, ' ')[2]"/>
     <xsl:variable name="month1" select="tokenize($months, ' ')[1]"/>
@@ -234,17 +237,14 @@
       if ($month2 and not($year2)) then $year1 else $year2, 
       if ($month1 and $day2 and not($month2)) then $month1 else $month2, 
       if (string-length($day2)=1) then concat('0', $day2) else $day2
-      )"/>
-    
+      )"/>  
   </xsl:function>
   
   <xsl:function name="mdc:remove-this-date" as="xs:boolean">
     <!-- update this to compare with the display form -->
     <xsl:param name="unitdate" as="node()"/>
-    <xsl:variable name="first-date" select="string-join($unitdate//replace(@standarddate, '-', ''), '')"/>
-    
+    <xsl:variable name="first-date" select="string-join($unitdate//replace(@standarddate, '-', ''), '')"/>   
     <xsl:variable name="second-date" select="$unitdate/following-sibling::*[1]/mdc:date-expression-2-iso-date(text())"/>
-    
     <xsl:value-of select="if ($first-date eq $second-date) then true() else false()"/>
   </xsl:function>
 

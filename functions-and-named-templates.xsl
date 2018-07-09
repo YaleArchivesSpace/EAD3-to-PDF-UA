@@ -181,9 +181,9 @@
         <xsl:param name="cell-margin"/>
         <fo:table inline-progression-dimension="100%" table-layout="fixed" font-size="10pt"
             border-collapse="collapse" keep-with-previous.within-page="always" table-omit-header-at-break="{$dsc-omit-table-header-at-break}">
-            <fo:table-column column-number="1" column-width="proportional-column-width(60)"/>
-            <fo:table-column column-number="2" column-width="proportional-column-width(15)"/>
-            <fo:table-column column-number="3" column-width="proportional-column-width(25)"/>
+            <fo:table-column column-number="1" column-width="proportional-column-width(20)"/>
+            <fo:table-column column-number="2" column-width="proportional-column-width(65)"/>
+            <fo:table-column column-number="3" column-width="proportional-column-width(15)"/>
             <xsl:call-template name="tableHeaders">
                 <xsl:with-param name="cell-margin" select="$cell-margin"/>
             </xsl:call-template>
@@ -215,13 +215,13 @@
             </fo:table-row>
             <fo:table-row>
                 <fo:table-cell>
-                    <fo:block font-weight="700">Description</fo:block>
+                    <fo:block text-decoration="underline">Container</fo:block>
                 </fo:table-cell>
                 <fo:table-cell>
-                    <fo:block font-weight="700">Date</fo:block>
+                    <fo:block text-decoration="underline">Description</fo:block>
                 </fo:table-cell>
                 <fo:table-cell>
-                    <fo:block font-weight="700">Container</fo:block>
+                    <fo:block text-decoration="underline">Date</fo:block>
                 </fo:table-cell>    
             </fo:table-row>
         </fo:table-header>

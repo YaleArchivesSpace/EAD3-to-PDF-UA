@@ -10,13 +10,16 @@
     
     <!-- to do:
         change so that the only thing in tables are files/items with containers ?
-        
         everything else can be handled in blocks.
+        
+        what if i go back to no tables, floating the dates to the right,
+            and just adding containers in a new block? 
         
         other ideas:
             autogenerate a series/subseries overview, with container ranges and first pargraph of scope note?
             
             take the regular DSC out of a table, and put the container information inline.
+            
             and add a container-inventory section at the end that's a real table, with box, folder, etc., plus title,
             date, etc., sorted by container numbers.   
      -->
@@ -114,7 +117,7 @@
                 , ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
                 , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
                 , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement" mode="dsc"/>
-            <!-- should write something else to sort, etc., as needed -->
+            <!-- still need to add templates here for digital objects.  anything else?  -->
             <xsl:call-template name="container-layout">
                 <xsl:with-param name="containers-sorted-by-localtype" select="$containers-sorted-by-localtype"/>
             </xsl:call-template>
@@ -162,6 +165,11 @@
                 <xsl:with-param name="no-children" select="$no-children"/>
             </xsl:call-template>
             <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
+                <xsl:call-template name="container-layout">
+                    <xsl:with-param name="containers-sorted-by-localtype" select="$containers-sorted-by-localtype"/>
+                </xsl:call-template>
+            </fo:table-cell>
+            <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
                 <fo:block>
                     <xsl:choose>
                         <xsl:when test="$first-row eq true()">
@@ -203,11 +211,6 @@
                 <fo:block>
                     <xsl:apply-templates select="ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate" mode="dsc"/>
                 </fo:block>
-            </fo:table-cell>
-            <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
-                <xsl:call-template name="container-layout">
-                    <xsl:with-param name="containers-sorted-by-localtype" select="$containers-sorted-by-localtype"/>
-                </xsl:call-template>
             </fo:table-cell>
         </fo:table-row>
         <xsl:apply-templates select="ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c']" mode="dsc-table"/>

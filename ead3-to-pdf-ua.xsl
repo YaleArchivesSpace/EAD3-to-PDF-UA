@@ -32,12 +32,10 @@
           
           add running page headers for appendices (why should series get all the fun?)
           
-          do NOT assume that colleciton-level dates will be normalized (including bulk dates).  ours are, but i should anticipate both cases.
+          do NOT assume that collection-level dates will be normalized (including bulk dates).  ours are, but i should anticipate both cases.
             in other words, we may need to process unitdate elements at the collection level.
           
           test Digital Object links. any way to get thumbnails?
-          
-          add a method to singularize extent types, unless that's handled in the transformation process.
           
           check that the use of "modes" is consistent and makes sense.
           
@@ -78,6 +76,9 @@
     <xsl:param name="sans-serif-font" select="'Mallory'"/>
     <xsl:param name="include-audience-equals-internal" select="false()"/>
     <xsl:param name="start-page-1-after-table-of-contents" select="false()"/>
+    <!-- if you change this to true, you'll lose the markers (e.g. series N continued)
+    since those are currently in the table header, not the page headers.
+    -->
     <xsl:param name="dsc-omit-table-header-at-break" select="false()"/>
     
     <xsl:param name="archdesc-did-title" select="'Collection Overview'"/>
