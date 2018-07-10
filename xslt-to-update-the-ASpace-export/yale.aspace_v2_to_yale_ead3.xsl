@@ -199,6 +199,16 @@
   to become
   1945
   
+  Another wrinkle:
+  
+                   <unitdatestructured unitdatetype="inclusive">
+                     <daterange>
+                        <fromdate standarddate="1960">1960</fromdate>
+                        <todate standarddate="1999">1999</todate>
+                     </daterange>
+                  </unitdatestructured>
+                  <unitdate unitdatetype="inclusive">1960s-1990s</unitdate>
+                  
   -->
     <xsl:variable name="years">
       <xsl:analyze-string select="$date-expression" regex="(\d{{4}})">
