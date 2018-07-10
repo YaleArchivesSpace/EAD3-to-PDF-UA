@@ -34,6 +34,7 @@
     The Fire in the Flint , galley...
   -->
   <xsl:template match="text()[../ead3:part]"/>
+  
 
   <!-- stand-alone block elements go here (not adding values like unitid and unittitle, however, since those will be handled differently
     a lot of these are handled differently as a LIST, however, when at the collection level.-->
@@ -153,6 +154,12 @@
         <xsl:apply-templates/>
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="ead3:physdescstructured" mode="dsc">
+    <fo:block>
+      <xsl:apply-templates/>
+    </fo:block>
   </xsl:template>
 
   <xsl:template match="ead3:physfacet" mode="#all">

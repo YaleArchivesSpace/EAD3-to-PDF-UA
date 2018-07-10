@@ -195,7 +195,7 @@
     
     <xsl:template name="tableHeaders">
         <xsl:param name="cell-margin"/>
-        <fo:table-header>
+        <fo:table-header xsl:use-attribute-sets="dsc-table-header">
             <fo:table-row>
                 <fo:table-cell number-columns-spanned="3">
                     <fo:block font-size="9pt">
@@ -215,13 +215,13 @@
             </fo:table-row>
             <fo:table-row>
                 <fo:table-cell>
-                    <fo:block text-decoration="underline">Container</fo:block>
+                    <fo:block>Container</fo:block>
                 </fo:table-cell>
                 <fo:table-cell>
-                    <fo:block text-decoration="underline">Description</fo:block>
+                    <fo:block>Description</fo:block>
                 </fo:table-cell>
                 <fo:table-cell>
-                    <fo:block text-decoration="underline">Date</fo:block>
+                    <fo:block>Date</fo:block>
                 </fo:table-cell>    
             </fo:table-row>
         </fo:table-header>

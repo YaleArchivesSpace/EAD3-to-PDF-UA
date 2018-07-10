@@ -59,8 +59,9 @@
     </xsl:template>
     
     <xsl:template match="ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c']" mode="dsc-block">
+        <!-- let's change the depth so that it's aware of whether or not a table has started (e.g. ignoring series from the count) -->
         <xsl:variable name="depth" select="count(ancestor::*) - 3"/> <!-- e.g. c01 = 0, c02 = 1, etc. -->
-        <xsl:variable name="cell-margin" select="concat(xs:string($depth * 8), 'pt')"/> <!-- e.g. 0, 8pt for c02, 16pt for c03, etc.-->
+        <xsl:variable name="cell-margin" select="concat(xs:string($depth * 6), 'pt')"/> <!-- e.g. 0, 8pt for c02, 16pt for c03, etc.-->
         <!-- do a second grouping based on the container grouping's primary localtype (i.e. box, volume, reel, etc.)
             then add a custom sort, or just sort those alphabetically -->
         <xsl:variable name="container-groupings">
@@ -186,7 +187,7 @@
                 </fo:block>
                 <!-- do the title and/or date stuff here -->
                 <fo:block-container margin-left="{$cell-margin}" id="{if (@id) then @id else generate-id(.)}">
-                    <fo:block-container keep-with-next.within-page="always">
+                    <fo:block-container>
                         <fo:block>
                             <xsl:apply-templates select="if (ead3:did/ead3:unittitle/normalize-space()) then ead3:did/ead3:unittitle
                                 else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate"/>

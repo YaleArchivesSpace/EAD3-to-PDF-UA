@@ -102,6 +102,12 @@
         <xsl:attribute name="text-align">end</xsl:attribute>
     </xsl:attribute-set>
     
+    <xsl:attribute-set name="dsc-table-header">
+        <xsl:attribute name="border-bottom-color">#000000</xsl:attribute>
+        <xsl:attribute name="border-bottom-width">thin</xsl:attribute>
+        <xsl:attribute name="border-bottom-style">solid</xsl:attribute>
+    </xsl:attribute-set>
+    
     <xsl:attribute-set name="dsc-table-cells">
         <xsl:attribute name="padding">5pt 2pt</xsl:attribute>
     </xsl:attribute-set>
