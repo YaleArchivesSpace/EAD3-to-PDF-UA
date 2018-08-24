@@ -35,17 +35,31 @@
           <font-triplet name="FontAwesomeSolid" style="normal" weight="normal"/>
         </font>
 
-        <font kerning="yes" embed-url="fonts/Mallory/Mallory-Light.TTF">
+        <font kerning="yes" embed-url="fonts/Mallory/Mallory-Book.otf">
           <font-triplet name="Mallory" style="normal" weight="normal"/>
         </font>
-        <font kerning="yes" embed-url="fonts/Mallory/Mallory-LightItalic.TTF">
+        <font kerning="yes" embed-url="fonts/Mallory/Mallory-BookItalic.otf">
           <font-triplet name="Mallory" style="italic" weight="normal"/>
         </font>
-        <font kerning="yes" embed-url="fonts/Mallory/Mallory-Bold.TTF">
+        <font kerning="yes" embed-url="fonts/Mallory/Mallory-Bold.otf">
           <font-triplet name="Mallory" style="normal" weight="bold"/>
         </font>
-        <font kerning="yes" embed-url="fonts/Mallory/Mallory-BoldItalic.TTF">
+        <font kerning="yes" embed-url="fonts/Mallory/Mallory-BoldItalic.otf">
           <font-triplet name="Mallory" style="italic" weight="bold"/>
+        </font>
+
+        <!-- try out MP as well -->
+        <font kerning="yes" embed-url="fonts/Mallory/MalloryMP-Book.otf">
+          <font-triplet name="MalloryMP" style="normal" weight="normal"/>
+        </font>
+        <font kerning="yes" embed-url="fonts/Mallory/MalloryMP-BookItalic.otf">
+          <font-triplet name="MalloryMP" style="italic" weight="normal"/>
+        </font>
+        <font kerning="yes" embed-url="fonts/Mallory/MalloryMP-Bold.otf">
+          <font-triplet name="MalloryMP" style="normal" weight="bold"/>
+        </font>
+        <font kerning="yes" embed-url="fonts/Mallory/MalloryMP-BoldItalic.otf">
+          <font-triplet name="MalloryMP" style="italic" weight="bold"/>
         </font>
 
         <font kerning="yes" embed-url="fonts/Yale/YaleNew-Bold.otf">
@@ -185,7 +199,7 @@
     <renderer mime="text/rtf">
     </renderer>
     -->
-    
+
   </renderers>
 
 </fop>
