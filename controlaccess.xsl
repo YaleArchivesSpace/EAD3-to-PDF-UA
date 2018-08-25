@@ -39,7 +39,7 @@
         <xsl:for-each-group select="*" group-by="local-name()">
             <xsl:variable name="current-group-size" select="count(current-group())"/>
             <fo:block margin-top="25pt" margin-left="10pt">
-                <fo:block font-weight="700">
+                <fo:block font-weight="700" xsl:use-attribute-sets="h4">
                     <!-- should we change values if there's only one heading?  e.g. Subject instead of Subjects?
                     if so, then we can use the current-group-size variable.  when 1, it's singular.-->
                     <xsl:value-of select="if (current-grouping-key() eq 'corpname')

@@ -52,7 +52,7 @@
     
     <!-- header and footer templates (start)-->
     <xsl:template name="header-right">
-        <fo:block text-align="right" font-size="9pt">
+        <fo:block text-align="right" font-size="9pt" xsl:use-attribute-sets="header-serif">
             <xsl:apply-templates select="$collection-title"/>
             <fo:block/>
             <xsl:apply-templates select="$collection-identifier"/>
@@ -179,7 +179,7 @@
     <!-- still neeed options for when dates and/or containers aren't present in a table -->
     <xsl:template name="tableBody">
         <xsl:param name="cell-margin"/>
-        <fo:table inline-progression-dimension="100%" table-layout="fixed" font-size="10pt"
+        <fo:table inline-progression-dimension="100%" table-layout="fixed" font-size="9pt"
             border-collapse="collapse" keep-with-previous.within-page="always" table-omit-header-at-break="{$dsc-omit-table-header-at-break}">
             <fo:table-column column-number="1" column-width="proportional-column-width(20)"/>
             <fo:table-column column-number="2" column-width="proportional-column-width(65)"/>
@@ -195,7 +195,8 @@
     
     <xsl:template name="tableHeaders">
         <xsl:param name="cell-margin"/>
-        <fo:table-header xsl:use-attribute-sets="dsc-table-header">
+        <!-- xsl:use-attribute-sets="dsc-table-header" -->
+        <fo:table-header>
             <fo:table-row>
                 <fo:table-cell number-columns-spanned="3">
                     <fo:block font-size="9pt">
@@ -213,7 +214,9 @@
                     </fo:block>
                 </fo:table-cell>
             </fo:table-row>
-            <fo:table-row>
+            <!-- a bit of a hack to hide the column headers here, but i don't think they're needed
+            for the visual layout of the PDF. -->
+            <fo:table-row xsl:use-attribute-sets="header-serif white-font">
                 <fo:table-cell>
                     <fo:block>Container</fo:block>
                 </fo:table-cell>
@@ -319,13 +322,13 @@
             <!-- the middle step, i.e. *, in these cases is the localtype (e.g. box, volume, etc.) -->
             <xsl:when test="count($containers-sorted-by-localtype/*/container-group) gt 1">
                 <xsl:for-each select="$containers-sorted-by-localtype/*/container-group">
-                    <fo:block>
+                    <fo:block xsl:use-attribute-sets="header-serif">
                         <xsl:apply-templates/>
                     </fo:block> 
                 </xsl:for-each>                
             </xsl:when>
             <xsl:otherwise>
-                <fo:block>
+                <fo:block xsl:use-attribute-sets="header-serif">
                     <xsl:apply-templates select="$containers-sorted-by-localtype/*/container-group"/>
                 </fo:block> 
             </xsl:otherwise>

@@ -21,7 +21,7 @@
                 <fo:block/>
             </fo:static-content>
             <!-- Content of page -->
-            <fo:flow flow-name="xsl-region-body">
+            <fo:flow flow-name="xsl-region-body" xsl:use-attribute-sets="header-serif">
                 <xsl:call-template name="section-start"/>
                 <fo:block xsl:use-attribute-sets="h3" id="toc">Table of Contents</fo:block>
                 <fo:block xsl:use-attribute-sets="toc-block">

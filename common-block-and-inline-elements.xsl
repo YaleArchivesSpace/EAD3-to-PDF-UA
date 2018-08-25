@@ -43,6 +43,7 @@
       ead3:unitid | ead3:abstract | ead3:addressline | ead3:langmaterial | ead3:materialspec | ead3:origination | ead3:physdesc[not(@localtype = 'container_summary')]
       | ead3:physloc | ead3:repository"
     mode="dsc">
+    <!-- could make "Call Number" a header element, but not sure that's necessary -->
     <fo:block keep-with-previous.within-page="always">
       <xsl:choose>
         <xsl:when test="self::ead3:unitid">
@@ -93,7 +94,7 @@
   </xsl:template>
 
   <xsl:template match="ead3:p" mode="#all">
-    <fo:block space-after="8pt" space-before="4pt">
+    <fo:block xsl:use-attribute-sets="paragraph">
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>

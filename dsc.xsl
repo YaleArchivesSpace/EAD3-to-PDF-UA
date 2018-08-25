@@ -82,7 +82,7 @@
                 </xsl:element>
             </xsl:for-each-group>
         </xsl:variable>
-        <fo:block margin-left="{$cell-margin}" keep-with-next.within-page="always" id="{if (@id) then @id else generate-id(.)}">
+        <fo:block font-size="10pt" margin-left="{$cell-margin}" keep-with-next.within-page="always" id="{if (@id) then @id else generate-id(.)}">
             <xsl:if test="preceding-sibling::ead3:*[@level=$levels-to-force-a-page-break or @otherlevel=$otherlevels-to-force-a-page-break-and-process-before-a-table]">
                 <xsl:attribute name="break-before" select="'page'"/>
             </xsl:if>

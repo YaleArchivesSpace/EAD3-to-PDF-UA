@@ -23,6 +23,11 @@
     <xsl:include href="controlaccess.xsl"/>
     
     <!-- to do:
+        
+          adjust dsc layout if no containers, no dates.
+          
+          adjust identation of desc in dsc.
+          
           fix up block and inline stylings.
           
           add red boxes around anything that has audience = internal. (also flag in table of contents / bookmarks?)
@@ -37,7 +42,7 @@
           
           test Digital Object links. any way to get thumbnails?
           
-          check that the use of "modes" is consistent and makes sense.
+          check that the use of "modes" is consistent and makes sense. it doesn't right now, so...
           
           decide on what gets added to table of contents and bookmarks. always the same?  skip a c01 really if it's labelled an item?, etc.
           
@@ -49,8 +54,9 @@
 		  future dev:
 		  - upgrade to FOP 2.3
 		  - test out request links, passing last-updated-date info so as to ensure the data that's passed is up-to-date.
-		  - add another section (or linked file) that's a flattened container list sorted by box number?  probably better to serve this up as an Excel or CSV file.
-		  - update so that this process won't only expect files to be produced by ASpace (e.g. nested control access sections, multiple DSC elements, etc.)
+		  - add another section (or linked file) that's a flattened container list sorted by box number?  probably better to serve this up as an Excel or CSV file, but could work here, too.
+		  
+		  - maybe update so that this process won't only expect files to be produced by ASpace (e.g. nested control access sections, multiple DSC elements, etc.)
 		 
 		  refactor, refactor, refactor. 
       -->
@@ -71,9 +77,10 @@
 
     <!-- global parameters -->
     <xsl:param name="primary-language-of-finding-aid" select="'en'"/>
-    <xsl:param name="primary-font-for-pdf" select="'Yale'"/>
+    <xsl:param name="primary-font-for-pdf" select="'Mallory'"/>
     <xsl:param name="serif-font" select="'Yale'"/>
     <xsl:param name="sans-serif-font" select="'Mallory'"/>
+    <xsl:param name="backup-font" select="'ArialUnicode'"/>
     <xsl:param name="include-audience-equals-internal" select="false()"/>
     <xsl:param name="start-page-1-after-table-of-contents" select="false()"/>
     <!-- if you change this to true, you'll lose the markers (e.g. series N continued)
@@ -90,6 +97,7 @@
     <xsl:param name="levels-to-include-in-toc" select="('series', 'subseries', 'collection', 'fonds', 'recordgrp', 'subgrp')"/>
     <xsl:param name="otherlevels-to-include-in-toc" select="('accession', 'acquisition')"/>
     
+    <!-- is this necessary, or should i always just wrap internal-only sections in a red box?  the files will be pre-processed-->
     <xsl:param name="staff-preview" select="false()"/>
      
     <!-- document-based variables -->
@@ -119,7 +127,7 @@
 
     <!--========== PAGE SETUP =======-->
     <xsl:template match="/">
-        <fo:root xml:lang="{$primary-language-of-finding-aid}" font-family="{$primary-font-for-pdf}">
+        <fo:root xml:lang="{$primary-language-of-finding-aid}" font-family="{$primary-font-for-pdf}, {$backup-font}">
             <fo:layout-master-set>
                 <xsl:call-template name="define-page-masters"/>
                 <xsl:call-template name="define-page-sequences"/>

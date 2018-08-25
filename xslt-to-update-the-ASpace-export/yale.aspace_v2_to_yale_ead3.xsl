@@ -201,6 +201,9 @@
   
   Another wrinkle:
   
+  (so, if a pattern of \d{4}s then replace
+  as appropriate for first and second date)
+  
                    <unitdatestructured unitdatetype="inclusive">
                      <daterange>
                         <fromdate standarddate="1960">1960</fromdate>
