@@ -93,7 +93,7 @@
     <xsl:apply-templates/>
   </xsl:template>
   
-  <xsl:template match="ead3:odd//ead3:p" mode="#all">
+  <xsl:template match="ead3:odd//ead3:p" mode="#all" priority="2">
     <fo:block xsl:use-attribute-sets="paragraph">
       <xsl:apply-templates/>
     </fo:block>
@@ -104,11 +104,44 @@
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>
+  
+  <xsl:template match="ead3:p" mode="dao" priority="2">
+      <xsl:apply-templates/>
+  </xsl:template>
 
   <xsl:template match="ead3:archref | ead3:bibref" mode="#all">
     <fo:block>
       <xsl:apply-templates/>
     </fo:block>
+  </xsl:template>
+  
+
+  <!-- the deep-equal stuff in the next two templates allow us to superimpose the dao link with the unittitle
+    when the two match -->
+  <xsl:template match="ead3:dao[@href]" mode="#all">
+    <xsl:choose>
+      <xsl:when test="deep-equal(ead3:descriptivenote/ead3:p//text()/normalize-space(), ../ead3:unittitle//text()/normalize-space())"/>
+      <xsl:otherwise>
+        <fo:block>
+          <fo:basic-link external-destination="url('{@href}')" xsl:use-attribute-sets="ref">
+            <xsl:apply-templates select="ead3:descriptivenote/ead3:p" mode="dao"/>
+          </fo:basic-link>
+        </fo:block>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="ead3:unittitle[../ead3:dao]" mode="#all">
+    <xsl:choose>
+      <xsl:when test="deep-equal(.//text()/normalize-space(), ../ead3:dao[1]/ead3:descriptivenote/ead3:p//text()/normalize-space())">
+        <fo:basic-link external-destination="url('{../ead3:dao[1]/@href}')" xsl:use-attribute-sets="ref">
+          <xsl:apply-templates select="../ead3:dao[1]/ead3:descriptivenote/ead3:p" mode="dao"/>
+        </fo:basic-link>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="ead3:blockquote" mode="#all">

@@ -23,12 +23,12 @@
     <xsl:include href="controlaccess.xsl"/>
     
     <!-- to do:
-        
-          adjust dsc layout if no containers, no dates.
           
           add Paging Info
           
           fix up Icons for first page
+          
+          remove series header on first page???
           
           fix up block and inline stylings.
           
@@ -42,16 +42,7 @@
           do NOT assume that collection-level dates will be normalized (including bulk dates).  ours are, but i should anticipate both cases.
             in other words, we may need to process unitdate elements at the collection level.
           
-          test Digital Object links. any way to get thumbnails?
-          
-          check that the use of "modes" is consistent and makes sense. it doesn't right now, so...
-          
-          decide on what gets added to table of contents and bookmarks. always the same?  skip a c01 really if it's labelled an item?, etc.
-          
-          create a list of other fonts needed for other languages that will be present (e.g. arabic, cjk languages, etc)
-          then add those as secondary font options when/where needed, such as the following example:
-           <fo:block font-family="Helvetica, SimSun">Paul 你好</fo:block>
-          
+          check that the use of "modes" is consistent and makes sense. it doesn't right now, so...    
 		 
 		  future dev:
 		  - upgrade to FOP 2.3
@@ -83,12 +74,15 @@
     <xsl:param name="serif-font" select="'Yale'"/>
     <xsl:param name="sans-serif-font" select="'Mallory'"/>
     <xsl:param name="backup-font" select="'ArialUnicode'"/>
+    <xsl:param name="default-font-size" select="'9'"/>
     <xsl:param name="include-audience-equals-internal" select="false()"/>
     <xsl:param name="start-page-1-after-table-of-contents" select="false()"/>
     <!-- if you change this to true, you'll lose the markers (e.g. series N continued)
     since those are currently in the table header, not the page headers.
     -->
     <xsl:param name="dsc-omit-table-header-at-break" select="false()"/>
+    <xsl:param name="include-paging-info" select="if ($repository-code = ('beinecke')) then true() else false()"/>
+    <xsl:param name="paging-info-title" select="'Paging Instructions'"/>
     
     <xsl:param name="archdesc-did-title" select="'Collection Overview'"/>
     <xsl:param name="admin-info-title" select="'Administrative Information'"/>
@@ -129,7 +123,7 @@
 
     <!--========== PAGE SETUP =======-->
     <xsl:template match="/">
-        <fo:root xml:lang="{$primary-language-of-finding-aid}" font-family="{$primary-font-for-pdf}, {$backup-font}">
+        <fo:root xml:lang="{$primary-language-of-finding-aid}" font-family="{$primary-font-for-pdf}, {$backup-font}" font-size="{$default-font-size}">
             <fo:layout-master-set>
                 <xsl:call-template name="define-page-masters"/>
                 <xsl:call-template name="define-page-sequences"/>

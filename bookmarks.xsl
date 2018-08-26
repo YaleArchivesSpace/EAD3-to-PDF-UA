@@ -20,6 +20,11 @@
             <fo:bookmark internal-destination="contents">
                 <fo:bookmark-title><xsl:value-of select="$archdesc-did-title"/></fo:bookmark-title>
             </fo:bookmark>
+            <xsl:if test="$include-paging-info">
+                <fo:bookmark internal-destination="paging-info">
+                    <fo:bookmark-title><xsl:value-of select="$paging-info-title"/></fo:bookmark-title>
+                </fo:bookmark>
+            </xsl:if>
             <fo:bookmark internal-destination="admin-info">
                 <xsl:attribute name="starting-state">hide</xsl:attribute>
                 <fo:bookmark-title>Adminstrative Information</fo:bookmark-title>

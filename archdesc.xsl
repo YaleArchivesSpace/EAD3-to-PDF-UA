@@ -30,6 +30,13 @@
                 </fo:block>
                 <!-- change mode name and re-purpose for all levels ? -->
                 <xsl:apply-templates select="ead3:did" mode="collection-overview"/>
+                <xsl:if test="$include-paging-info">
+                    <xsl:call-template name="section-start"/>
+                    <fo:block xsl:use-attribute-sets="h3" id="paging-info">
+                        <xsl:value-of select="$paging-info-title"/>
+                    </fo:block>
+                    <xsl:call-template name="aeon-instructions"/>
+                </xsl:if>
                 <xsl:if test="ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
                     , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
                     , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan">

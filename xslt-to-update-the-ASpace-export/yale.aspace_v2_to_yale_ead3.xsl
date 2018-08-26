@@ -461,6 +461,11 @@
   <!-- head fix for data added by the AT migration tool!
   remove this once those values are corrected in ASpace -->
   <xsl:template match="ead3:head[lower-case(normalize-space()) = 'missing title']"/>
+  
+  <!-- let's remove those AT database IDs even if we keep internal-only elements around.
+  those should be the only unitids exported with an invalid @type attribute, so just remove 'em.
+  -->
+  <xsl:template match="ead3:unitid[@type]" priority="2"/>
 
   <!-- MDC:  new additions for new data-entry rules in ArchivesSpace !!! -->
   <xsl:template match="ead3:*[@level = 'series']/ead3:did/ead3:unitid[matches(., '^\d+$')]">
@@ -659,8 +664,18 @@
      is exported as:
      <unittitle>MT</unittitle>.
      Oi.          
-   -->
+
   <xsl:template match="ead3:dao/ead3:descriptivenote"/>
+     -->
+  
+  <!-- a very wacky hack to fix the dao title comparisons for the 2 kissiner finding aids, which include a date string as part of the dao title
+    after the last comma (which we strip out below) -->
+  <xsl:template match="ead3:dao/ead3:descriptivenote/ead3:p/text()[last()][$finding-aid-identifier = ('mssa.ms.2004', 'mssa.ms.1980')]" priority="2">
+    <xsl:variable name="tokens" select="tokenize(string-join(., ' '), ', ')"/>
+    <xsl:value-of select="$tokens[position() &lt; last()]" separator=", "/>
+  </xsl:template>
+
+
   
   <!-- REMOVE THIS TEMPLATE ONCE THIS BUG IS FIXED IN ASPACE'S EAD3 EXPORT OPTION
     actually, going to remove this, since it just masks other problems with the EAD3 export.
@@ -677,9 +692,9 @@
   
   <!-- REMOVE THIS TEMPLATE ONCE THIS BUG IS FIXED IN ASPACE'S EAD3 EXPORT OPTION -->
   <xsl:template match="@linktitle">
-    <xsl:copy>
-      <xsl:value-of select="replace(., '&amp;quot;', '&quot;')"/>"
-    </xsl:copy>
+    <xsl:attribute name="{local-name()}">
+      <xsl:value-of select="replace(replace(replace(., '&amp;quot;', '&quot;'), '&amp;lt;', '&lt;'), '&amp;gt;', '&gt;')"/>
+    </xsl:attribute>
   </xsl:template>
   
   <!-- for now, we're going to remove any thumbnail only style links-->
@@ -697,14 +712,33 @@
   </xsl:template>
   
   <!-- we need to check on unitdatestructureds to see if we need to remove those and only process the unitdate that follows.
-    here's where we do that (until we can get ASpace updated to align better with EAD3). -->
+    here's where we do that (until we can get ASpace updated to align better with EAD3).
+  this will no longer be necessary once the EAD3 exporter is updated (and possibly the EAD3 schema)
+  but keeping it in for now since it won't hurt anything. -->
   <xsl:template match="ead3:unitdatestructured[following-sibling::*[1][local-name() eq 'unitdate']]">
-     <xsl:variable name="remove" select="mdc:remove-this-date(.)"/>
-     <xsl:if test="$remove eq false()">
-       <xsl:copy>
-         <xsl:apply-templates select="@*|node()"/>
-       </xsl:copy>
-     </xsl:if>
+    <xsl:variable name="remove" select="mdc:remove-this-date(.)"/>
+    <xsl:if test="$remove eq false()">
+      <xsl:copy>
+        <xsl:apply-templates select="@*|node()"/>
+      </xsl:copy>
+    </xsl:if>
+  </xsl:template>
+  
+  <!-- we're changing the EAD3 export options to make dealing with dates easier.  here's an example output:
+      <unitdatestructured unitdatetype="inclusive">
+        <daterange>
+          <fromdate standarddate="1961">1961</fromdate>
+          <todate standarddate="1993">1993</todate>
+        </daterange>
+        <unitdate unitdatetype="inclusive">date expression</unitdate>
+      </unitdatestructured>
+      as always, we'll let the date expression override the normalized dates for display purposes.
+      so, in this case, we remove the unitdatestructured element and replace it with the unitdate.
+      eventually, it would be great if EAD3 just had a unitdate element, defined the same way as unitdatestructured,
+      with the additional ability to have a display form of the date in another element, such as "displayform"
+  -->
+  <xsl:template match="ead3:unitdatestructured[ead3:unitdate]" priority="2">
+    <xsl:apply-templates select="ead3:unitdate"/>
   </xsl:template>
 
 </xsl:stylesheet>

@@ -219,10 +219,10 @@
         <xsl:param name="column-types"/>
         <xsl:variable name="columns-spanned" select="string-length(replace($column-types, '-', ''))"/>
         <!-- xsl:use-attribute-sets="dsc-table-header" -->
-        <fo:table-header>
+        <fo:table-header xsl:use-attribute-sets="header-serif">
             <fo:table-row>
                 <fo:table-cell number-columns-spanned="{$columns-spanned}">
-                    <fo:block font-size="9pt">
+                    <fo:block font-size="8pt">
                         <fo:retrieve-table-marker retrieve-class-name="continued-text" 
                             retrieve-position-within-table="first-starting" 
                             retrieve-boundary-within-table="table-fragment"/> 
@@ -349,8 +349,11 @@
         </xsl:variable>
         <xsl:variable name="series-of-series" select="if (contains($ancestor-sequence-filtered, 'xx*****yz'))
             then tokenize($ancestor-sequence-filtered, 'xx\*\*\*\*\*yz') else $ancestor-sequence-filtered"/>
-        <xsl:for-each select="$series-of-series[normalize-space()]">
-            <fo:inline font-style="italic">
+        <!-- mdc: since we include the series name in the page header, let's see what it looks like without that here in the table header 
+        if folks don't like that, just remove the position() filter
+        -->
+        <xsl:for-each select="$series-of-series[normalize-space()][position() > 1]">
+            <fo:inline>
                 <xsl:value-of select="if (string-length(.) gt $longest-length-allowed) 
                     then concat(substring(., 1, $longest-length-allowed), ' [...]') 
                     else ."/>
@@ -394,4 +397,79 @@
         </fo:block>
     </xsl:template>
       
+      
+     <xsl:template name="aeon-instructions">
+             <xsl:choose>
+                 <xsl:when test="$repository-code='beinecke'">
+                     <fo:block xsl:use-attribute-sets="paragraph-indent">
+                         <xsl:text>To request items from this collection for use in the 
+            Beinecke Library reading room, please use the request links in the 
+            HTML version of this finding aid, available at </xsl:text>
+                         <fo:wrapper xsl:use-attribute-sets="ref">
+                             <fo:basic-link external-destination="{$finding-aid-identifier/@instanceurl}">
+                                 <xsl:value-of select="$finding-aid-identifier/@instanceurl"/>
+                             </fo:basic-link>
+                         </fo:wrapper>
+                         <xsl:text>.</xsl:text>
+                     </fo:block>
+                     <fo:block xsl:use-attribute-sets="paragraph-indent">
+                         <xsl:text>To order reproductions from this collection, please 
+            send an email with the call number, box number(s), and folder number(s) to  </xsl:text>
+                         <fo:wrapper xsl:use-attribute-sets="ref">
+                             <fo:basic-link external-destination="'mailto:beinecke.images@yale.edu'">
+                                 <xsl:text>beinecke.images@yale.edu</xsl:text>
+                             </fo:basic-link>
+                         </fo:wrapper>
+                         <xsl:text>.</xsl:text>
+                     </fo:block>
+                 </xsl:when>
+                 <!--
+                 <xsl:when test="$repository_code='mssa'">
+                     <xsl:element name="fo:block" use-attribute-sets="p.generic">
+                         <xsl:text>To request items from this collection for use in 
+            the Manuscripts and Archives reading room, please use the 
+            request links in the HTML version of this finding aid, available at </xsl:text>
+                         <fo:wrapper color="{$linkcolor}">
+                             <xsl:element name="fo:basic-link">
+                                 <xsl:attribute name="external-destination">
+                                     <xsl:value-of select="$handleURL"/>
+                                 </xsl:attribute>
+                                 <xsl:value-of select="$handleURL"/>
+                             </xsl:element>
+                         </fo:wrapper>
+                         <xsl:text>.</xsl:text>
+                     </xsl:element>
+                     <xsl:element name="fo:block" use-attribute-sets="p.generic">
+                         <xsl:text>To order reproductions from this collection, please go to </xsl:text>
+                         <fo:wrapper color="{$linkcolor}">
+                             <xsl:element name="fo:basic-link">
+                                 <xsl:attribute name="external-destination">
+                                     <xsl:text>http://www.library.yale.edu/mssa/ifr_copy_order.html</xsl:text>
+                                 </xsl:attribute>
+                                 <xsl:text>http://www.library.yale.edu/mssa/ifr_copy_order.html</xsl:text>
+                             </xsl:element>
+                         </fo:wrapper>
+                         <xsl:text>.  The information you will need to submit an order 
+            includes: the collection call number, collection title, 
+            series or accession number, box number, and folder number or name.</xsl:text>
+                     </xsl:element>
+                 </xsl:when>
+                 <xsl:otherwise>
+                     <xsl:element name="fo:block" use-attribute-sets="p.generic">
+                         <xsl:text>To request items from this collection for use on site, please use the request links in the 
+            HTML version of this finding aid, available at </xsl:text>
+                         <fo:wrapper color="{$linkcolor}">
+                             <xsl:element name="fo:basic-link">
+                                 <xsl:attribute name="external-destination">
+                                     <xsl:value-of select="$handleURL"/>
+                                 </xsl:attribute>
+                                 <xsl:value-of select="$handleURL"/>
+                             </xsl:element>
+                         </fo:wrapper>
+                         <xsl:text>.</xsl:text>
+                     </xsl:element>
+                 </xsl:otherwise>
+                 -->
+             </xsl:choose>
+     </xsl:template> 
 </xsl:stylesheet>
