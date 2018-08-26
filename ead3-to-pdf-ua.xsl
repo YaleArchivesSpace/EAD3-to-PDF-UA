@@ -26,7 +26,9 @@
         
           adjust dsc layout if no containers, no dates.
           
-          adjust identation of desc in dsc.
+          add Paging Info
+          
+          fix up Icons for first page
           
           fix up block and inline stylings.
           

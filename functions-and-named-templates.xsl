@@ -59,7 +59,7 @@
         </fo:block>
     </xsl:template>
     <xsl:template name="header-dsc">
-        <fo:block text-align="justify">
+        <fo:block text-align="justify" xsl:use-attribute-sets="header-serif">
             <fo:inline-container width="30%">
                 <fo:block font-size="9pt">
                     <fo:retrieve-marker retrieve-class-name="continued-header-text"/>
@@ -178,27 +178,50 @@
     
     <!-- still neeed options for when dates and/or containers aren't present in a table -->
     <xsl:template name="tableBody">
+        <xsl:param name="column-types"/>
+        <xsl:param name="depth" select="0"/>
         <xsl:param name="cell-margin"/>
         <fo:table inline-progression-dimension="100%" table-layout="fixed" font-size="9pt"
-            border-collapse="collapse" keep-with-previous.within-page="always" table-omit-header-at-break="{$dsc-omit-table-header-at-break}">
-            <fo:table-column column-number="1" column-width="proportional-column-width(20)"/>
-            <fo:table-column column-number="2" column-width="proportional-column-width(65)"/>
-            <fo:table-column column-number="3" column-width="proportional-column-width(15)"/>
+            border-collapse="collapse" keep-with-previous.within-page="always" table-omit-header-at-break="{$dsc-omit-table-header-at-break}">          
+            <xsl:choose>
+                <xsl:when test="$column-types eq 'c-d-d'">
+                    <fo:table-column column-number="1" column-width="proportional-column-width(20)"/>
+                    <fo:table-column column-number="2" column-width="proportional-column-width(65)"/>
+                    <fo:table-column column-number="3" column-width="proportional-column-width(15)"/>
+                </xsl:when>
+                <xsl:when test="$column-types eq 'd-d'">
+                     <fo:table-column column-number="1" column-width="proportional-column-width(75)"/>
+                     <fo:table-column column-number="2" column-width="proportional-column-width(25)"/>
+                </xsl:when>
+                <xsl:when test="$column-types eq 'c-d'">
+                    <fo:table-column column-number="1" column-width="proportional-column-width(20)"/>
+                    <fo:table-column column-number="2" column-width="proportional-column-width(80)"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <fo:table-column column-number="1" column-width="proportional-column-width(100)"/>
+                </xsl:otherwise>
+            </xsl:choose>
             <xsl:call-template name="tableHeaders">
                 <xsl:with-param name="cell-margin" select="$cell-margin"/>
+                <xsl:with-param name="column-types" select="$column-types"/>
             </xsl:call-template>
             <fo:table-body>
-                <xsl:apply-templates select="ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c']" mode="dsc-table"/>
+                <xsl:apply-templates select="ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c']" mode="dsc-table">
+                    <xsl:with-param name="depth" select="$depth"/>
+                    <xsl:with-param name="column-types" select="$column-types"/>
+                </xsl:apply-templates>
             </fo:table-body>
         </fo:table>
     </xsl:template>
     
     <xsl:template name="tableHeaders">
         <xsl:param name="cell-margin"/>
+        <xsl:param name="column-types"/>
+        <xsl:variable name="columns-spanned" select="string-length(replace($column-types, '-', ''))"/>
         <!-- xsl:use-attribute-sets="dsc-table-header" -->
         <fo:table-header>
             <fo:table-row>
-                <fo:table-cell number-columns-spanned="3">
+                <fo:table-cell number-columns-spanned="{$columns-spanned}">
                     <fo:block font-size="9pt">
                         <fo:retrieve-table-marker retrieve-class-name="continued-text" 
                             retrieve-position-within-table="first-starting" 
@@ -208,24 +231,49 @@
                 </fo:table-cell>
             </fo:table-row>
             <fo:table-row>
-                <fo:table-cell number-columns-spanned="3">
+                <fo:table-cell number-columns-spanned="{$columns-spanned}">
                     <fo:block>
                         &#x00A0;
                     </fo:block>
                 </fo:table-cell>
             </fo:table-row>
-            <!-- a bit of a hack to hide the column headers here, but i don't think they're needed
+            <!-- a bit of a hack to hide the column headers here, using "white font", but i don't think they're needed
             for the visual layout of the PDF. -->
             <fo:table-row xsl:use-attribute-sets="header-serif white-font">
-                <fo:table-cell>
-                    <fo:block>Container</fo:block>
-                </fo:table-cell>
-                <fo:table-cell>
-                    <fo:block>Description</fo:block>
-                </fo:table-cell>
-                <fo:table-cell>
-                    <fo:block>Date</fo:block>
-                </fo:table-cell>    
+                <xsl:choose>
+                    <xsl:when test="$column-types eq 'c-d-d'">
+                        <fo:table-cell>
+                            <fo:block>Container</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                            <fo:block>Description</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                            <fo:block>Date</fo:block>
+                        </fo:table-cell>      
+                    </xsl:when>
+                    <xsl:when test="$column-types eq 'd-d'">
+                        <fo:table-cell>
+                            <fo:block>Description</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                            <fo:block>Date</fo:block>
+                        </fo:table-cell>   
+                    </xsl:when>
+                    <xsl:when test="$column-types eq 'c-d'">
+                        <fo:table-cell>
+                            <fo:block>Container</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                            <fo:block>Description</fo:block>
+                        </fo:table-cell>   
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <fo:table-cell>
+                            <fo:block>Description</fo:block>
+                        </fo:table-cell>  
+                    </xsl:otherwise>
+                </xsl:choose>
             </fo:table-row>
         </fo:table-header>
     </xsl:template>

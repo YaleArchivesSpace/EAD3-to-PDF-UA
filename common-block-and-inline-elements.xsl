@@ -92,9 +92,15 @@
   <xsl:template match="ead3:head" mode="toc">
     <xsl:apply-templates/>
   </xsl:template>
-
-  <xsl:template match="ead3:p" mode="#all">
+  
+  <xsl:template match="ead3:odd//ead3:p" mode="#all">
     <fo:block xsl:use-attribute-sets="paragraph">
+      <xsl:apply-templates/>
+    </fo:block>
+  </xsl:template>
+  
+  <xsl:template match="ead3:p" mode="#all">
+    <fo:block xsl:use-attribute-sets="paragraph-indent">
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>
@@ -493,5 +499,27 @@
       </xsl:when>
     </xsl:choose>
   </xsl:template>
+  
+  <xsl:template match="ead3:lb">
+    <fo:block/>
+  </xsl:template>
+  
+  <!-- dao stuff -->
+  
+  <!-- example ASpace encoding:
+    
+                     <dao actuate="onrequest"
+                             daotype="unknown"
+                             href="http://hdl.handle.net/10079/xwdbs31"
+                             linktitle="View digital image(s) [Folder 1374]."
+                             localtype="image/jpeg"
+                             show="new">
+                           <descriptivenote>
+                              <p>View digital image(s) [Folder 1374].</p>
+                           </descriptivenote>
+                        </dao>
+    -->
+  
+  
 
 </xsl:stylesheet>

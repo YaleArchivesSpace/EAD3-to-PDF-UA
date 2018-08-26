@@ -29,6 +29,17 @@
     
     <!-- not worrying about multiple DSC sections.  ASpace can only export 1 DSC -->
     <xsl:template match="ead3:dsc">
+        <xsl:variable name="column-types" select="
+            if 
+            (ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c'][descendant-or-self::ead3:unitdate or descendant-or-self::ead3:unitdatestructured][descendant-or-self::ead3:container])
+            then 'c-d-d'
+            else 
+            if (ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c'][descendant-or-self::ead3:unitdate or descendant-or-self::ead3:unitdatestructured])
+            then 'd-d'
+            else 
+            if (ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c'][descendant-or-self::ead3:container])
+            then 'c-d'
+            else 'd'"/>
         <fo:page-sequence master-reference="contents">
             <!-- Page header -->
             <fo:static-content flow-name="xsl-region-before">
@@ -44,10 +55,14 @@
                 <fo:block xsl:use-attribute-sets="h3" id="dsc-contents"><xsl:value-of select="$dsc-title"/></fo:block>
                 <xsl:choose>
                     <xsl:when test="ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c'][@level=$dsc-first-c-levels-to-process-before-a-table or @otherlevel=$otherlevels-to-force-a-page-break-and-process-before-a-table]">
-                        <xsl:apply-templates select="ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c']" mode="dsc-block"/>
+                        <xsl:apply-templates select="ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c']" mode="dsc-block">
+                            <xsl:with-param name="column-types" select="$column-types"/>
+                        </xsl:apply-templates>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:call-template name="tableBody"/>
+                        <xsl:call-template name="tableBody">
+                            <xsl:with-param name="column-types" select="$column-types"/>
+                        </xsl:call-template>
                     </xsl:otherwise>
                 </xsl:choose>
                 <!-- adding this to grab the last page number-->
@@ -59,9 +74,19 @@
     </xsl:template>
     
     <xsl:template match="ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c']" mode="dsc-block">
-        <!-- let's change the depth so that it's aware of whether or not a table has started (e.g. ignoring series from the count) -->
         <xsl:variable name="depth" select="count(ancestor::*) - 3"/> <!-- e.g. c01 = 0, c02 = 1, etc. -->
         <xsl:variable name="cell-margin" select="concat(xs:string($depth * 6), 'pt')"/> <!-- e.g. 0, 8pt for c02, 16pt for c03, etc.-->
+        <xsl:variable name="column-types" select="
+            if 
+            (ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c'][descendant-or-self::ead3:unitdate or descendant-or-self::ead3:unitdatestructured][descendant-or-self::ead3:container])
+            then 'c-d-d'
+            else 
+            if (ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c'][descendant-or-self::ead3:unitdate or descendant-or-self::ead3:unitdatestructured])
+            then 'd-d'
+            else 
+            if (ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c'][descendant-or-self::ead3:container])
+            then 'c-d'
+            else 'd'"/>
         <!-- do a second grouping based on the container grouping's primary localtype (i.e. box, volume, reel, etc.)
             then add a custom sort, or just sort those alphabetically -->
         <xsl:variable name="container-groupings">
@@ -82,7 +107,7 @@
                 </xsl:element>
             </xsl:for-each-group>
         </xsl:variable>
-        <fo:block font-size="10pt" margin-left="{$cell-margin}" keep-with-next.within-page="always" id="{if (@id) then @id else generate-id(.)}">
+        <fo:block margin-left="{$cell-margin}" keep-with-next.within-page="always" id="{if (@id) then @id else generate-id(.)}">
             <xsl:if test="preceding-sibling::ead3:*[@level=$levels-to-force-a-page-break or @otherlevel=$otherlevels-to-force-a-page-break-and-process-before-a-table]">
                 <xsl:attribute name="break-before" select="'page'"/>
             </xsl:if>
@@ -127,7 +152,7 @@
             <xsl:when test="not(ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c'])"/>
             <xsl:otherwise>
                <xsl:call-template name="tableBody">
-                   <xsl:with-param name="cell-margin" select="$cell-margin"/>
+                   <xsl:with-param name="column-types" select="$column-types"/>
                </xsl:call-template>
             </xsl:otherwise>
         </xsl:choose>
@@ -142,7 +167,8 @@
             then true() else false()"/>
         <xsl:param name="no-children" select="if (not(ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c'])) then true() else false()"/>
         <xsl:param name="last-row" select="if (position() eq last() and $no-children) then true() else false()"/>
-        <xsl:variable name="depth" select="count(ancestor::*) - 3"/> <!-- e.g. c01 = 0, c02 = 1, etc. -->
+        <xsl:param name="depth"/> <!-- e.g. c01 = 0, c02 = 1, etc. -->
+        <xsl:param name="column-types"/>
         <xsl:variable name="cell-margin" select="concat(xs:string($depth * 8), 'pt')"/> <!-- e.g. 0, 8pt for c02, 16pt for c03, etc.-->
         <xsl:variable name="container-groupings">
             <xsl:for-each-group select="ead3:did/ead3:container" group-by="if (@parent) then @parent else @id">
@@ -165,56 +191,193 @@
                 <xsl:with-param name="last-row" select="$last-row"/>
                 <xsl:with-param name="no-children" select="$no-children"/>
             </xsl:call-template>
-            <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
-                <xsl:call-template name="container-layout">
-                    <xsl:with-param name="containers-sorted-by-localtype" select="$containers-sorted-by-localtype"/>
-                </xsl:call-template>
-            </fo:table-cell>
-            <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
-                <fo:block>
-                    <xsl:choose>
-                        <xsl:when test="$first-row eq true()">
-                            <fo:marker marker-class-name="continued-text"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <fo:marker marker-class-name="continued-text">
-                                <fo:inline>
-                                    <xsl:call-template name="ancestor-info"/>
-                                </fo:inline>
-                            </fo:marker>
-                        </xsl:otherwise>
-                    </xsl:choose> 
-                </fo:block>
-                <!-- do the title and/or date stuff here -->
-                <fo:block-container margin-left="{$cell-margin}" id="{if (@id) then @id else generate-id(.)}">
-                    <fo:block-container>
+            <xsl:choose>
+                <xsl:when test="$column-types eq 'c-d-d'">
+                    <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
+                        <xsl:call-template name="container-layout">
+                            <xsl:with-param name="containers-sorted-by-localtype" select="$containers-sorted-by-localtype"/>
+                        </xsl:call-template>
+                    </fo:table-cell>
+                    <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
                         <fo:block>
-                            <xsl:apply-templates select="if (ead3:did/ead3:unittitle/normalize-space()) then ead3:did/ead3:unittitle
-                                else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate"/>
-                            <xsl:apply-templates select="ead3:did/ead3:unitid" mode="dsc"/>
+                            <xsl:choose>
+                                <xsl:when test="$first-row eq true()">
+                                    <fo:marker marker-class-name="continued-text"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <fo:marker marker-class-name="continued-text">
+                                        <fo:inline>
+                                            <xsl:call-template name="ancestor-info"/>
+                                        </fo:inline>
+                                    </fo:marker>
+                                </xsl:otherwise>
+                            </xsl:choose> 
                         </fo:block>
-                        <!-- still need to add the other did elements, and select an order -->
+                        <!-- do the title and/or date stuff here -->
+                        <fo:block-container margin-left="{$cell-margin}" id="{if (@id) then @id else generate-id(.)}">
+                            <fo:block-container>
+                                <fo:block>
+                                    <xsl:apply-templates select="if (ead3:did/ead3:unittitle/normalize-space()) then ead3:did/ead3:unittitle
+                                        else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate"/>
+                                    <xsl:apply-templates select="ead3:did/ead3:unitid" mode="dsc"/>
+                                </fo:block>
+                                <!-- still need to add the other did elements, and select an order -->
+                                <fo:block>
+                                    <xsl:apply-templates select="ead3:did" mode="dsc"/>
+                                </fo:block>
+                            </fo:block-container>
+                            <fo:block-container>
+                                <fo:block>
+                                    <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
+                                        , ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
+                                        , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
+                                        , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement" mode="dsc"/>
+                                </fo:block>
+                            </fo:block-container>
+                        </fo:block-container>
+                    </fo:table-cell>
+                    <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
                         <fo:block>
-                            <xsl:apply-templates select="ead3:did" mode="dsc"/>
+                            <xsl:apply-templates select="ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate" mode="dsc"/>
                         </fo:block>
-                    </fo:block-container>
-                    <fo:block-container>
+                    </fo:table-cell>
+                </xsl:when>
+                <xsl:when test="$column-types eq 'd-d'">
+                    <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
                         <fo:block>
-                            <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
-                                , ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
-                                , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
-                                , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement" mode="dsc"/>
+                            <xsl:choose>
+                                <xsl:when test="$first-row eq true()">
+                                    <fo:marker marker-class-name="continued-text"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <fo:marker marker-class-name="continued-text">
+                                        <fo:inline>
+                                            <xsl:call-template name="ancestor-info"/>
+                                        </fo:inline>
+                                    </fo:marker>
+                                </xsl:otherwise>
+                            </xsl:choose> 
                         </fo:block>
-                    </fo:block-container>
-                </fo:block-container>
-            </fo:table-cell>
-            <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
-                <fo:block>
-                    <xsl:apply-templates select="ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate" mode="dsc"/>
-                </fo:block>
-            </fo:table-cell>
+                        <!-- do the title and/or date stuff here -->
+                        <fo:block-container margin-left="{$cell-margin}" id="{if (@id) then @id else generate-id(.)}">
+                            <fo:block-container>
+                                <fo:block>
+                                    <xsl:apply-templates select="if (ead3:did/ead3:unittitle/normalize-space()) then ead3:did/ead3:unittitle
+                                        else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate"/>
+                                    <xsl:apply-templates select="ead3:did/ead3:unitid" mode="dsc"/>
+                                </fo:block>
+                                <!-- still need to add the other did elements, and select an order -->
+                                <fo:block>
+                                    <xsl:apply-templates select="ead3:did" mode="dsc"/>
+                                </fo:block>
+                            </fo:block-container>
+                            <fo:block-container>
+                                <fo:block>
+                                    <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
+                                        , ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
+                                        , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
+                                        , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement" mode="dsc"/>
+                                </fo:block>
+                            </fo:block-container>
+                        </fo:block-container>
+                    </fo:table-cell>
+                    <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
+                        <fo:block>
+                            <xsl:apply-templates select="ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate" mode="dsc"/>
+                        </fo:block>
+                    </fo:table-cell>
+                </xsl:when>
+                <xsl:when test="$column-types eq 'c-d'">
+                    <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
+                        <xsl:call-template name="container-layout">
+                            <xsl:with-param name="containers-sorted-by-localtype" select="$containers-sorted-by-localtype"/>
+                        </xsl:call-template>
+                    </fo:table-cell>
+                    <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
+                        <fo:block>
+                            <xsl:choose>
+                                <xsl:when test="$first-row eq true()">
+                                    <fo:marker marker-class-name="continued-text"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <fo:marker marker-class-name="continued-text">
+                                        <fo:inline>
+                                            <xsl:call-template name="ancestor-info"/>
+                                        </fo:inline>
+                                    </fo:marker>
+                                </xsl:otherwise>
+                            </xsl:choose> 
+                        </fo:block>
+                        <!-- do the title and/or date stuff here -->
+                        <fo:block-container margin-left="{$cell-margin}" id="{if (@id) then @id else generate-id(.)}">
+                            <fo:block-container>
+                                <fo:block>
+                                    <xsl:apply-templates select="if (ead3:did/ead3:unittitle/normalize-space()) then ead3:did/ead3:unittitle
+                                        else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate"/>
+                                    <xsl:apply-templates select="ead3:did/ead3:unitid" mode="dsc"/>
+                                </fo:block>
+                                <!-- still need to add the other did elements, and select an order -->
+                                <fo:block>
+                                    <xsl:apply-templates select="ead3:did" mode="dsc"/>
+                                </fo:block>
+                            </fo:block-container>
+                            <fo:block-container>
+                                <fo:block>
+                                    <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
+                                        , ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
+                                        , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
+                                        , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement" mode="dsc"/>
+                                </fo:block>
+                            </fo:block-container>
+                        </fo:block-container>
+                    </fo:table-cell>
+                </xsl:when>
+                <xsl:otherwise>
+                    <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
+                        <fo:block>
+                            <xsl:choose>
+                                <xsl:when test="$first-row eq true()">
+                                    <fo:marker marker-class-name="continued-text"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <fo:marker marker-class-name="continued-text">
+                                        <fo:inline>
+                                            <xsl:call-template name="ancestor-info"/>
+                                        </fo:inline>
+                                    </fo:marker>
+                                </xsl:otherwise>
+                            </xsl:choose> 
+                        </fo:block>
+                        <!-- do the title and/or date stuff here -->
+                        <fo:block-container margin-left="{$cell-margin}" id="{if (@id) then @id else generate-id(.)}">
+                            <fo:block-container>
+                                <fo:block>
+                                    <xsl:apply-templates select="if (ead3:did/ead3:unittitle/normalize-space()) then ead3:did/ead3:unittitle
+                                        else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate"/>
+                                    <xsl:apply-templates select="ead3:did/ead3:unitid" mode="dsc"/>
+                                </fo:block>
+                                <!-- still need to add the other did elements, and select an order -->
+                                <fo:block>
+                                    <xsl:apply-templates select="ead3:did" mode="dsc"/>
+                                </fo:block>
+                            </fo:block-container>
+                            <fo:block-container>
+                                <fo:block>
+                                    <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
+                                        , ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
+                                        , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
+                                        , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement" mode="dsc"/>
+                                </fo:block>
+                            </fo:block-container>
+                        </fo:block-container>
+                    </fo:table-cell>
+                </xsl:otherwise>
+            </xsl:choose>
         </fo:table-row>
-        <xsl:apply-templates select="ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c']" mode="dsc-table"/>
+        <xsl:apply-templates select="ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c']" mode="dsc-table">
+            <xsl:with-param name="depth" select="$depth + 1"/>
+            <xsl:with-param name="column-types" select="$column-types"/>
+        </xsl:apply-templates>
     </xsl:template>
     
     <xsl:template match="ead3:did" mode="dsc">

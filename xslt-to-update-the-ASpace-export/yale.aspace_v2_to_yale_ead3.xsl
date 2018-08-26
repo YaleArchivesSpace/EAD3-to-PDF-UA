@@ -113,6 +113,15 @@
                   </daterange> 
               </unitdatestructured> 
               <unitdate unitdatetype="inclusive">1942 Apr 21</unitdate>
+              
+        5      <unitdatestructured unitdatetype="inclusive">
+                <daterange>
+                  <fromdate standarddate="2006">2006</fromdate>
+                  <todate standarddate="2006">2006</todate>
+                </daterange>
+              </unitdatestructured>
+              <unitdate unitdatetype="inclusive">2006</unitdate>
+              
         
         In the first two cases, it would be best to just process the sibling unitdate element by itself,
         but in the last case we need to process all 3 of the date subrecords.
@@ -142,6 +151,9 @@
 
   <!-- will pass false() when using this process to do staff-only PDF previews -->
   <xsl:param name="suppressInternalComponents" select="true()" as="xs:boolean"/>
+  
+  <xsl:variable name="finding-aid-identifier" select="ead3:ead/ead3:control/ead3:recordid[1]"/>
+  <xsl:variable name="holding-repository" select="ead3:ead/ead3:archdesc/ead3:did/ead3:repository[1]"/>
 
   <xsl:function name="mdc:iso-date-2-display-form" as="xs:string*">
     <xsl:param name="date" as="xs:string"/>
@@ -247,7 +259,7 @@
       $year1, 
       $month1, 
       if (string-length($day1)=1) then concat('0', $day1) else $day1,
-      if ($month2 and not($year2)) then $year1 else $year2, 
+      if ($month2 and not($year2) or (not($year2) and not($month2))) then $year1 else $year2, 
       if ($month1 and $day2 and not($month2)) then $month1 else $month2, 
       if (string-length($day2)=1) then concat('0', $day2) else $day2
       )"/>  
@@ -419,6 +431,7 @@
   <xsl:template match="ead3:part/text()">
     <xsl:value-of select="replace(., '\$\w:', '')"/>
   </xsl:template>
+  
  
 
   <!-- in ASpace, we don't want to include links that start with "aspace_".  
@@ -426,7 +439,7 @@
     in ArchivesSpace, not the AT (hence the "ref" part), we need to append
     "aspace_" before the target, since that's what ASpace appends to the @id attributes
     upon export.  Clear as mud, right? :) -->
-  <xsl:template match="@target[not(starts-with(., 'ref'))]">
+  <xsl:template match="@target[not(starts-with(., 'ref'))][not(starts-with(., 'aspace_'))]">
     <xsl:attribute name="target">
       <xsl:value-of select="concat('aspace_', .)"/>
     </xsl:attribute>
@@ -630,6 +643,50 @@
   <xsl:template match="ead3:p[ead3:table]">
     <xsl:apply-templates/>
   </xsl:template>
+  
+  <!-- here's a fun fact:  ASpace still has issues with exporting &s and stuff in EAD3,  and when it comes to DAOs, which get the titles exported in two places...
+    title attribute and the daodesc element, the daodesc element can get messed up.  
+    here's an example:
+                  <dao actuate="onrequest" daotype="unknown"
+                href="http://hdl.handle.net/10079/digcoll/1193830"
+                linktitle="MT&amp;R International Councillors Meeting in Beijing, China with Nancy Kissinger, 2002 November 4-7"
+                show="new">
+                <descriptivenote>MT</descriptivenote>
+              </dao>
+     Because of this, we're going to strip those daodescs.
+     and for the Kissinger collections (which repeats the dao title as the archival object title)
+     we're going to need to replace the dang unittitle with the dao/@title since the unittitle in this case
+     is exported as:
+     <unittitle>MT</unittitle>.
+     Oi.          
+   -->
+  <xsl:template match="ead3:dao/ead3:descriptivenote"/>
+  
+  <!-- REMOVE THIS TEMPLATE ONCE THIS BUG IS FIXED IN ASPACE'S EAD3 EXPORT OPTION
+    actually, going to remove this, since it just masks other problems with the EAD3 export.
+    as it turns out, if you just have an & in a field, then it gets stripped.
+    the EAD3 exports require &amp; to be recorded in the field, instead.
+    that's fine, but we've got lots of data to udpate!
+    and we'll need to instruct folks who enter that info manually
+  <xsl:template match="ead3:c/ead3:did/ead3:unittitle[not(contains(., '&amp;'))][following-sibling::ead3:dao[contains(@linktitle, '&amp;')]][$finding-aid-identifier=('mssa.ms.2004', 'mssa.ms.1981')]">
+    <xsl:copy>
+      <xsl:value-of select="following-sibling::ead3:dao[1]/replace(@linktitle, '&amp;quot;', '&quot;')"/>
+    </xsl:copy>
+  </xsl:template>
+   -->
+  
+  <!-- REMOVE THIS TEMPLATE ONCE THIS BUG IS FIXED IN ASPACE'S EAD3 EXPORT OPTION -->
+  <xsl:template match="@linktitle">
+    <xsl:copy>
+      <xsl:value-of select="replace(., '&amp;quot;', '&quot;')"/>"
+    </xsl:copy>
+  </xsl:template>
+  
+  <!-- for now, we're going to remove any thumbnail only style links-->
+  <xsl:template match="ead3:dao[@show='embed']"/>
+  <!-- also taking out staff-only dao links until we figure out what to do with those -->
+  <xsl:template match="ead3:dao[contains(@href, 'preservica')]"/>
+  <xsl:template match="ead3:dao[contains(@href, 'kaltura')]"/>
 
   <!-- we want ead3:c elements in the final product, so if enumerated elements are exported by mistake,
     we'll change those here -->
