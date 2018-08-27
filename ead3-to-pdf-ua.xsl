@@ -24,8 +24,6 @@
     
     <!-- to do:
           
-          add Paging Info
-          
           fix up Icons for first page
           
           remove series header on first page???

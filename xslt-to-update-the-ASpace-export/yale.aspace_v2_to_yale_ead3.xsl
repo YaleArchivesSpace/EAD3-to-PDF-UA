@@ -7,9 +7,17 @@
 
   to do:
 
+  -1) geez. looks like the EAD3 exporter is still having issues with unicode characters.  not sure what's going on.
+  i might need use the normalize-unicode function on the text output, or at least on the "part" elements
+  where i've noticed this issue.  thankfully that seems to do the trick... with what i've tested so far, at least.
+  
+
   0)
   Fix "0 See Container Summary extents"
   as well as singular extents, like 1 audiocassettes.
+  
+  0.5)
+  convert PTR to REF/@target (and get a report on those via SQL since they don't work in the PUI.).
   
 
   1)

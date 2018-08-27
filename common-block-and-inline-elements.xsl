@@ -43,7 +43,7 @@
       ead3:unitid | ead3:abstract | ead3:addressline | ead3:langmaterial | ead3:materialspec | ead3:origination | ead3:physdesc[not(@localtype = 'container_summary')]
       | ead3:physloc | ead3:repository"
     mode="dsc">
-    <!-- could make "Call Number" a header element, but not sure that's necessary -->
+    <!-- could make "Call Number" a header element, but not sure that's necessary / would make sense. -->
     <fo:block keep-with-previous.within-page="always">
       <xsl:choose>
         <xsl:when test="self::ead3:unitid">
@@ -144,12 +144,6 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="ead3:blockquote" mode="#all">
-    <fo:block margin="4pt 18pt">
-      <xsl:apply-templates/>
-    </fo:block>
-  </xsl:template>
-
   <xsl:template match="ead3:unitdatestructured" mode="#all">
     <xsl:apply-templates/>
     <xsl:if test="position() ne last()">
@@ -177,7 +171,8 @@
 
   <xsl:template match="ead3:unittype" mode="#all">
     <xsl:text> </xsl:text>
-    <!-- add something here to convert to singular extent types, when quantity = 1-->
+    <!-- add something here to convert to singular extent types, when quantity = 1
+    upate: this will be handled in the post-process step instead. -->
     <xsl:value-of select="lower-case(.)"/>
   </xsl:template>
 
@@ -215,13 +210,6 @@
     </xsl:if>
     <xsl:apply-templates/>
   </xsl:template>
-
-  <xsl:template match="ead3:title" mode="#all">
-    <fo:inline font-style="italic">
-      <xsl:apply-templates/>
-    </fo:inline>
-  </xsl:template>
-
 
 
   <!-- Block <list> Template -->
@@ -553,6 +541,120 @@
                         </dao>
     -->
   
+  <xsl:template match="ead3:ref[@target]" mode="#all">
+    <!-- not, not all of notes get IDs, but this will generally work as long as folks are linking to components.
+    should update this later so that all IDs in the XML file wind up as linkable in the PDF -->
+    <fo:basic-link internal-destination="{@target}" xsl:use-attribute-sets="ref">
+      <xsl:choose>
+        <xsl:when test="*|text()">
+          <xsl:apply-templates/>
+        </xsl:when>
+        <xsl:when test="@linktitle">
+          <xsl:value-of select="@linktitle"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="@target"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </fo:basic-link>
+  </xsl:template>
   
+  <!-- a ref has a target AND a href for some reason, we're going to use the external link instead.
+    but we should add this to the schematron to error out -->
+  <xsl:template match="ead3:ref[@href]" priority="2" mode="#all">
+    <fo:basic-link external-destination="url({@href})" xsl:use-attribute-sets="ref">
+      <xsl:choose>
+        <xsl:when test="*|text()">
+          <xsl:apply-templates/>
+        </xsl:when>
+        <xsl:when test="@linktitle">
+          <xsl:value-of select="@linktitle"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="@href"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </fo:basic-link>
+  </xsl:template>
+  
+  
+  <!--Render elements -->
+  <!-- still need to add those font variants, etc. -->
+  <xsl:template match="*[@render = 'bold'] | *[@altrender = 'bold']" mode="#all">
+    <fo:inline font-weight="bold">
+      <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>
+      <xsl:apply-templates/>
+    </fo:inline>
+  </xsl:template>
+  <xsl:template match="*[@render = 'bolddoublequote'] | *[@altrender = 'bolddoublequote']" mode="#all">
+    <fo:inline font-weight="bold"><xsl:if test="preceding-sibling::*">
+      &#160;</xsl:if>"<xsl:apply-templates/>"</fo:inline>
+  </xsl:template>
+  <xsl:template match="*[@render = 'boldsinglequote'] | *[@altrender = 'boldsinglequote']" mode="#all">
+    <fo:inline font-weight="bold"><xsl:if test="preceding-sibling::*">
+      &#160;</xsl:if>'<xsl:apply-templates/>'</fo:inline>
+  </xsl:template>
+  <xsl:template match="*[@render = 'bolditalic'] | *[@altrender = 'bolditalic']" mode="#all">
+    <fo:inline font-weight="bold" font-style="italic">
+      <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>
+      <xsl:apply-templates/>
+    </fo:inline>
+  </xsl:template>
+  <xsl:template match="*[@render = 'boldsmcaps'] | *[@altrender = 'boldsmcaps']" mode="#all">
+    <fo:inline font-weight="bold" font-variant="small-caps">
+      <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>
+      <xsl:apply-templates/>
+    </fo:inline>
+  </xsl:template>
+  <xsl:template match="*[@render = 'boldunderline'] | *[@altrender = 'boldunderline']" mode="#all">
+    <fo:inline font-weight="bold" border-bottom="1pt solid #000">
+      <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>
+      <xsl:apply-templates/>
+    </fo:inline>
+  </xsl:template>
+  <xsl:template match="*[@render = 'doublequote'] | *[@altrender = 'doublequote']" mode="#all">
+    <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>"<xsl:apply-templates/>" </xsl:template>
+  <xsl:template match="*[@render = 'italic'] | *[@altrender = 'italic']">
+    <fo:inline font-style="italic">
+      <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>
+      <xsl:apply-templates/>
+    </fo:inline>
+  </xsl:template>
+  <xsl:template match="*[@render = 'singlequote'] | *[@altrender = 'singlequote']" mode="#all">
+    <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>'<xsl:apply-templates/>' </xsl:template>
+  <xsl:template match="*[@render = 'smcaps'] | *[@altrender = 'smcaps']">
+    <fo:inline font-variant="small-caps">
+      <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>
+      <xsl:apply-templates/>
+    </fo:inline>
+  </xsl:template>
+  <xsl:template match="*[@render = 'sub'] | *[@altrender = 'sub']" mode="#all">
+    <fo:inline baseline-shift="sub">
+      <xsl:apply-templates/>
+    </fo:inline>
+  </xsl:template>
+  <xsl:template match="*[@render = 'super'] | *[@altrender = 'super']" mode="#all">
+    <fo:inline baseline-shift="super">
+      <xsl:apply-templates/>
+    </fo:inline>
+  </xsl:template>
+  <xsl:template match="*[@render = 'underline'] | *[@altrender = 'underline']" mode="#all">
+    <fo:inline text-decoration="underline">
+      <xsl:apply-templates/>
+    </fo:inline>
+  </xsl:template>
+  
+  <!-- Formatting elements -->
+  <xsl:template match="ead3:blockquote" mode="#all">
+    <fo:block margin="4pt 18pt">
+      <xsl:apply-templates/>
+    </fo:block>
+  </xsl:template>
+  
+  <xsl:template match="ead3:emph[not(@render)] | ead3:title[not(@render)]" mode="#all">
+    <fo:inline font-style="italic">
+      <xsl:apply-templates/>
+    </fo:inline>
+  </xsl:template>
 
 </xsl:stylesheet>
