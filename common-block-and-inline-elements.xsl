@@ -36,24 +36,33 @@
   <xsl:template match="text()[../ead3:part]"/>
   
 
-  <!-- stand-alone block elements go here (not adding values like unitid and unittitle, however, since those will be handled differently
+  <!-- stand-alone block elements go here (not adding values like unittitle, however, since those will be handled differently
     a lot of these are handled differently as a LIST, however, when at the collection level.-->
   <xsl:template
     match="
       ead3:unitid | ead3:abstract | ead3:addressline | ead3:langmaterial | ead3:materialspec | ead3:origination | ead3:physdesc[not(@localtype = 'container_summary')]
       | ead3:physloc | ead3:repository"
     mode="dsc">
-    <!-- could make "Call Number" a header element, but not sure that's necessary / would make sense. -->
+    <!-- add a call number header in front of unitid elements, and italicize physdesc notes -->
     <fo:block keep-with-previous.within-page="always">
       <xsl:choose>
         <xsl:when test="self::ead3:unitid">
-          <fo:inline font-style="italic">Call Number: </fo:inline>
+          <fo:inline>Call Number: </fo:inline>
+          <xsl:apply-templates/>
         </xsl:when>
+        <xsl:when test="self::ead3:physdesc">
+          <fo:inline font-style="italic">
+            <xsl:apply-templates/>
+          </fo:inline>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates/>
+        </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates/>
     </fo:block>
   </xsl:template>
 
+  <!-- no need for so many labels, usually -->
   <xsl:template match="ead3:head" mode="dsc"/>
 
   <!-- currently used in the adminstrative info section of the collection overview -->
@@ -173,7 +182,7 @@
     <xsl:text> </xsl:text>
     <!-- add something here to convert to singular extent types, when quantity = 1
     upate: this will be handled in the post-process step instead. -->
-    <xsl:value-of select="lower-case(.)"/>
+    <xsl:apply-templates/>
   </xsl:template>
 
   <xsl:template match="ead3:physdesc[@localtype = 'container_summary']" mode="#all">
@@ -194,6 +203,15 @@
   <xsl:template match="ead3:physdescstructured" mode="dsc">
     <fo:block>
       <xsl:apply-templates/>
+    </fo:block>
+  </xsl:template>
+  
+  <!-- this is very Yale specific-->
+  <xsl:template match="ead3:physdescstructured[ead3:unittype eq 'duration_HH:MM:SS.mmm']" mode="#all">
+    <!-- change this to an inline block group? -->
+    <fo:block>
+     <xsl:text>duration: </xsl:text>
+     <xsl:apply-templates select="* except ead3:unittype"/>
     </fo:block>
   </xsl:template>
 

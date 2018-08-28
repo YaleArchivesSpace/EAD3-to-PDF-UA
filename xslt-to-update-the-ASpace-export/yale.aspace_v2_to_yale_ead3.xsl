@@ -491,60 +491,80 @@
     </xsl:copy>
   </xsl:template>
 
-  <!--optimized for what ASpace can output (up to 2 extents only).  If these templates are not used with AS-produced EAD, they
-    will definitely need to change!-->
-  <xsl:template match="ead3:extent[1][matches(., '^\d')]">
+
+  <!-- ArchivesSpace Extent subrecords, EAD3 style (which is much easier to handle than EAD2002 style):  let's deal with 'em.
+  
+  Here's what we're up against:
+
+      <physdescstructured coverage="whole" physdescstructuredtype="spaceoccupied">
+        <quantity>1</quantity>
+        <unittype>3.5" computer disks</unittype>
+        <physfacet>physical details</physfacet>
+        <dimensions>dimensions</dimensions>
+      </physdescstructured>
+**immediately following physdesc with "container_summary" is part of the above, so take that into account for the display 
+      <physdesc localtype="container_summary">container summary</physdesc>
+     
+     though we can have whole/part statements, for now we just take them as they are in the PDF output.
+      
+**also, no distinction for the other physdesc notes. 
+      <physdesc id="aspace_c01a106a4cf1b9787c933ec0ae449fba">physical description</physdesc>
+      <physdesc id="aspace_87278ac037e106a92efd44152b242089">physical facet</physdesc>
+      <physdesc id="aspace_ed6aa58891d81e358bce0571bc4c823a">dimensions</physdesc>
+
+So, all that we need to do here 
+1) is singularize the unittype values when the quantity = 1.
+2) remove any quantity/unittype values when the quantity is 0 OR unittype = 'see container summary', and replace with a generic physdesc element in case physfacet and dimensions were recorded.
+3) [also consider formatting the numbers?  e.g. if 1000 is entered, display as 1,000]
+  -->
+
+  <xsl:template match="ead3:physdescstructured[normalize-space(ead3:quantity) eq '1']/ead3:unittype">
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
-      <!--ASpace doesn't force the extent number to be a number, so we'll need to validate and test this on our own-->
-      <xsl:variable name="extent-number" select="number(substring-before(normalize-space(.), ' '))"/>
-      <xsl:variable name="extent-type" select="lower-case(substring-after(normalize-space(.), ' '))"/>
-      <xsl:value-of select="format-number($extent-number, '#,##0.##')"/>
-      <xsl:text> </xsl:text>
       <xsl:choose>
         <!--changes feet to foot for singular extents-->
-        <xsl:when test="$extent-number eq 1 and contains($extent-type, ' feet')">
-          <xsl:value-of select="replace($extent-type, ' feet', ' foot')"/>
+        <xsl:when test="matches(., 'feet', 'i')">
+          <xsl:value-of select="replace(., 'eet', 'oot')"/>
         </xsl:when>
         <!--changes boxes to box for singular extents-->
-        <xsl:when test="$extent-number eq 1 and contains($extent-type, ' Boxes')">
-          <xsl:value-of select="replace($extent-type, ' Boxes', ' Box')"/>
+        <xsl:when test="matches(., 'boxes', 'i')">
+          <xsl:value-of select="replace(., 'oxes', 'ox')"/>
         </xsl:when>
         <!--changes works to work for the "Works of art" extent type, if this is used-->
-        <xsl:when test="$extent-number eq 1 and contains($extent-type, ' Works of art')">
-          <xsl:value-of select="replace($extent-type, ' Works', ' Work')"/>
+        <xsl:when test="matches(., 'works of art', 'i')">
+          <xsl:value-of select="replace(., 'orks', 'ork')"/>
         </xsl:when>
         <!--chops off the trailing 's' for singular extents-->
-        <xsl:when test="$extent-number eq 1 and ends-with($extent-type, 's')">
-          <xsl:variable name="sl" select="string-length($extent-type)"/>
-          <xsl:value-of select="substring($extent-type, 1, $sl - 1)"/>
+        <xsl:when test="ends-with(., 's')">
+          <xsl:variable name="sl" select="string-length(.)"/>
+          <xsl:value-of select="substring(., 1, $sl - 1)"/>
         </xsl:when>
-        <!--chops off the trailing 's' for singular extents that are in AAT form, with a paranthetical qualifer-->
-        <xsl:when test="$extent-number eq 1 and ends-with($extent-type, ')')">
-          <xsl:value-of select="replace($extent-type, 's \(', ' (')"/>
+        <!--chops off the trailing 's' for singular extents that are in AAT form, with a paranthetical qualifier-->
+        <xsl:when test="ends-with(., ')')">
+          <xsl:value-of select="replace(., 's \(', ' (')"/>
         </xsl:when>
         <!--any other irregular singluar/plural extent type names???-->
-
-        <!--otherwise, just print out the childless text node as is-->
+        
+        <!--otherwise, just go with what we've got -->
         <xsl:otherwise>
-          <xsl:value-of select="$extent-type"/>
+          <xsl:apply-templates/>
         </xsl:otherwise>
-
-      </xsl:choose>
-
-      <!--provide a separator before the next extent value, if present-->
-      <xsl:choose>
-        <!-- if there's a second extent, and that value starts with an open parentheis character, then add a space-->
-        <xsl:when test="starts-with(following-sibling::ead3:extent[1], '(')">
-          <xsl:text> </xsl:text>
-        </xsl:when>
-        <!--otherwise, if there's a second extent value, add a comma and a space-->
-        <xsl:when test="following-sibling::ead3:extent[1]">
-          <xsl:text>, </xsl:text>
-        </xsl:when>
       </xsl:choose>
     </xsl:copy>
   </xsl:template>
+  
+
+  <xsl:template match="ead3:physdescstructured[normalize-space(ead3:quantity) eq '0'] 
+    | ead3:physdescstructured[lower-case(normalize-space(ead3:unittype)) eq 'see container summary']">
+    <xsl:element name="physdesc" namespace="http://ead3.archivists.org/schema/">
+      <xsl:value-of select="ead3:physfacet"/>
+      <xsl:if test="ead3:physfacet/normalize-space()">
+          <xsl:text> ; </xsl:text>
+       </xsl:if>
+      <xsl:value-of select="ead3:dimensions"/>
+    </xsl:element>
+  </xsl:template>
+
 
   <!-- this stuff won't work for all of the hand-encoded YCBA files, so those should probably be updated in ASpace.
     Or, just remove these templates for YCBA by adding a repository-based filter-->
@@ -576,6 +596,7 @@
       </xsl:choose>
     </xsl:copy>
   </xsl:template>
+  
 
 
   <!-- silly hack to deal with the fact that ASpace won't allow notes over 65k.

@@ -95,18 +95,26 @@
         </fo:list-item>
     </xsl:template>
     
-    <xsl:template match="ead3:physdescstructured" mode="collection-overview-table-row">
+    <xsl:template match="ead3:physdescstructured" mode="collection-overview-table-row" priority="2">
         <fo:list-item xsl:use-attribute-sets="collection-overview-list-item">
             <fo:list-item-label xsl:use-attribute-sets="collection-overview-list-label">
                 <xsl:call-template name="select-header"/>
             </fo:list-item-label>
             <fo:list-item-body xsl:use-attribute-sets="collection-overview-list-body">
                 <fo:block>
-                    <xsl:apply-templates select="ead3:quantity
-                        , ead3:unittype
-                        , following-sibling::*[1][self::ead3:physdesc/@localtype='container_summary']
-                        , ead3:physfacet
-                        , ead3:dimensions"/>
+                    <xsl:choose>
+                        <xsl:when test="ead3:unittype eq 'duration_HH:MM:SS.mmm'">
+                            <xsl:text>duration: </xsl:text>
+                            <xsl:apply-templates select="* except ead3:unittype"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:apply-templates select="ead3:quantity
+                                , ead3:unittype
+                                , following-sibling::*[1][self::ead3:physdesc/@localtype='container_summary']
+                                , ead3:physfacet
+                                , ead3:dimensions"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </fo:block>
             </fo:list-item-body>
         </fo:list-item>
