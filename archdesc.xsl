@@ -134,16 +134,10 @@
                 doing a refactor. -->
                 <fo:block>
                     <xsl:for-each select="../ead3:unitdatestructured[not(@unitdatetype='bulk')]">
-                        <xsl:sort select="if (ead3:daterange//@standarddate) then (ead3:daterange//@standarddate)[1]
-                            else ead3:datesingle/@standarddate[1]" data-type="number"/>
-                        <xsl:choose>
-                            <xsl:when test="following-sibling::ead3:*[1][local-name()='unitdate']">
-                                <xsl:apply-templates select="following-sibling::ead3:*[1]"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:apply-templates/>
-                            </xsl:otherwise>
-                        </xsl:choose>
+                        <!-- short sort more precisely, but for now i'm just grabbing the year -->
+                        <xsl:sort select="if (ead3:daterange//ead3:fromdate/@standarddate) then ead3:daterange//ead3:fromdate/substring(@standarddate, 1, 4)
+                            else ead3:datesingle/substring(@standarddate, 1, 4)" data-type="number"/>
+                        <xsl:apply-templates/>
                         <xsl:if test="position() != last()">
                             <xsl:text>, </xsl:text>
                         </xsl:if>
@@ -160,17 +154,11 @@
             </fo:list-item-label>
             <fo:list-item-body xsl:use-attribute-sets="collection-overview-list-body">
                 <fo:block>
-                    <xsl:for-each select="../ead3:unitdatestructured[@unitdatetype='bulk']">                
-                        <xsl:sort select="if (ead3:daterange//@standarddate) then (ead3:daterange//@standarddate)[1]
-                            else ead3:datesingle/@standarddate[1]" data-type="number"/>
-                        <xsl:choose>
-                            <xsl:when test="following-sibling::ead3:*[1][local-name()='unitdate']">
-                                <xsl:apply-templates select="following-sibling::ead3:*[1]"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:apply-templates/>
-                            </xsl:otherwise>
-                        </xsl:choose>
+                    <xsl:for-each select="../ead3:unitdatestructured[@unitdatetype='bulk']"> 
+                        <!-- short sort more precisely, but for now i'm just grabbing the year -->
+                        <xsl:sort select="if (ead3:daterange//ead3:fromdate/@standarddate) then ead3:daterange//ead3:fromdate/substring(@standarddate, 1, 4)
+                            else ead3:datesingle/substring(@standarddate, 1, 4)" data-type="number"/>
+                        <xsl:apply-templates/>
                         <xsl:if test="position() != last()">
                             <xsl:text>, </xsl:text>
                         </xsl:if>
