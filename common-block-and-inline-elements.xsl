@@ -43,8 +43,10 @@
       ead3:unitid | ead3:abstract | ead3:addressline | ead3:langmaterial | ead3:materialspec | ead3:origination | ead3:physdesc[not(@localtype = 'container_summary')]
       | ead3:physloc | ead3:repository"
     mode="dsc">
-    <!-- add a call number header in front of unitid elements, and italicize physdesc notes -->
-    <fo:block keep-with-previous.within-page="always">
+    <!-- add a call number header in front of unitid elements, and italicize physdesc notes 
+    removed keep-with-previous.within-page="always" 
+    -->
+    <fo:block>
       <xsl:choose>
         <xsl:when test="self::ead3:unitid">
           <fo:inline>Call Number: </fo:inline>
@@ -184,8 +186,15 @@
     upate: this will be handled in the post-process step instead. -->
     <xsl:apply-templates/>
   </xsl:template>
+  
+  <xsl:template match="ead3:physdescstructured" mode="dsc">
+    <fo:inline font-style="italic">
+      <xsl:apply-templates/>
+    </fo:inline>
+  </xsl:template>
 
   <xsl:template match="ead3:physdesc[@localtype = 'container_summary']" mode="#all">
+    <fo:inline font-style="italic">
     <xsl:text> </xsl:text>
     <xsl:choose>
       <xsl:when
@@ -198,12 +207,7 @@
         <xsl:apply-templates/>
       </xsl:otherwise>
     </xsl:choose>
-  </xsl:template>
-  
-  <xsl:template match="ead3:physdescstructured" mode="dsc">
-    <fo:block>
-      <xsl:apply-templates/>
-    </fo:block>
+    </fo:inline>
   </xsl:template>
   
   <!-- this is very Yale specific-->

@@ -107,7 +107,8 @@
                 </xsl:element>
             </xsl:for-each-group>
         </xsl:variable>
-        <fo:block margin-left="{$cell-margin}" keep-with-next.within-page="always" id="{if (@id) then @id else generate-id(.)}">
+        <!-- removed keep-with-next.within-page="always" -->
+        <fo:block margin-left="{$cell-margin}" id="{if (@id) then @id else generate-id(.)}">
             <xsl:if test="preceding-sibling::ead3:*[@level=$levels-to-force-a-page-break or @otherlevel=$otherlevels-to-force-a-page-break-and-process-before-a-table]">
                 <xsl:attribute name="break-before" select="'page'"/>
             </xsl:if>
@@ -186,7 +187,7 @@
                 </xsl:element>
             </xsl:for-each-group>
         </xsl:variable>
-        <fo:table-row>
+        <fo:table-row keep-together.within-column="always">
             <xsl:call-template name="dsc-table-row-border">
                 <xsl:with-param name="last-row" select="$last-row"/>
                 <xsl:with-param name="no-children" select="$no-children"/>
@@ -381,7 +382,7 @@
     </xsl:template>
     
     <xsl:template match="ead3:did" mode="dsc">
-        <xsl:apply-templates select="ead3:abstract, ead3:physdesc, ead3:physdescstructured, 
+        <xsl:apply-templates select="ead3:abstract, ead3:physdescstructured, ead3:physdesc, 
             ead3:physdescset, ead3:physloc, 
             ead3:langmaterial, ead3:materialspec, ead3:origination, ead3:repository, ead3:dao" mode="#current"/>
     </xsl:template>
