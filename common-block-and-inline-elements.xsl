@@ -111,7 +111,7 @@
   </xsl:template>
   
   <xsl:template match="ead3:p" mode="#all">
-    <fo:block xsl:use-attribute-sets="paragraph-indent">
+    <fo:block xsl:use-attribute-sets="paragraph">
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>

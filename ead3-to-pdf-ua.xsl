@@ -26,9 +26,13 @@
     
     <!-- to do:
           
-          fix up Icons for first page
+          fix up logos for first page  (peabody and walpole down; the rest to go).
+          
+          fix up paging info for each repo.  i think it's just beinecke and mssa that have different instructions.
           
           remove series header on first page???
+          
+          consider removing the footer and putting page number at top (per Sandra's request; also how YFAD does it).  could add total page size to overview section?
           
           fix up block and inline stylings.
           
@@ -74,20 +78,23 @@
     <xsl:param name="serif-font" select="'Yale'"/>
     <xsl:param name="sans-serif-font" select="'Mallory'"/>
     <xsl:param name="backup-font" select="'ArialUnicode'"/>
-    <xsl:param name="default-font-size" select="'9'"/>
+    <xsl:param name="default-font-size" select="'10'"/>
     <xsl:param name="include-audience-equals-internal" select="false()"/>
     <xsl:param name="start-page-1-after-table-of-contents" select="false()"/>
     <!-- if you change this to true, you'll lose the markers (e.g. series N continued)
     since those are currently in the table header, not the page headers.
     -->
     <xsl:param name="dsc-omit-table-header-at-break" select="false()"/>
-    <xsl:param name="include-paging-info" select="if ($repository-code = ('beinecke')) then true() else false()"/>
+    <xsl:param name="include-paging-info" select="if ($repository-code = ('ypm', 'ycba', 'div')) then false() else true()"/>
     <xsl:param name="paging-info-title" select="'Paging Instructions'"/>
     
     <xsl:param name="archdesc-did-title" select="'Collection Overview'"/>
     <xsl:param name="admin-info-title" select="'Administrative Information'"/>
     <xsl:param name="dsc-title" select="'Collection Contents'"/>
-    <xsl:param name="control-access-title" select="'Names and Subjects'"/>
+    <xsl:param name="control-access-title" select="'Selected Search Terms'"/>
+    <xsl:param name="control-access-context-note">
+        <xsl:text>The following terms have been used to index the description of this collection in the Library's online catalog. They are grouped by name of person or organization, by subject or location, and by occupation and listed alphabetically therein.</xsl:text>
+    </xsl:param>
     
     <xsl:param name="odd-headings-to-add-at-end" select="'index|appendix'"/>
     <xsl:param name="levels-to-include-in-toc" select="('series', 'subseries', 'collection', 'fonds', 'recordgrp', 'subgrp')"/>
@@ -108,6 +115,8 @@
                 ead3:ead/ead3:archdesc/ead3:scopecontent[1]/ead3:p[1]"/>
     <!--example: <recordid instanceurl="http://hdl.handle.net/10079/fa/beinecke.ndy10">beinecke.ndy10</recordid> -->
     <xsl:variable name="finding-aid-identifier" select="ead3:ead/ead3:control/ead3:recordid[1]"/>
+    <xsl:variable name="handle-link" select="if ($finding-aid-identifier/@instanceurl) then $finding-aid-identifier/@instanceurl/normalize-space() 
+        else concat('http://hdl.handle.net/10079/fa/', normalize-space($finding-aid-identifier))"/>
     <xsl:variable name="holding-repository" select="ead3:ead/ead3:archdesc/ead3:did/ead3:repository[1]"/>
     <!-- do i need a variable for the repository code, or can we trust that the repository names won't be edited in ASpace?
     probably shouldn't trust that... so....-->
@@ -153,7 +162,7 @@
 
     <xsl:template name="define-page-masters">
         <!-- Page master for Cover Page -->
-        <fo:simple-page-master master-name="cover" page-height="11in" page-width="8.5in" margin="0.2in">
+        <fo:simple-page-master master-name="cover" page-height="11in" page-width="8.5in" margin="0.4in">
             <fo:region-body margin="1.5in 0.3in 0.3in 0.3in"/>
             <fo:region-before extent="1.5in"/>
             <fo:region-after extent="0.3in"/>
@@ -161,7 +170,7 @@
             <fo:region-end extent="0.3in"/>
         </fo:simple-page-master>
         <!-- Page master for Table of Contents -->
-        <fo:simple-page-master master-name="table-of-contents" page-height="11in" page-width="8.5in" margin="0.2in">
+        <fo:simple-page-master master-name="table-of-contents" page-height="11in" page-width="8.5in" margin="0.4in">
             <fo:region-body margin="0.5in 0.3in 0.3in 0.3in"/>
             <fo:region-before extent="0.5in"/>
             <fo:region-after extent="0.3in"/>
@@ -169,7 +178,7 @@
             <fo:region-end extent="0.3in"/>
         </fo:simple-page-master>
         <!-- Page master for Archdesc -->
-        <fo:simple-page-master master-name="archdesc" page-height="11in" page-width="8.5in" margin="0.2in">
+        <fo:simple-page-master master-name="archdesc" page-height="11in" page-width="8.5in" margin="0.4in">
             <fo:region-body margin="0.5in 0.3in 0.3in 0.3in"/>
             <fo:region-before extent="0.5in"/>
             <fo:region-after extent="0.3in"/>
@@ -177,7 +186,7 @@
             <fo:region-end extent="0.3in"/>
         </fo:simple-page-master>
         <!-- Page master for DSC -->
-        <fo:simple-page-master master-name="contents" page-height="11in" page-width="8.5in" margin="0.2in">
+        <fo:simple-page-master master-name="contents" page-height="11in" page-width="8.5in" margin="0.4in">
             <fo:region-body margin="0.5in 0.3in 0.3in 0.3in"/>
             <fo:region-before extent="0.5in"/>
             <fo:region-after extent="0.3in"/>
@@ -185,7 +194,7 @@
             <fo:region-end extent="0.3in"/>
         </fo:simple-page-master>
         <!-- Page master for Index -->
-        <fo:simple-page-master master-name="index" page-height="11in" page-width="8.5in" margin="0.2in">
+        <fo:simple-page-master master-name="index" page-height="11in" page-width="8.5in" margin="0.4in">
             <fo:region-body margin="0.5in 0.3in 0.3in 0.3in"/>
             <fo:region-before extent="0.5in"/>
             <fo:region-after extent="0.3in"/>
@@ -193,7 +202,7 @@
             <fo:region-end extent="0.3in"/>
         </fo:simple-page-master>
         <!-- Page master for Control Accession -->
-        <fo:simple-page-master master-name="control-access" page-height="11in" page-width="8.5in" margin="0.2in">
+        <fo:simple-page-master master-name="control-access" page-height="11in" page-width="8.5in" margin="0.4in">
             <fo:region-body column-count="2" column-gap=".5in" margin="0.5in 0.3in 0.3in 0.3in"/>
             <fo:region-before extent="0.5in"/>
             <fo:region-after extent="0.3in"/>

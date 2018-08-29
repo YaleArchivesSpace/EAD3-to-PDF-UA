@@ -59,7 +59,6 @@
     </xsl:attribute-set>
     
     <xsl:attribute-set name="paragraph-indent">
-        <xsl:attribute name="space-after">8pt</xsl:attribute>
         <xsl:attribute name="space-before">4pt</xsl:attribute>
         <xsl:attribute name="text-indent">1.5em</xsl:attribute>
     </xsl:attribute-set>

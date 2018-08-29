@@ -122,9 +122,9 @@
             <fo:list-item-body xsl:use-attribute-sets="collection-overview-list-body">
                 <fo:block>
                     <xsl:text>To cite or bookmark this finding aid, please use the following link: </xsl:text>
-                    <fo:basic-link xsl:use-attribute-sets="ref" external-destination="{$finding-aid-identifier/@instanceurl/normalize-space()}"
+                    <fo:basic-link xsl:use-attribute-sets="ref" external-destination="{$handle-link}"
                         fox:alt-text="Permanent finding aid link">
-                        <xsl:value-of select="$finding-aid-identifier/@instanceurl/normalize-space()"/>
+                        <xsl:value-of select="$handle-link"/>
                     </fo:basic-link>
                 </fo:block>
             </fo:list-item-body>
@@ -401,19 +401,19 @@
       
      <xsl:template name="aeon-instructions">
              <xsl:choose>
-                 <xsl:when test="$repository-code='beinecke'">
-                     <fo:block xsl:use-attribute-sets="paragraph-indent">
+                 <xsl:when test="$repository-code eq 'beinecke'">
+                     <fo:block xsl:use-attribute-sets="paragraph">
                          <xsl:text>To request items from this collection for use in the 
             Beinecke Library reading room, please use the request links in the 
             HTML version of this finding aid, available at </xsl:text>
                          <fo:wrapper xsl:use-attribute-sets="ref">
-                             <fo:basic-link external-destination="{$finding-aid-identifier/@instanceurl}">
-                                 <xsl:value-of select="$finding-aid-identifier/@instanceurl"/>
+                             <fo:basic-link external-destination="url({$handle-link})">
+                                 <xsl:value-of select="$handle-link"/>
                              </fo:basic-link>
                          </fo:wrapper>
                          <xsl:text>.</xsl:text>
                      </fo:block>
-                     <fo:block xsl:use-attribute-sets="paragraph-indent">
+                     <fo:block xsl:use-attribute-sets="paragraph">
                          <xsl:text>To order reproductions from this collection, please 
             send an email with the call number, box number(s), and folder number(s) to  </xsl:text>
                          <fo:wrapper xsl:use-attribute-sets="ref">
@@ -424,53 +424,44 @@
                          <xsl:text>.</xsl:text>
                      </fo:block>
                  </xsl:when>
-                 <!--
-                 <xsl:when test="$repository_code='mssa'">
-                     <xsl:element name="fo:block" use-attribute-sets="p.generic">
+                 <xsl:when test="$repository-code eq 'mssa'">
+                     <xsl:element name="fo:block">
                          <xsl:text>To request items from this collection for use in 
             the Manuscripts and Archives reading room, please use the 
             request links in the HTML version of this finding aid, available at </xsl:text>
-                         <fo:wrapper color="{$linkcolor}">
-                             <xsl:element name="fo:basic-link">
-                                 <xsl:attribute name="external-destination">
-                                     <xsl:value-of select="$handleURL"/>
-                                 </xsl:attribute>
-                                 <xsl:value-of select="$handleURL"/>
-                             </xsl:element>
+                         <fo:wrapper xsl:use-attribute-sets="ref">
+                             <fo:basic-link>
+                                 <fo:basic-link external-destination="{$handle-link}">
+                                     <xsl:value-of select="$handle-link"/>
+                                 </fo:basic-link>
+                             </fo:basic-link>
                          </fo:wrapper>
                          <xsl:text>.</xsl:text>
                      </xsl:element>
-                     <xsl:element name="fo:block" use-attribute-sets="p.generic">
+                     <fo:block xsl:use-attribute-sets="paragraph">
                          <xsl:text>To order reproductions from this collection, please go to </xsl:text>
-                         <fo:wrapper color="{$linkcolor}">
-                             <xsl:element name="fo:basic-link">
-                                 <xsl:attribute name="external-destination">
-                                     <xsl:text>http://www.library.yale.edu/mssa/ifr_copy_order.html</xsl:text>
-                                 </xsl:attribute>
+                         <fo:wrapper xsl:use-attribute-sets="ref">
+                             <fo:basic-link external-destination="url('http://www.library.yale.edu/mssa/ifr_copy_order.html')">
                                  <xsl:text>http://www.library.yale.edu/mssa/ifr_copy_order.html</xsl:text>
-                             </xsl:element>
+                             </fo:basic-link>
                          </fo:wrapper>
                          <xsl:text>.  The information you will need to submit an order 
             includes: the collection call number, collection title, 
             series or accession number, box number, and folder number or name.</xsl:text>
-                     </xsl:element>
+                     </fo:block>
                  </xsl:when>
                  <xsl:otherwise>
-                     <xsl:element name="fo:block" use-attribute-sets="p.generic">
+                     <fo:block xsl:use-attribute-sets="paragraph">
                          <xsl:text>To request items from this collection for use on site, please use the request links in the 
             HTML version of this finding aid, available at </xsl:text>
-                         <fo:wrapper color="{$linkcolor}">
-                             <xsl:element name="fo:basic-link">
-                                 <xsl:attribute name="external-destination">
-                                     <xsl:value-of select="$handleURL"/>
-                                 </xsl:attribute>
-                                 <xsl:value-of select="$handleURL"/>
-                             </xsl:element>
+                         <fo:wrapper xsl:use-attribute-sets="ref">
+                             <fo:basic-link external-destination="{$handle-link}">
+                                 <xsl:value-of select="$handle-link"/>
+                             </fo:basic-link>
                          </fo:wrapper>
                          <xsl:text>.</xsl:text>
-                     </xsl:element>
+                     </fo:block>
                  </xsl:otherwise>
-                 -->
              </xsl:choose>
      </xsl:template> 
 </xsl:stylesheet>

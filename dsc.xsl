@@ -389,8 +389,9 @@
     
     <xsl:template match="ead3:container">
         <xsl:variable name="container-lower-case" select="lower-case(@localtype)"/>
+        <!-- removed box from here for now.  seeing if it looks less busy without it. -->
         <xsl:variable name="use-fontawesome" as="xs:boolean">
-            <xsl:value-of select="if ($container-lower-case = ('box', 'volume', 'item_barcode')) then true() else false()"/>
+            <xsl:value-of select="if ($container-lower-case = ('volume', 'item_barcode')) then true() else false()"/>
         </xsl:variable>
         <xsl:variable name="container-abbr">
             <xsl:value-of select="if ($container-lower-case = ('box', 'folder')) then concat(substring($container-lower-case, 1, 1), '.') 

@@ -87,11 +87,17 @@
             <xsl:when test="$repository-code='ypm'">
                 <fo:block xsl:use-attribute-sets="margin-after-small">
                     <fo:external-graphic src="url('logos/peabody.jpg')"
-                        width="70%"
-                        content-height="70%"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="A view from outside the Peabody Museum, with a statue of a triceratops horridus in the foreground"/>
+                </fo:block>
+            </xsl:when>
+            <xsl:when test="$repository-code='lwl'">
+                <fo:block xsl:use-attribute-sets="margin-after-small">
+                    <fo:external-graphic src="url('logos/walpole-summer.jpg')"
+                        content-width="scale-to-fit"
+                        scaling="uniform"
+                        fox:alt-text="A view of the Lewis Walpole Library, during summertime"/>
                 </fo:block>
             </xsl:when>
             <xsl:otherwise/>

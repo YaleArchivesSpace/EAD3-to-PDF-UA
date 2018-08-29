@@ -21,6 +21,9 @@
                 <fo:block xsl:use-attribute-sets="h3" id="control-access" span="all">
                     <xsl:value-of select="$control-access-title"/>
                 </fo:block>
+                <fo:block span="all">
+                    <xsl:value-of select="$control-access-context-note"/>
+                </fo:block>
                 <fo:block>
                     <xsl:apply-templates select="ead3:controlaccess"/>
                 </fo:block>

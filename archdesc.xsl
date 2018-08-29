@@ -30,7 +30,7 @@
                 </fo:block>
                 <!-- change mode name and re-purpose for all levels ? -->
                 <xsl:apply-templates select="ead3:did" mode="collection-overview"/>
-                <xsl:if test="$include-paging-info">
+                <xsl:if test="$include-paging-info eq true()">
                     <xsl:call-template name="section-start"/>
                     <fo:block xsl:use-attribute-sets="h3" id="paging-info">
                         <xsl:value-of select="$paging-info-title"/>
@@ -76,7 +76,7 @@
             <xsl:call-template name="finding-aid-summary"/>
             <xsl:apply-templates select="ead3:physloc
                 , ead3:materialspec" mode="collection-overview-table-row"/>
-            <xsl:if test="$finding-aid-identifier/@instanceurl/normalize-space()">
+            <xsl:if test="$handle-link">
                 <xsl:call-template name="finding-aid-link"/>
             </xsl:if>
         </fo:list-block>

@@ -4,7 +4,17 @@
 
   maintained by: mark.custer@yale.edu
   updated to conform with ASpace versions 2.x
-
+  
+ another example problem:
+  
+              <p>Includes <title localtype="simple" render="italic">
+                  <emph render="italic">By-laws of the Hudson River Spathic Iron Ore Company</emph>
+                  <part/>
+                </title> (1875)</p>
+                
+         Gotta get rid of that extra emph, and put the text
+         of emph into part.  geez.
+                        
   to do:
 
   1)
