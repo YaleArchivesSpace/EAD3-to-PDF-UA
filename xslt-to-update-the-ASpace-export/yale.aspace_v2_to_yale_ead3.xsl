@@ -646,7 +646,7 @@ So, all that we need to do here
     <xsl:element name="ref" namespace="http://ead3.archivists.org/schema/">
       <xsl:attribute name="target" select="@target"/>
       <xsl:call-template name="get-target-info">
-        <xsl:with-param name="id-to-find" select="@target"/>
+        <xsl:with-param name="id-to-find" select="if (starts-with(@target, 'aspace_')) then @target else concat('aspace_', @target)"/>
       </xsl:call-template>
     </xsl:element>
   </xsl:template>

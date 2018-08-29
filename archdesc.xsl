@@ -112,7 +112,7 @@
                                 , ead3:unittype
                                 , following-sibling::*[1][self::ead3:physdesc/@localtype='container_summary']
                                 , ead3:physfacet
-                                , ead3:dimensions"/>
+                                , ead3:dimensions" mode="#current"/>
                         </xsl:otherwise>
                     </xsl:choose>
                 </fo:block>

@@ -193,7 +193,7 @@
     </fo:inline>
   </xsl:template>
 
-  <xsl:template match="ead3:physdesc[@localtype = 'container_summary']" mode="#all">
+  <xsl:template match="ead3:physdesc[@localtype = 'container_summary']" mode="dsc">
     <fo:inline font-style="italic">
     <xsl:text> </xsl:text>
     <xsl:choose>
@@ -208,6 +208,21 @@
       </xsl:otherwise>
     </xsl:choose>
     </fo:inline>
+  </xsl:template>
+  
+  <xsl:template match="ead3:physdesc[@localtype = 'container_summary']" mode="collection-overview-table-row">
+    <xsl:text> </xsl:text>
+    <xsl:choose>
+      <xsl:when
+        test="not(starts-with(normalize-space(), '(')) and not(ends-with(normalize-space(), ')'))">
+        <xsl:text>(</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>)</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   <!-- this is very Yale specific-->
