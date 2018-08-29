@@ -637,6 +637,13 @@ So, all that we need to do here
   <xsl:template match="ead3:unitdatestructured[ead3:unitdate]" priority="2">
     <xsl:apply-templates select="ead3:unitdate"/>
   </xsl:template>
+  <!-- since we're only allowing normalized dates at the collection levels, we'll suppress any date expressions
+    during this step -->
+  <xsl:template match="ead3:archdesc/ead3:did/ead3:unitdatestructured[ead3:unitdate]" priority="3">
+    <xsl:copy>
+      <xsl:apply-templates select="@* | * except ead3:unitdate"/>
+    </xsl:copy>
+  </xsl:template>
   
   <!-- ptr to ref 
   this assumes that the ptr is directed to a component.  

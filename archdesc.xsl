@@ -129,7 +129,9 @@
             </fo:list-item-label>
             <fo:list-item-body xsl:use-attribute-sets="collection-overview-list-body">
                 <!-- this is a mess right now.  EAD3 doesn't make it any easier, either
-                    especially the way that ASpace creates it right now.-->
+                    especially the way that ASpace creates it right now.
+                Well, I could clean this up now that we're modifying the EAD3 exporter, but I'll do that 
+                doing a refactor. -->
                 <fo:block>
                     <xsl:for-each select="../ead3:unitdatestructured[not(@unitdatetype='bulk')]">
                         <xsl:sort select="if (ead3:daterange//@standarddate) then (ead3:daterange//@standarddate)[1]
