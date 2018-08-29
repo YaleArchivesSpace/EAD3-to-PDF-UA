@@ -13,7 +13,7 @@
             <fo:static-content flow-name="xsl-region-before">
                 <fo:block id="cover-page">
                     <xsl:choose>
-                        <xsl:when test="$repository-code = ('peabody', 'ycba')">
+                        <xsl:when test="$repository-code = ('ypm', 'ycba')">
                             <xsl:text>Yale University</xsl:text>
                         </xsl:when>
                         <xsl:otherwise>
@@ -82,6 +82,16 @@
                         content-width="scale-to-fit"
                         scaling="uniform"
                     fox:alt-text="A drawing of an exterior view of the Beinecke Library"/>
+                </fo:block>
+            </xsl:when>
+            <xsl:when test="$repository-code='ypm'">
+                <fo:block xsl:use-attribute-sets="margin-after-small">
+                    <fo:external-graphic src="url('logos/peabody.jpg')"
+                        width="70%"
+                        content-height="70%"
+                        content-width="scale-to-fit"
+                        scaling="uniform"
+                        fox:alt-text="A view from outside the Peabody Museum, with a statue of a triceratops horridus in the foreground"/>
                 </fo:block>
             </xsl:when>
             <xsl:otherwise/>

@@ -7,47 +7,24 @@
 
   to do:
 
-  -1) geez. looks like the EAD3 exporter is still having issues with unicode characters.  not sure what's going on.
-  i might need use the normalize-unicode function on the text output, or at least on the "part" elements
-  where i've noticed this issue.  thankfully that seems to do the trick... with what i've tested so far, at least.
-  
-
-  0)
-  Fix "0 See Container Summary extents"
-  as well as singular extents, like 1 audiocassettes.
-  
-  0.5)
-  convert PTR to REF/@target (and get a report on those via SQL since they don't work in the PUI.).
-  
-
   1)
-  add a method to singularize extent types when necessary.
-
-  2)
-  consider grouping multiple containers into a single span.
+  consider grouping multiple containers into a available spans.
     e.g. box 1, box 2, box 3, box6 in output, then transform to:
         box 1-3
         box 6
     sorting etc. is handled in the display, but if there were a series with 10 boxes
     in order, then it would be better to list that in a single line
-    rather than 10 lines!
+    rather than 10 lines!  update: mssa has a series with 1,000 boxes, but i wouldn't know how to combine the box numbers in that case due to their opaque naming scheme.
 
-  3)
-  decide on how to handle multiple creators.  just take the first for the overview?  use beinecke.frkoch as a test case.
+  2)
+  strip any notes that only have a head element, and no text otheriwse.
 
 
   4)
-  strip any notes that only have a head element, and no text otheriwse.
-
-  5)
-  decide on how to handle EAD3 head elements (e.g. should we replace or accept ASpace defaults?)
-
-
-  6)
   update all repo records in ASpace and remove the "respository_code" parameter from this file.
 
 
-  7)
+  5)
   remove elements that aren't legal in EAD3...  e.g. linebreaks in title elements.
   e.g.
   <title localtype="simple" render="italic">
@@ -62,97 +39,6 @@
   ead2002 example:
 
   ead3 example:
-
-
- Done:
-  adjust how ASpace exports unitdatestructure and unitdate in EAD3 (and report some JIRA issues).
-    notes:
-      1) if you create a date subrecord and give it an end date, do NOT give it a begin date, and give it a date expression...
-            (the date type will have to be bulk or inclusive, since if you change it to single you lose the "end" option)
-        then the ASpace EAD2002 exporter will include the date expression, but not the end date (that's no good, but the problem is with the @normal attribute in EAD2002);
-        and the ASpace EAD3 exporter will ONLY include the end date, NOT the date expression.  that's really not good...
-        but until ASpace has a way to differentiate between unitdatestructured and unitdate, there's no great solution here.
-          ***perhaps the best comprimise would be to always export "unitdate" when a date expression was filled out, ignoring the begin/end values altogether.
-
-      2) if you create a date subrecord and give it an end date, do NOT give it a begin date, and leave the date expression field blank...
-             the date type will have to be bulk or inclusive, since if you change it to single you lose the "end" option)
-        then the ASpace EAD2002 exporter will be reasonable.  example output: <unitdate type="inclusive">-2018-06-03</unitdate>. and that's as best it can do, really, since EAD2002 wouldn't allow  @normal="/2018-06-03"
-        and the ASpace EAD3 exporter also will work as expected (the problem with the EAD3 exporter, though, is issue #1 above).
-
-     3)  if you create a date subrecord and give it a begin date, do NOT give it an end date, call it "inclusive", and add a date expresion...
-        then the ASpace EAD2002 exporter does fine, but it's a bit repetitious since you wind up with normal="1945-04-01/1945-04-01" instead of normal="1945-04-01"
-        and the ASpace EAD3 exporter will export the date but ignore the date expression altogether.  that's not good.
-          ...but if if you go back and change the date type to "single", you're golden.
-       4)  And there are other problems to deal with for now regarding the EAD3 exporter, such as:
-
-          1 ASpace subrecord, which looks like 2 in the export:
-
-                     <unitdatestructured unitdatetype="inclusive"> 
-                       <daterange>
-      <fromdate standarddate="1934">1934</fromdate> 
-                          <todate standarddate="1967">1967</todate> 
-                       </daterange> 
-                     </unitdatestructured> 
-                     <unitdate unitdatetype="inclusive">1934–1967</unitdate>
-
-          1 ASpace subrecord, which looks even more like 2 in the export (since the date expression ends with ", undated")
-
-                     <unitdatestructured unitdatetype="inclusive"> 
-                      <daterange> 
-                        <fromdate standarddate="1942">1942</fromdate> 
-                        <todate standarddate="1946">1946</todate> 
-                      </daterange> 
-                     </unitdatestructured> 
-                     <unitdate unitdatetype="inclusive">1942-1946, undated</unitdate>
-
-          3 ASpace date subrecords, which look like 3 in the export, and finally looks are not deceiving:
-
-                  <unitdatestructured unitdatetype="inclusive"> 
-                      <daterange> 
-                        <fromdate standarddate="1963">1963</fromdate> 
-                    </daterange> 
-                  </unitdatestructured> 
-                  <unitdatestructured unitdatetype="inclusive"> 
-                    <daterange> 
-                      <fromdate standarddate="1968">1968</fromdate> 
-                    </daterange> 
-                  </unitdatestructured> 
-                  <unitdate unitdatetype="inclusive">undated</unitdate>
-
-
-        4     <unitdatestructured unitdatetype="inclusive"> 
-                  <daterange> 
-                     <fromdate standarddate="1942-04-21">1942-04-21</fromdate> 
-                  </daterange> 
-              </unitdatestructured> 
-              <unitdate unitdatetype="inclusive">1942 Apr 21</unitdate>
-
-        5      <unitdatestructured unitdatetype="inclusive">
-                <daterange>
-                  <fromdate standarddate="2006">2006</fromdate>
-                  <todate standarddate="2006">2006</todate>
-                </daterange>
-              </unitdatestructured>
-              <unitdate unitdatetype="inclusive">2006</unitdate>
-
-
-        In the first two cases, it would be best to just process the sibling unitdate element by itself,
-        but in the last case we need to process all 3 of the date subrecords.
-
-        In other words, we need a way to tell when ASpace has exported a unitdatestructured + unitdate pair via the EAD3 exporter...
-        and when those potential "pairs" are not produced from the same ASpace date subrecord.
-
-        For now, I attempt to compare all unitdatestructured elements with the unitdate element that follows immmediately, if any.
-          to compare, i'll only look at the numeric contents of the unitdate and the unitdatestructured.
-          if those match exactly, then I will remove the unitdatestructured.
-          if they don't match, then we'll keep everything and process whatever's in the output during the PDF process.
-                this isn't perfect ,but as long as folks don't type in month names into date expressions, etc. (since we've said not to, according to our guidelines),
-                then it should be good enough.
-
-          however, i should probably convert those date expressions to iso dates for comparison (due to example 4).
-          that's probably the only way to handle this unfortunate issue without just updating the EAD3 exporter
-          to not try and serialize structured dates (in fact, that would be the best approach, but i'm up for a challenge).
-
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ead3="http://ead3.archivists.org/schema/"
   xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -189,8 +75,6 @@
     </xsl:analyze-string>
   </xsl:function>
 
-
-
   <xsl:function name="mdc:month-name-2-number" as="xs:string">
     <xsl:param name="month-name" as="xs:string"/>
     <xsl:variable name="months" as="xs:string*" select="'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'"/>
@@ -226,9 +110,6 @@
 
   Another wrinkle:
 
-  (so, if a pattern of \d{4}s then replace
-  as appropriate for first and second date)
-
                    <unitdatestructured unitdatetype="inclusive">
                      <daterange>
                         <fromdate standarddate="1960">1960</fromdate>
@@ -236,7 +117,11 @@
                      </daterange>
                   </unitdatestructured>
                   <unitdate unitdatetype="inclusive">1960s-1990s</unitdate>
-
+     (so, if a pattern of \d{4}s then replace
+  as appropriate for first and second date)
+  
+  MDC (2018/08/28): At this point, I've decided it best to modify the EAD3 exporter so this issue doesn't happen in the first place.
+  Keeping the templates/functions around for now, since they won't hurt anything, but they should no longer be necessary.
   -->
     <xsl:variable name="years">
       <xsl:analyze-string select="$date-expression" regex="(\d{{4}})">
@@ -286,15 +171,12 @@
     <xsl:value-of select="if ($first-date eq $second-date) then true() else false()"/>
   </xsl:function>
 
-  <!-- still need to decide on how we should handle these default head / label elements -->
-  <xsl:include href="http://www.library.yale.edu/facc/xsl/include/yale.ead2002.id_head_values.xsl"/>
-
   <!-- Repository Parameter -->
   <xsl:param name="repository">
     <xsl:value-of select="substring-before(normalize-space(/ead3:ead/ead3:control/ead3:recordid), '.')"/>
   </xsl:param>
 
-  <xsl:param name="include-cc0-rights-statement">
+  <xsl:param name="include-cc0-rights-statement" as="xs:boolean"> 
     <!-- need to get the okay from Peabody.  anyone else?-->
     <xsl:value-of select="if ($repository = ('mssa', 'beinecke', 'divinity', 'music', 'med', 'arts', 'vrc', 'lwl', 'ycba')) then true() else false()"/>
   </xsl:param>
@@ -361,21 +243,21 @@
   <xsl:template match="ead3:notestmt"/>
 
 
-  <xsl:template match="ead3:conventiondeclaration[$include-cc0-rights-statement]">
+  <xsl:template match="ead3:conventiondeclaration[$include-cc0-rights-statement eq true()]">
     <xsl:copy>
       <xsl:apply-templates select="@* | node()"/>
     </xsl:copy>
     <xsl:call-template name="cc0-rights-statement"/>
   </xsl:template>
 
-  <xsl:template match="ead3:languagedeclaration[$include-cc0-rights-statement][not(following-sibling::ead3:conventiondeclaration)]">
+  <xsl:template match="ead3:languagedeclaration[$include-cc0-rights-statement eq true()][not(following-sibling::ead3:conventiondeclaration)]">
     <xsl:copy>
       <xsl:apply-templates select="@* | node()"/>
     </xsl:copy>
     <xsl:call-template name="cc0-rights-statement"/>
   </xsl:template>
 
-  <xsl:template match="ead3:maintenanceagency[$include-cc0-rights-statement][not(following-sibling::ead3:languagedeclaration)][not(following-sibling::ead3:conventiondeclaration)]">
+  <xsl:template match="ead3:maintenanceagency[$include-cc0-rights-statement eq true()][not(following-sibling::ead3:languagedeclaration)][not(following-sibling::ead3:conventiondeclaration)]">
     <xsl:copy>
       <xsl:apply-templates select="@* | node()"/>
     </xsl:copy>
@@ -515,7 +397,8 @@
 So, all that we need to do here 
 1) is singularize the unittype values when the quantity = 1.
 2) remove any quantity/unittype values when the quantity is 0 OR unittype = 'see container summary', and replace with a generic physdesc element in case physfacet and dimensions were recorded.
-3) [also consider formatting the numbers?  e.g. if 1000 is entered, display as 1,000]
+3) [also consider formatting the numbers?  e.g. if 1000 is entered, display as 1,000.  need feedback about this.  
+  for now, we'll display whatever is entered since ASpace does not actually store this field as a number.]
   -->
 
   <xsl:template match="ead3:physdescstructured[normalize-space(ead3:quantity) eq '1']/ead3:unittype">
@@ -553,7 +436,6 @@ So, all that we need to do here
     </xsl:copy>
   </xsl:template>
   
-
   <xsl:template match="ead3:physdescstructured[normalize-space(ead3:quantity) eq '0'] 
     | ead3:physdescstructured[lower-case(normalize-space(ead3:unittype)) eq 'see container summary']">
     <xsl:element name="physdesc" namespace="http://ead3.archivists.org/schema/">
@@ -568,7 +450,7 @@ So, all that we need to do here
 
   <!-- this stuff won't work for all of the hand-encoded YCBA files, so those should probably be updated in ASpace.
     Or, just remove these templates for YCBA by adding a repository-based filter-->
-  <xsl:template match="ead3:physfacet">
+  <xsl:template match="ead3:physfacet[$repository != ('ycba')]">
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
       <xsl:choose>
@@ -582,7 +464,7 @@ So, all that we need to do here
       </xsl:choose>
     </xsl:copy>
   </xsl:template>
-  <xsl:template match="ead3:dimensions">
+  <xsl:template match="ead3:dimensions[$repository != ('ycba')]">
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
       <xsl:choose>
@@ -623,7 +505,6 @@ So, all that we need to do here
   <xsl:template match="ead3:archdesc/ead3:did/ead3:origination[@label = 'source']"/>
 
 
-
   <xsl:template match="ead3:physdesc">
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
@@ -639,9 +520,6 @@ So, all that we need to do here
       </xsl:choose>
     </xsl:copy>
   </xsl:template>
-
-  <!-- decide later on how we should handle default head / label values for each element-->
-
 
 
 <!-- we'll have to update how ASpace deals with languages (and languagesets)
@@ -709,21 +587,6 @@ So, all that we need to do here
     <xsl:value-of select="$tokens[position() &lt; last()]" separator=", "/>
   </xsl:template>
 
-
-
-  <!-- REMOVE THIS TEMPLATE ONCE THIS BUG IS FIXED IN ASPACE'S EAD3 EXPORT OPTION
-    actually, going to remove this, since it just masks other problems with the EAD3 export.
-    as it turns out, if you just have an & in a field, then it gets stripped.
-    the EAD3 exports require &amp; to be recorded in the field, instead.
-    that's fine, but we've got lots of data to udpate!
-    and we'll need to instruct folks who enter that info manually
-  <xsl:template match="ead3:c/ead3:did/ead3:unittitle[not(contains(., '&amp;'))][following-sibling::ead3:dao[contains(@linktitle, '&amp;')]][$finding-aid-identifier=('mssa.ms.2004', 'mssa.ms.1981')]">
-    <xsl:copy>
-      <xsl:value-of select="following-sibling::ead3:dao[1]/replace(@linktitle, '&amp;quot;', '&quot;')"/>
-    </xsl:copy>
-  </xsl:template>
-   -->
-
   <!-- REMOVE THIS TEMPLATE ONCE THIS BUG IS FIXED IN ASPACE'S EAD3 EXPORT OPTION -->
   <xsl:template match="@linktitle">
     <xsl:attribute name="{local-name()}">
@@ -773,6 +636,30 @@ So, all that we need to do here
   -->
   <xsl:template match="ead3:unitdatestructured[ead3:unitdate]" priority="2">
     <xsl:apply-templates select="ead3:unitdate"/>
+  </xsl:template>
+  
+  <!-- ptr to ref 
+  this assumes that the ptr is directed to a component.  
+  adjust after investigating the data, but eventually we can remove this feature since we'll be converting our ptr elements to ref elements.
+  -->
+  <xsl:template match="ead3:ptr[@target]">
+    <xsl:element name="ref" namespace="http://ead3.archivists.org/schema/">
+      <xsl:attribute name="target" select="@target"/>
+      <xsl:call-template name="get-target-info">
+        <xsl:with-param name="id-to-find" select="@target"/>
+      </xsl:call-template>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template name="get-target-info">
+    <xsl:param name="id-to-find"/>
+    <xsl:apply-templates select="//*[@id = $id-to-find]/ead3:did/ead3:unittitle/(*|text())"/>
+  </xsl:template>
+  
+  <xsl:template match="ead3:ptr[@href]" priority="2">
+    <xsl:element name="ref" namespace="http://ead3.archivists.org/schema/">
+      <xsl:value-of select="@href"/>
+    </xsl:element>
   </xsl:template>
 
 </xsl:stylesheet>

@@ -370,16 +370,17 @@
     <xsl:template name="container-layout">
         <xsl:param name="containers-sorted-by-localtype"/>
         <xsl:choose>
+            <!-- use Yale font or not? xsl:use-attribute-sets="header-serif" -->
             <!-- the middle step, i.e. *, in these cases is the localtype (e.g. box, volume, etc.) -->
             <xsl:when test="count($containers-sorted-by-localtype/*/container-group) gt 1">
                 <xsl:for-each select="$containers-sorted-by-localtype/*/container-group">
-                    <fo:block xsl:use-attribute-sets="header-serif">
+                    <fo:block>
                         <xsl:apply-templates/>
                     </fo:block> 
                 </xsl:for-each>                
             </xsl:when>
             <xsl:otherwise>
-                <fo:block xsl:use-attribute-sets="header-serif">
+                <fo:block>
                     <xsl:apply-templates select="$containers-sorted-by-localtype/*/container-group"/>
                 </fo:block> 
             </xsl:otherwise>

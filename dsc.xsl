@@ -387,26 +387,47 @@
     </xsl:template>
     
     <xsl:template match="ead3:container">
+        <xsl:variable name="container-lower-case" select="lower-case(@localtype)"/>
         <xsl:variable name="use-fontawesome" as="xs:boolean">
-            <xsl:value-of select="if (lower-case(@localtype) = ('box', 'volume', 'item_barcode')) then true() else false()"/>
+            <xsl:value-of select="if ($container-lower-case = ('box', 'volume', 'item_barcode')) then true() else false()"/>
+        </xsl:variable>
+        <xsl:variable name="container-abbr">
+            <xsl:value-of select="if ($container-lower-case = ('box', 'folder')) then concat(substring($container-lower-case, 1, 1), '.') 
+                else if ($container-lower-case eq 'volume') then 'vol.'
+                else ''"/>
+        </xsl:variable>
+        <xsl:variable name="container-expan">
+            <xsl:value-of select="if (normalize-space($container-abbr)) then $container-lower-case else ''"/>
         </xsl:variable>
         <xsl:choose>
             <xsl:when test="$use-fontawesome eq false()">
-                <xsl:value-of select="lower-case(@localtype)"/>
+                <fo:inline color="#4A4A4A">
+                    <xsl:if test="$container-expan">
+                        <xsl:attribute name="alt-text" namespace="http://xmlgraphics.apache.org/fop/extensions" select="$container-expan"/>
+                    </xsl:if>
+                    <xsl:value-of select="if (normalize-space($container-abbr)) then $container-abbr else $container-expan"/>
+                </fo:inline>
             </xsl:when>
             <xsl:otherwise>
                 <fo:inline font-family="FontAwesomeSolid" color="#4A4A4A">
-                    <xsl:value-of select="if (lower-case(@localtype) eq 'box') then '&#xf187; '
-                        else if (lower-case(@localtype) eq 'folder') then '&#xf07b; '
-                        else if (lower-case(@localtype) eq 'volume') then '&#xf02d; '
-                        else if (lower-case(@localtype) eq 'item_barcode') then '&#xf02a;'
+                    <xsl:value-of select="if ($container-lower-case eq 'box') then '&#xf187; '
+                        else if ($container-lower-case eq 'folder') then '&#xf07b; '
+                        else if ($container-lower-case eq 'volume') then '&#xf02d; '
+                        else if ($container-lower-case eq 'item_barcode') then '&#xf02a;'
                         else '&#xf0a0; '"/>
                 </fo:inline>
-                <xsl:value-of select="if (lower-case(@localtype) eq 'item_barcode') then '' else lower-case(@localtype)"/>
+                <fo:inline color="#4A4A4A">
+                    <xsl:if test="$container-expan">
+                        <xsl:attribute name="alt-text" namespace="http://xmlgraphics.apache.org/fop/extensions" select="$container-expan"/>
+                    </xsl:if>
+                    <xsl:value-of select="if (normalize-space($container-abbr)) then $container-abbr else $container-expan"/>
+                </fo:inline>
             </xsl:otherwise>
         </xsl:choose>
         <xsl:text> </xsl:text>
         <xsl:apply-templates/>
+        
+        <!-- comma separator or no? -->
         <xsl:if test="position() ne last()">
             <xsl:text>, </xsl:text>
         </xsl:if>
