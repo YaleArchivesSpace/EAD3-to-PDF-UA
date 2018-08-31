@@ -113,7 +113,7 @@
     <xsl:template match="ead3:eventdatetime" mode="titlepage.pdf.creation.date">
         <fo:block font-size="9pt">
             <xsl:text>Last modified at </xsl:text>
-            <xsl:value-of select="format-dateTime(xs:dateTime(.), '[h].[m01][Pn] on [FNn], [MNn] [D1o], [Y0001]')"/>
+            <xsl:value-of select="format-dateTime(xs:dateTime(.), '[h].[m01] [Pn] on [FNn], [MNn] [D1o], [Y0001]')"/>
         </fo:block>
     </xsl:template>
 
