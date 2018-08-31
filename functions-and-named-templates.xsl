@@ -59,13 +59,13 @@
         </fo:block>
     </xsl:template>
     <xsl:template name="header-dsc">
-        <fo:block text-align="justify">
-            <fo:inline-container width="30%">
+        <fo:block text-align="left">
+            <fo:inline-container width="39%">
                 <fo:block font-size="9pt">
                     <fo:retrieve-marker retrieve-class-name="continued-header-text"/>
                 </fo:block>
             </fo:inline-container>
-            <fo:inline-container width="70%">
+            <fo:inline-container width="61%">
                 <xsl:call-template name="header-right"/>
             </fo:inline-container>
         </fo:block>
@@ -221,14 +221,31 @@
         <!-- xsl:use-attribute-sets="dsc-table-header" -->
         <fo:table-header>
             <fo:table-row>
-                <fo:table-cell number-columns-spanned="{$columns-spanned}">
-                    <fo:block font-size="8pt">
-                        <fo:retrieve-table-marker retrieve-class-name="continued-text" 
-                            retrieve-position-within-table="first-starting" 
-                            retrieve-boundary-within-table="table-fragment"/> 
-                        &#x00A0;
-                    </fo:block>
-                </fo:table-cell>
+                <xsl:choose>
+                    <xsl:when test="$column-types = ('c-d-d', 'c-d')">
+                        <fo:table-cell>
+                            <fo:block/>
+                        </fo:table-cell>
+                        <fo:table-cell number-columns-spanned="{$columns-spanned -1 }">
+                            <fo:block font-size="9pt">
+                                <fo:retrieve-table-marker retrieve-class-name="continued-text" 
+                                    retrieve-position-within-table="first-starting" 
+                                    retrieve-boundary-within-table="table-fragment"/> 
+                                &#x00A0;
+                            </fo:block>
+                        </fo:table-cell>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <fo:table-cell number-columns-spanned="{$columns-spanned}">
+                            <fo:block font-size="9pt">
+                                <fo:retrieve-table-marker retrieve-class-name="continued-text" 
+                                    retrieve-position-within-table="first-starting" 
+                                    retrieve-boundary-within-table="table-fragment"/> 
+                                &#x00A0;
+                            </fo:block>
+                        </fo:table-cell>
+                    </xsl:otherwise>
+                </xsl:choose>
             </fo:table-row>
             <fo:table-row>
                 <fo:table-cell number-columns-spanned="{$columns-spanned}">
