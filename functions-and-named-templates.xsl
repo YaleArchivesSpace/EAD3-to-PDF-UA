@@ -52,14 +52,14 @@
     
     <!-- header and footer templates (start)-->
     <xsl:template name="header-right">
-        <fo:block text-align="right" font-size="9pt" xsl:use-attribute-sets="header-serif">
+        <fo:block text-align="right" font-size="9pt">
             <xsl:apply-templates select="$collection-title"/>
             <fo:block/>
             <xsl:apply-templates select="$collection-identifier"/>
         </fo:block>
     </xsl:template>
     <xsl:template name="header-dsc">
-        <fo:block text-align="justify" xsl:use-attribute-sets="header-serif">
+        <fo:block text-align="justify">
             <fo:inline-container width="30%">
                 <fo:block font-size="9pt">
                     <fo:retrieve-marker retrieve-class-name="continued-header-text"/>
@@ -219,7 +219,7 @@
         <xsl:param name="column-types"/>
         <xsl:variable name="columns-spanned" select="string-length(replace($column-types, '-', ''))"/>
         <!-- xsl:use-attribute-sets="dsc-table-header" -->
-        <fo:table-header xsl:use-attribute-sets="header-serif">
+        <fo:table-header>
             <fo:table-row>
                 <fo:table-cell number-columns-spanned="{$columns-spanned}">
                     <fo:block font-size="8pt">
@@ -239,7 +239,7 @@
             </fo:table-row>
             <!-- a bit of a hack to hide the column headers here, using "white font", but i don't think they're needed
             for the visual layout of the PDF. -->
-            <fo:table-row xsl:use-attribute-sets="header-serif white-font">
+            <fo:table-row xsl:use-attribute-sets="white-font">
                 <xsl:choose>
                     <xsl:when test="$column-types eq 'c-d-d'">
                         <fo:table-cell>
