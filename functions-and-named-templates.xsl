@@ -378,7 +378,7 @@
                     <xsl:text> > </xsl:text>
                 </xsl:if>
                 <xsl:if test="position() eq last()">
-                    <xsl:text> (Continued)</xsl:text>
+                    <xsl:text> (continued)</xsl:text>
                 </xsl:if>
             </fo:inline>
         </xsl:for-each>

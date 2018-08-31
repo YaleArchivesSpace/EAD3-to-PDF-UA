@@ -110,7 +110,7 @@
         <xsl:attribute name="start-indent">body-start()</xsl:attribute>
     </xsl:attribute-set>
     
-    <xsl:attribute-set name="page-number" use-attribute-sets="header-serif">
+    <xsl:attribute-set name="page-number">
         <xsl:attribute name="font-size">9pt</xsl:attribute>
         <xsl:attribute name="text-align">end</xsl:attribute>
     </xsl:attribute-set>
