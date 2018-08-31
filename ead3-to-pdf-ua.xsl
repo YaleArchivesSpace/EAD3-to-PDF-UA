@@ -28,8 +28,6 @@
           
           fix up logos for first page  (peabody and walpole down; the rest to go).
           
-          fix up paging info for each repo.  i think it's just beinecke and mssa that have different instructions.
-          
           remove series header on first page???
           
           consider removing the footer and putting page number at top (per Sandra's request; also how YFAD does it).  could add total page size to overview section?
@@ -66,7 +64,7 @@
     
     https://xmlgraphics.apache.org/fop/2.2/accessibility.html
     
-    This XSL-FO process has been written for EAD3 files that produced by ArchivesSpace, version 2.2.
+    This XSL-FO process has been written for EAD3 files that are produced by ArchivesSpace, version 2.2 and up.
     Those exports are first processed by another XSLT transformtion, however, to clean up some of the potentially-invalid / 
     problematic EAD that ArchivesSpace can produce.
     -->
