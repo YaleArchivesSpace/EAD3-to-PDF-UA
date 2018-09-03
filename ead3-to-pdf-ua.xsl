@@ -91,7 +91,14 @@
     <xsl:param name="dsc-title" select="'Collection Contents'"/>
     <xsl:param name="control-access-title" select="'Selected Search Terms'"/>
     <xsl:param name="control-access-context-note">
-        <xsl:text>The following terms have been used to index the description of this collection in the Library's online catalog. They are grouped by name of person or organization, by subject or location, and by occupation and listed alphabetically therein.</xsl:text>
+        <xsl:choose>
+            <xsl:when test="$repository-code eq 'ypm'">
+                <xsl:text>The following terms have been used to index the description of this collection. They are grouped by name of person or organization, by subject or location, and by occupation and listed alphabetically therein.</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text>The following terms have been used to index the description of this collection in the Library's online catalog. They are grouped by name of person or organization, by subject or location, and by occupation and listed alphabetically therein.</xsl:text>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:param>
     
     <xsl:param name="odd-headings-to-add-at-end" select="'index|appendix'"/>
