@@ -420,7 +420,9 @@
                     <xsl:if test="$container-abbr/normalize-space()">
                         <xsl:attribute name="alt-text" namespace="http://xmlgraphics.apache.org/fop/extensions" select="$container-lower-case"/>
                     </xsl:if>
-                    <xsl:value-of select="if ($container-abbr/normalize-space()) then $container-abbr else $container-lower-case"/>
+                    <xsl:value-of select="if ($container-lower-case eq 'item_barcode') then '' 
+                        else if ($container-abbr/normalize-space()) then $container-abbr
+                        else $container-lower-case"/>
                 </fo:inline>
             </xsl:otherwise>
         </xsl:choose>
