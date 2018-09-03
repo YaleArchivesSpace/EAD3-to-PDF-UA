@@ -110,6 +110,11 @@
         <xsl:attribute name="start-indent">body-start()</xsl:attribute>
     </xsl:attribute-set>
     
+    <xsl:attribute-set name="dsc-container-key-list-label">
+          <xsl:attribute name="end-indent">label-end()</xsl:attribute>
+          <xsl:attribute name="width">3em</xsl:attribute>
+    </xsl:attribute-set>
+    
     <xsl:attribute-set name="page-number">
         <xsl:attribute name="font-size">9pt</xsl:attribute>
         <xsl:attribute name="text-align">end</xsl:attribute>
@@ -142,6 +147,11 @@
     
     <xsl:attribute-set name="dsc-table-cells">
         <xsl:attribute name="padding">5pt 2pt</xsl:attribute>
+    </xsl:attribute-set>
+    
+    <xsl:attribute-set name="container-grouping">
+        <xsl:attribute name="start-indent">1em</xsl:attribute>
+        <xsl:attribute name="text-indent">-1em</xsl:attribute>
     </xsl:attribute-set>
     
 

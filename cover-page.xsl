@@ -97,8 +97,10 @@
                 </fo:block>
             </xsl:when>
             <xsl:otherwise>
-              <fo:block xsl:use-attribute-sets="margin-after-small">
-                  <fo:external-graphic src="url('logos/YaleShieldBW.jpg')"
+                <fo:block xsl:use-attribute-sets="margin-after-small">
+                  <fo:external-graphic src="url('logos/Yale_University_Shield_1.svg')"
+                      width="70%"
+                      content-height="70%"
                       content-width="scale-to-fit"
                       scaling="uniform"
                       fox:alt-text="Yale University logo, with the Lux et Veritas motto"/>
@@ -116,7 +118,7 @@
     <xsl:template match="ead3:eventdatetime" mode="titlepage.pdf.creation.date">
         <fo:block font-size="9pt">
             <xsl:text>Last modified at </xsl:text>
-            <xsl:value-of select="format-dateTime(xs:dateTime(.), '[h].[m01] [Pn] on [FNn], [MNn] [D1o], [Y0001]')"/>
+            <xsl:value-of select="format-dateTime(xs:dateTime(.), '[h]:[m01] [Pn] on [FNn], [MNn] [D1o], [Y0001]')"/>
         </fo:block>
     </xsl:template>
 

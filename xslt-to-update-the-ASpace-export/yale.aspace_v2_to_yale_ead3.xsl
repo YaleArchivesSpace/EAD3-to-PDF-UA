@@ -418,6 +418,7 @@
       <xsl:when test="not(following-sibling::ead3:container)">
         <xsl:copy>
           <xsl:apply-templates select="@localtype"/>
+          <xsl:attribute name="id" select="generate-id()"/>
           <xsl:value-of select="if ($first-container-in-range eq $current-container) 
             then $current-container
             else concat($first-container-in-range, '&#x2013;', $current-container)"/>
@@ -447,6 +448,7 @@
       <xsl:when test="mdc:top-container-to-number($current-container) + 1 ne mdc:top-container-to-number($next-container)">
         <xsl:copy>
           <xsl:apply-templates select="@localtype"/>
+          <xsl:attribute name="id" select="generate-id()"/>
           <xsl:value-of select="if ($first-container-in-range eq $current-container) 
             then $current-container
             else concat($first-container-in-range, '&#x2013;', $current-container)"/>

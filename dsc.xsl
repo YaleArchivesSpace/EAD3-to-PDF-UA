@@ -40,6 +40,7 @@
             if (ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c'][descendant-or-self::ead3:container])
             then 'c-d'
             else 'd'"/>
+
         <fo:page-sequence master-reference="contents">
             <!-- Page header -->
             <fo:static-content flow-name="xsl-region-before">
@@ -52,7 +53,7 @@
             <!-- Content of page -->
             <fo:flow flow-name="xsl-region-body">
                 <xsl:call-template name="section-start"/>
-                <fo:block xsl:use-attribute-sets="h3" id="dsc-contents"><xsl:value-of select="$dsc-title"/></fo:block>
+                <fo:block xsl:use-attribute-sets="h3" id="dsc-contents"><xsl:value-of select="$dsc-title"/></fo:block>                
                 <xsl:choose>
                     <xsl:when test="ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c'][@level=$dsc-first-c-levels-to-process-before-a-table or @otherlevel=$otherlevels-to-force-a-page-break-and-process-before-a-table]">
                         <xsl:apply-templates select="ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c']" mode="dsc-block">
@@ -398,16 +399,13 @@
                 else if ($container-lower-case eq 'volume') then 'vol.'
                 else ''"/>
         </xsl:variable>
-        <xsl:variable name="container-expan">
-            <xsl:value-of select="if (normalize-space($container-abbr)) then $container-lower-case else ''"/>
-        </xsl:variable>
         <xsl:choose>
             <xsl:when test="$use-fontawesome eq false()">
                 <fo:inline color="#4A4A4A">
-                    <xsl:if test="$container-expan">
-                        <xsl:attribute name="alt-text" namespace="http://xmlgraphics.apache.org/fop/extensions" select="$container-expan"/>
+                    <xsl:if test="$container-abbr/normalize-space()">
+                        <xsl:attribute name="alt-text" namespace="http://xmlgraphics.apache.org/fop/extensions" select="$container-lower-case"/>
                     </xsl:if>
-                    <xsl:value-of select="if (normalize-space($container-abbr)) then $container-abbr else $container-expan"/>
+                    <xsl:value-of select="if ($container-abbr/normalize-space()) then $container-abbr else $container-lower-case"/>
                 </fo:inline>
             </xsl:when>
             <xsl:otherwise>
@@ -419,10 +417,10 @@
                         else '&#xf0a0; '"/>
                 </fo:inline>
                 <fo:inline color="#4A4A4A">
-                    <xsl:if test="$container-expan">
-                        <xsl:attribute name="alt-text" namespace="http://xmlgraphics.apache.org/fop/extensions" select="$container-expan"/>
+                    <xsl:if test="$container-abbr/normalize-space()">
+                        <xsl:attribute name="alt-text" namespace="http://xmlgraphics.apache.org/fop/extensions" select="$container-lower-case"/>
                     </xsl:if>
-                    <xsl:value-of select="if (normalize-space($container-abbr)) then $container-abbr else $container-expan"/>
+                    <xsl:value-of select="if ($container-abbr/normalize-space()) then $container-abbr else $container-lower-case"/>
                 </fo:inline>
             </xsl:otherwise>
         </xsl:choose>

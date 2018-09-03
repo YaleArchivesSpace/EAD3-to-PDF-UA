@@ -185,8 +185,8 @@
             border-collapse="collapse" keep-with-previous.within-page="always" table-omit-header-at-break="{$dsc-omit-table-header-at-break}">          
             <xsl:choose>
                 <xsl:when test="$column-types eq 'c-d-d'">
-                    <fo:table-column column-number="1" column-width="proportional-column-width(20)"/>
-                    <fo:table-column column-number="2" column-width="proportional-column-width(65)"/>
+                    <fo:table-column column-number="1" column-width="proportional-column-width(15)"/>
+                    <fo:table-column column-number="2" column-width="proportional-column-width(70)"/>
                     <fo:table-column column-number="3" column-width="proportional-column-width(15)"/>
                 </xsl:when>
                 <xsl:when test="$column-types eq 'd-d'">
@@ -194,8 +194,8 @@
                      <fo:table-column column-number="2" column-width="proportional-column-width(25)"/>
                 </xsl:when>
                 <xsl:when test="$column-types eq 'c-d'">
-                    <fo:table-column column-number="1" column-width="proportional-column-width(20)"/>
-                    <fo:table-column column-number="2" column-width="proportional-column-width(80)"/>
+                    <fo:table-column column-number="1" column-width="proportional-column-width(15)"/>
+                    <fo:table-column column-number="2" column-width="proportional-column-width(85)"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <fo:table-column column-number="1" column-width="proportional-column-width(100)"/>
@@ -387,11 +387,10 @@
     <xsl:template name="container-layout">
         <xsl:param name="containers-sorted-by-localtype"/>
         <xsl:choose>
-            <!-- use Yale font or not? xsl:use-attribute-sets="header-serif" -->
             <!-- the middle step, i.e. *, in these cases is the localtype (e.g. box, volume, etc.) -->
             <xsl:when test="count($containers-sorted-by-localtype/*/container-group) gt 1">
                 <xsl:for-each select="$containers-sorted-by-localtype/*/container-group">
-                    <fo:block>
+                    <fo:block xsl:use-attribute-sets="container-grouping">
                         <xsl:apply-templates/>
                     </fo:block> 
                 </xsl:for-each>                
@@ -415,7 +414,65 @@
         </fo:block>
     </xsl:template>
       
-      
+     
+     <!-- of course, now that i'm putting this in the Requesting Materials 
+         section it won't ever show up for ypm, ycba, or div.  ycba and div won't be long...
+         and ypm doesn't have containers.
+         maybe re-think this depending on how long the rollout takes for ycba and div -->
+     <xsl:template name="dsc-container-abbr-key">
+         <xsl:param name="container-localtypes"/>
+         <fo:block margin="1em 0">
+             <fo:block>Key to the container abbreviations used in the PDF finding aid:</fo:block>
+             <fo:list-block 
+                 font-size="9pt" 
+                 provisional-distance-between-starts="4em"
+                 provisional-label-separation="1em"
+                 margin-top="0.5em">
+                 <xsl:if test="$container-localtypes = 'box'">
+                     <fo:list-item>
+                         <fo:list-item-label xsl:use-attribute-sets="dsc-container-key-list-label">
+                             <fo:block color="#4A4A4A">b.</fo:block>
+                         </fo:list-item-label>
+                         <fo:list-item-body xsl:use-attribute-sets="collection-overview-list-body">
+                             <fo:block>box</fo:block>
+                         </fo:list-item-body>
+                     </fo:list-item>
+                 </xsl:if>
+                 <xsl:if test="$container-localtypes = 'folder'">
+                     <fo:list-item>
+                         <fo:list-item-label xsl:use-attribute-sets="dsc-container-key-list-label">><fo:block color="#4A4A4A">f.</fo:block></fo:list-item-label>
+                         <fo:list-item-body xsl:use-attribute-sets="collection-overview-list-body"><fo:block>folder</fo:block></fo:list-item-body>
+                     </fo:list-item>
+                 </xsl:if>
+                 <xsl:if test="$container-localtypes = 'item_barcode'">
+                     <fo:list-item>
+                         <fo:list-item-label xsl:use-attribute-sets="dsc-container-key-list-label">>
+                             <fo:block font-family="FontAwesomeSolid" color="#4A4A4A">
+                                 <xsl:text>&#xf02a;</xsl:text>
+                             </fo:block>
+                         </fo:list-item-label>
+                         <fo:list-item-body xsl:use-attribute-sets="collection-overview-list-body"><fo:block>item barcode</fo:block></fo:list-item-body>
+                     </fo:list-item> 
+                 </xsl:if>
+                 <xsl:if test="$container-localtypes = 'volume'">
+                     <fo:list-item>
+                         <fo:list-item-label xsl:use-attribute-sets="dsc-container-key-list-label">>
+                             <fo:block>
+                                 <fo:inline font-family="FontAwesomeSolid" color="#4A4A4A">
+                                     <xsl:value-of select="'&#xf02d;'"/>
+                                 </fo:inline>
+                                 <fo:inline color="#4A4A4A">
+                                     <xsl:text> vol.</xsl:text>
+                                 </fo:inline>
+                             </fo:block>
+                         </fo:list-item-label>
+                         <fo:list-item-body xsl:use-attribute-sets="collection-overview-list-body"><fo:block>volume</fo:block></fo:list-item-body>
+                     </fo:list-item>
+                 </xsl:if>
+             </fo:list-block>
+         </fo:block>
+     </xsl:template>
+    
      <xsl:template name="aeon-instructions">
              <xsl:choose>
                  <xsl:when test="$repository-code eq 'beinecke'">
@@ -480,5 +537,10 @@
                      </fo:block>
                  </xsl:otherwise>
              </xsl:choose>
+         <xsl:if test="$include-container-key eq true()">
+             <xsl:call-template name="dsc-container-abbr-key">
+                 <xsl:with-param name="container-localtypes" select="$container-localtypes"/>
+             </xsl:call-template>
+         </xsl:if>
      </xsl:template> 
 </xsl:stylesheet>

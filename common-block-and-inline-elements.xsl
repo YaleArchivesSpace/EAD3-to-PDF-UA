@@ -180,11 +180,17 @@
     </xsl:if>
   </xsl:template>
 
+  <!-- let's lower case the Linear Feet and Linear Foot statements -->
   <xsl:template match="ead3:unittype" mode="#all">
     <xsl:text> </xsl:text>
-    <!-- add something here to convert to singular extent types, when quantity = 1
-    upate: this will be handled in the post-process step instead. -->
-    <xsl:apply-templates/>
+    <xsl:choose>
+      <xsl:when test="starts-with(lower-case(.), 'linear')">
+        <xsl:value-of select="lower-case(.)"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   <xsl:template match="ead3:physdescstructured" mode="dsc">

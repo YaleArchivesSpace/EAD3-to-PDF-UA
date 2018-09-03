@@ -84,7 +84,10 @@
     -->
     <xsl:param name="dsc-omit-table-header-at-break" select="false()"/>
     <xsl:param name="include-paging-info" select="if ($repository-code = ('ypm', 'ycba', 'div')) then false() else true()"/>
-    <xsl:param name="paging-info-title" select="'Paging Instructions'"/>
+    <xsl:param name="paging-info-title" select="'Requesting Instructions'"/>
+    <!-- should make this a function since we might want to paramertize the abbreviations, but hard coding it for now -->
+    <xsl:variable name="container-localtypes" select="distinct-values(ead3:ead/ead3:archdesc/ead3:dsc//ead3:container/@localtype)"/>
+    <xsl:variable name="include-container-key" select="if ($container-localtypes = ('box', 'folder', 'volume', 'item_barcode')) then true() else false()"/>
     
     <xsl:param name="archdesc-did-title" select="'Collection Overview'"/>
     <xsl:param name="admin-info-title" select="'Administrative Information'"/>
@@ -120,7 +123,7 @@
                 ead3:ead/ead3:archdesc/ead3:scopecontent[1]/ead3:p[1]"/>
     <!--example: <recordid instanceurl="http://hdl.handle.net/10079/fa/beinecke.ndy10">beinecke.ndy10</recordid> -->
     <xsl:variable name="finding-aid-identifier" select="ead3:ead/ead3:control/ead3:recordid[1]"/>
-    <xsl:variable name="handle-link" select="if ($finding-aid-identifier/@instanceurl) then $finding-aid-identifier/@instanceurl/normalize-space() 
+    <xsl:variable name="handle-link" select="if ($finding-aid-identifier/@instanceurl/normalize-space()) then $finding-aid-identifier/@instanceurl/normalize-space() 
         else concat('http://hdl.handle.net/10079/fa/', normalize-space($finding-aid-identifier))"/>
     <xsl:variable name="holding-repository" select="ead3:ead/ead3:archdesc/ead3:did/ead3:repository[1]"/>
     <!-- do i need a variable for the repository code, or can we trust that the repository names won't be edited in ASpace?
