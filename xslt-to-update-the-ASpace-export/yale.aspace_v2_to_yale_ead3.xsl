@@ -17,24 +17,16 @@
                         
   to do:
 
+  
   1)
-  consider grouping multiple containers into a available spans.
-    e.g. box 1, box 2, box 3, box6 in output, then transform to:
-        box 1-3
-        box 6
-    sorting etc. is handled in the display, but if there were a series with 10 boxes
-    in order, then it would be better to list that in a single line
-    rather than 10 lines!  update: mssa has a series with 1,000 boxes, but i wouldn't know how to combine the box numbers in that case due to their opaque naming scheme.
-
-  2)
   strip any notes that only have a head element, and no text otheriwse.
 
 
-  4)
+  2)
   update all repo records in ASpace and remove the "respository_code" parameter from this file.
 
 
-  5)
+  3)
   remove elements that aren't legal in EAD3...  e.g. linebreaks in title elements.
   e.g.
   <title localtype="simple" render="italic">
@@ -180,6 +172,28 @@
     <xsl:variable name="second-date" select="$unitdate/following-sibling::*[1]/mdc:date-expression-2-iso-date(text())"/>
     <xsl:value-of select="if ($first-date eq $second-date) then true() else false()"/>
   </xsl:function>
+
+
+  <xsl:function name="mdc:top-container-to-number" as="xs:decimal">
+    <xsl:param name="current-container" as="node()*"/>
+    <xsl:variable name="primary-container-number" select="if (contains($current-container, '-')) then replace(substring-before($current-container, '-'), '\D', '') else replace($current-container, '\D', '')"/>
+    <xsl:variable name="primary-container-modify">
+      <xsl:choose>
+        <xsl:when test="matches($current-container, '\D')">
+          <xsl:analyze-string select="$current-container" regex="(\D)(\s?)">
+            <xsl:matching-substring>
+              <xsl:value-of select="number(string-to-codepoints(upper-case(regex-group(1))))"/>
+            </xsl:matching-substring>
+          </xsl:analyze-string>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="00"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:value-of select="xs:decimal(concat($primary-container-number, '.', $primary-container-modify))"/>
+  </xsl:function>
+  
 
   <!-- Repository Parameter -->
   <xsl:param name="repository">
@@ -352,16 +366,139 @@
 
   <!--remove any ref/@type attributes -->
   <xsl:template match="ead3:ref/@type"/>
-
+  
+  <!-- let's make top-container ranges, if the component has nothing but top containers -->
+  <xsl:template match="ead3:did[ead3:container[2]][not(ead3:container/@parent)]">
+    <xsl:copy>
+      <xsl:apply-templates select="@*|node() except ead3:container"/>
+      <xsl:variable name="containers-sorted-by-localtype">
+        <xsl:for-each-group
+          select="ead3:container"
+          group-by="if (@localtype eq '') then 'box' else lower-case(@localtype)">
+          <xsl:sort select="current-grouping-key()" data-type="text"/>
+          <xsl:element name="{current-grouping-key()}">
+            <xsl:apply-templates select="current-group()">
+              <xsl:sort select="mdc:top-container-to-number(.)"/>
+            </xsl:apply-templates>
+          </xsl:element>
+        </xsl:for-each-group>
+      </xsl:variable>
+      <!--
+      our variable will be structured like so:  
+        box
+          container 1
+          container 2
+        carton
+          container 1
+          container 3
+        @localtype
+          container N
+          etc.
+        -->
+      <xsl:apply-templates select="$containers-sorted-by-localtype/*" mode="container-fun"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="*" mode="container-fun">
+    <!--now we've got one more container children, which need to be condensed into ranges -->
+      <xsl:apply-templates select="ead3:container[1]" mode="container-fun"/>
+  </xsl:template>
+ 
+  <!-- 
+           but really should be (can handle that in the PDF tranformation bit):
+           1-2, 2a-2c, 4-8, 9-11
+           1
+  -->
+  <xsl:template match="ead3:container" mode="container-fun">
+    <xsl:param name="first-container-in-range" select="."/> 
+    <xsl:variable name="current-container" select="."/>
+    <xsl:variable name="next-container" select="following-sibling::ead3:container[1]"/>
+    <xsl:choose>
+      <!-- e.g. end of the line, regardless of ranges (but still might need to output a range) -->
+      <xsl:when test="not(following-sibling::ead3:container)">
+        <xsl:copy>
+          <xsl:apply-templates select="@localtype"/>
+          <xsl:value-of select="if ($first-container-in-range eq $current-container) 
+            then $current-container
+            else concat($first-container-in-range, '&#x2013;', $current-container)"/>
+        </xsl:copy>
+      </xsl:when>
+      <!-- e.g. 6, 6a, 6b, 6c, 7 (could also handle a rule here to condense 6a-6c)
+      perhaps: when has a remainder plus floor of current = floor of next. -->
+      <xsl:when test="mdc:top-container-to-number($current-container) mod 1 gt 0
+        and mdc:top-container-to-number($next-container) mod 1 gt 0
+        and (floor(mdc:top-container-to-number($current-container)) eq floor(mdc:top-container-to-number($next-container)))">       
+        <xsl:apply-templates select="$next-container" mode="#current">
+          <xsl:with-param name="first-container-in-range" select="$first-container-in-range"/>
+          <xsl:with-param name="current-container" select="$next-container"/>
+        </xsl:apply-templates>
+      </xsl:when> 
+      <!-- e.g. 1, 2, 3, 4, 5, 6, 8
+        when we're at 1 -5, we just want to keep going.
+      -->
+      <xsl:when test="mdc:top-container-to-number($current-container) + 1 eq mdc:top-container-to-number($next-container)">
+            <xsl:apply-templates select="$next-container" mode="#current">
+              <xsl:with-param name="first-container-in-range" select="$first-container-in-range"/>
+              <xsl:with-param name="current-container" select="$next-container"/>
+            </xsl:apply-templates>
+      </xsl:when>
+      <!-- e.g. in the above example, let's say we get to 6. 
+      -->
+      <xsl:when test="mdc:top-container-to-number($current-container) + 1 ne mdc:top-container-to-number($next-container)">
+        <xsl:copy>
+          <xsl:apply-templates select="@localtype"/>
+          <xsl:value-of select="if ($first-container-in-range eq $current-container) 
+            then $current-container
+            else concat($first-container-in-range, '&#x2013;', $current-container)"/>
+        </xsl:copy>    
+        <xsl:if test="following-sibling::ead3:container">
+          <xsl:apply-templates select="$next-container" mode="#current">
+            <xsl:with-param name="first-container-in-range" select="$next-container"/>
+            <xsl:with-param name="current-container" select="$next-container"/>
+          </xsl:apply-templates>
+        </xsl:if>     
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>  
+  
 
   <!--aspace exports empty type/localtype attributes on containers that don't have a container type.
     for local purposes, we assume that these containers are "boxes".
   the following template adds our default value of 'box' to this attribute.-->
-  <xsl:template match="ead3:container/@localtype[. eq '']">
+  <xsl:template match="ead3:container/@localtype[. eq '']" priority="2">
     <xsl:attribute name="localtype">
       <xsl:text>box</xsl:text>
     </xsl:attribute>
   </xsl:template>
+  
+  <xsl:template match="ead3:container/@localtype">
+    <xsl:attribute name="{local-name()}">
+      <xsl:value-of select="lower-case(.)"/>
+    </xsl:attribute>  
+  </xsl:template>
+  
+  <!-- mdc: hack for beinecke.edwards (and any other collections/sections we
+    need to model deliverable units within top containers)-->
+  <xsl:template match="ead3:container[@localtype = ('parent_barcode', 'parent_box')]"/>
+  <xsl:template match="ead3:container[@localtype eq 'folder'][following-sibling::ead3:container[1][@localtype eq 'parent_box']]">
+    <xsl:copy>
+      <xsl:attribute name="localtype" select="'box'"/>
+      <xsl:attribute name="id">
+        <xsl:apply-templates select="following-sibling::ead3:container[1]/@id"/>
+      </xsl:attribute>
+      <!-- of course, this wouldn't work very well if we allowed mixed-content for container indicators, but why would we???-->
+      <xsl:value-of select="following-sibling::ead3:container[1]"/>
+    </xsl:copy>
+    <xsl:copy>
+      <xsl:apply-templates select="@localtype|@id"/>
+      <xsl:attribute name="parent">
+        <xsl:apply-templates select="following-sibling::ead3:container[1]/@id"/>
+      </xsl:attribute>
+      <xsl:apply-templates/>
+    </xsl:copy>
+  </xsl:template>
+
+
 
   <!-- head fix for data added by the AT migration tool!
   remove this once those values are corrected in ASpace -->
