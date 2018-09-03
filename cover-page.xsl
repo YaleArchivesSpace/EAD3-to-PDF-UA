@@ -53,32 +53,28 @@
         </fo:page-sequence>
     </xsl:template>
     <!--========== End: Cover Page ======== -->
-    
+
     <xsl:template name="coverpage.image">
         <xsl:choose>
-            <xsl:when test="$repository-code='mssa'">
-                <fo:block xsl:use-attribute-sets="margin-after-small">
-                    <fo:external-graphic src="url('http://www.library.yale.edu/facc/images/yalebw.jpg')" 
-                        fox:alt-text="Yale University logo"/>
-                </fo:block>
-            </xsl:when>
             <xsl:when test="$repository-code='divinity'">
                 <fo:block xsl:use-attribute-sets="margin-after-small">
-                    <fo:external-graphic src="url('http://www.library.yale.edu/facc/images/divshield.jpg')"
+                    <fo:external-graphic src="url('logos/divshield.jpg')"
+                      content-width="scale-to-fit"
+                      scaling="uniform"
                     fox:alt-text="Divinity school shield logo"/>
                 </fo:block>
             </xsl:when>
             <xsl:when test="$repository-code='med'">
                 <fo:block xsl:use-attribute-sets="margin-after-small">
-                    <fo:external-graphic src="url('http://www.library.yale.edu/facc/images/medshield.jpg')"
+                    <fo:external-graphic src="url('logos/medshield.jpg')"
+                      content-width="scale-to-fit"
+                      scaling="uniform"
                     fox:alt-text="Medical school shield logo"/>
                 </fo:block>
             </xsl:when>
             <xsl:when test="$repository-code='beinecke'">
                 <fo:block xsl:use-attribute-sets="margin-after-small">
-                    <fo:external-graphic src="url('http://www.library.yale.edu/facc/images/brbl_bldg.jpg')"
-                        width="70%"
-                        content-height="70%"
+                    <fo:external-graphic src="url('logos/brbl_bldg.jpg')"
                         content-width="scale-to-fit"
                         scaling="uniform"
                     fox:alt-text="A drawing of an exterior view of the Beinecke Library"/>
@@ -100,7 +96,14 @@
                         fox:alt-text="A view of the Lewis Walpole Library, during summertime"/>
                 </fo:block>
             </xsl:when>
-            <xsl:otherwise/>
+            <xsl:otherwise>
+              <fo:block xsl:use-attribute-sets="margin-after-small">
+                  <fo:external-graphic src="url('logos/YaleShieldBW.jpg')"
+                      content-width="scale-to-fit"
+                      scaling="uniform"
+                      fox:alt-text="Yale University logo, with the Lux et Veritas motto"/>
+              </fo:block>
+            </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
 
@@ -109,7 +112,7 @@
             <xsl:apply-templates/>
         </fo:block>
     </xsl:template>
-    
+
     <xsl:template match="ead3:eventdatetime" mode="titlepage.pdf.creation.date">
         <fo:block font-size="9pt">
             <xsl:text>Last modified at </xsl:text>
