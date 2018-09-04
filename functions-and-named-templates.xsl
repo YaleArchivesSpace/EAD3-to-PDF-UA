@@ -518,7 +518,9 @@
             the Manuscripts and Archives reading room, please use the 
             request links in the HTML version of this finding aid, available at </xsl:text>
                          <fo:wrapper xsl:use-attribute-sets="ref">
-                                
+                             <fo:basic-link external-destination="url({$handle-link})">
+                                 <xsl:value-of select="$handle-link"/>
+                             </fo:basic-link>   
                          </fo:wrapper>
                          <xsl:text>.</xsl:text>
                      </xsl:element>
