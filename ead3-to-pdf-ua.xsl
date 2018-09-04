@@ -76,7 +76,7 @@
     <xsl:param name="serif-font" select="'Yale'"/>
     <xsl:param name="sans-serif-font" select="'Mallory'"/>
     <xsl:param name="backup-font" select="'ArialUnicode'"/>
-    <xsl:param name="default-font-size" select="'10'"/>
+    <xsl:param name="default-font-size" select="'10pt'"/>
     <xsl:param name="include-audience-equals-internal" select="false()"/>
     <xsl:param name="start-page-1-after-table-of-contents" select="false()"/>
     <!-- if you change this to true, you'll lose the markers (e.g. series N continued)

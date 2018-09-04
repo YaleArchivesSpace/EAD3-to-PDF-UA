@@ -454,7 +454,7 @@
                  </xsl:if>
                  <xsl:if test="$container-localtypes = 'folder'">
                      <fo:list-item>
-                         <fo:list-item-label xsl:use-attribute-sets="dsc-container-key-list-label">><fo:block color="#4A4A4A">f.</fo:block></fo:list-item-label>
+                         <fo:list-item-label xsl:use-attribute-sets="dsc-container-key-list-label"><fo:block color="#4A4A4A">f.</fo:block></fo:list-item-label>
                          <fo:list-item-body xsl:use-attribute-sets="collection-overview-list-body"><fo:block>folder</fo:block></fo:list-item-body>
                      </fo:list-item>
                  </xsl:if>
@@ -518,11 +518,7 @@
             the Manuscripts and Archives reading room, please use the 
             request links in the HTML version of this finding aid, available at </xsl:text>
                          <fo:wrapper xsl:use-attribute-sets="ref">
-                             <fo:basic-link>
-                                 <fo:basic-link external-destination="{$handle-link}">
-                                     <xsl:value-of select="$handle-link"/>
-                                 </fo:basic-link>
-                             </fo:basic-link>
+                                
                          </fo:wrapper>
                          <xsl:text>.</xsl:text>
                      </xsl:element>
