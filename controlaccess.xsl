@@ -86,5 +86,54 @@
             </fo:block>
         </xsl:for-each-group>
     </xsl:template>
+    
+    <xsl:template match="ead3:controlaccess" mode="dsc">
+        <xsl:for-each-group select="*" group-by="local-name()">
+            <xsl:variable name="current-group-size" select="count(current-group())"/>
+            <fo:block margin="10pt">
+                <fo:block>
+                    <!-- should we change values if there's only one heading?  e.g. Subject instead of Subjects?
+                    if so, then we can use the current-group-size variable.  when 1, it's singular.-->
+                    <xsl:value-of select="if (current-grouping-key() eq 'corpname')
+                        then 
+                        if ($current-group-size eq 1) then 'Corporate Body:' else 'Corporate Bodies:'
+                        else if (current-grouping-key() eq 'famname')
+                        then 'Families:'
+                        else if (current-grouping-key() eq 'function')
+                        then 'Functions:'
+                        else if (current-grouping-key() eq 'genreform')
+                        then 'Genres / Formats:'
+                        else if (current-grouping-key() eq 'geogname')
+                        then 'Geographic Names:'
+                        else if (current-grouping-key() eq 'occupation')
+                        then 'Occupations:'
+                        else if (current-grouping-key() = ('persname', 'name'))
+                        then 'Names:'
+                        else if (current-grouping-key() eq 'subject')
+                        then 'Subjects:'
+                        else if (current-grouping-key() eq 'title')
+                        then 'Preferred Titles:'
+                        else ''"/>
+                </fo:block>
+                <fo:list-block margin-left="1em">
+                    <xsl:for-each select="current-group()">
+                        <xsl:sort select="." data-type="text"/>
+                        <xsl:for-each select=".">
+                            <fo:list-item>
+                                <fo:list-item-label>
+                                    <fo:block/>
+                                </fo:list-item-label>
+                                <fo:list-item-body>
+                                    <fo:block>
+                                        <xsl:apply-templates/>
+                                    </fo:block>
+                                </fo:list-item-body>
+                            </fo:list-item>
+                        </xsl:for-each>
+                    </xsl:for-each>
+                </fo:list-block>
+            </fo:block>
+        </xsl:for-each-group>
+    </xsl:template>
 
 </xsl:stylesheet>

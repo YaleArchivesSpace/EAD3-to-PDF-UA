@@ -313,6 +313,10 @@
         <xsl:param name="last-row"/>
         <xsl:param name="no-children"/>
         <xsl:param name="audience"/>
+        <xsl:param name="component-string-length"/>
+        <xsl:if test="$component-string-length lt 2000">
+            <xsl:attribute name="keep-together.within-column">always</xsl:attribute>
+        </xsl:if>
         <xsl:choose>
             <xsl:when test="$suppressInternalComponents eq false() and $audience eq 'internal'">
                 <xsl:attribute name="border-style">solid</xsl:attribute>

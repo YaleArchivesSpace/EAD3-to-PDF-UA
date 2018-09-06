@@ -147,7 +147,7 @@
             <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
                 , ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
                 , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
-                , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement" mode="dsc"/>
+                , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement, ead3:controlaccess" mode="dsc"/>
             <!-- still need to add templates here for digital objects.  anything else?  -->
             <xsl:call-template name="container-layout">
                 <xsl:with-param name="containers-sorted-by-localtype" select="$containers-sorted-by-localtype"/>
@@ -191,11 +191,13 @@
                 </xsl:element>
             </xsl:for-each-group>
         </xsl:variable>
-        <fo:table-row keep-together.within-column="always">
+        <!--  need to do something here to fix rows that have REALLY long notes. see 15.pdf -->
+        <fo:table-row>
             <xsl:call-template name="dsc-table-row-border">
                 <xsl:with-param name="last-row" select="$last-row"/>
                 <xsl:with-param name="no-children" select="$no-children"/>
                 <xsl:with-param name="audience" select="@audience"/>
+                <xsl:with-param name="component-string-length" select="sum(for $x in child::*[not(local-name()='c')] return string-length($x))"/>
             </xsl:call-template>
             <xsl:choose>
                 <xsl:when test="$column-types eq 'c-d-d'">
@@ -237,7 +239,7 @@
                                     <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
                                         , ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
                                         , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
-                                        , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement" mode="dsc"/>
+                                        , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement, ead3:controlaccess" mode="dsc"/>
                                 </fo:block>
                             </fo:block-container>
                         </fo:block-container>
@@ -282,7 +284,7 @@
                                     <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
                                         , ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
                                         , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
-                                        , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement" mode="dsc"/>
+                                        , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement, ead3:controlaccess" mode="dsc"/>
                                 </fo:block>
                             </fo:block-container>
                         </fo:block-container>
@@ -332,7 +334,7 @@
                                     <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
                                         , ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
                                         , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
-                                        , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement" mode="dsc"/>
+                                        , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement, ead3:controlaccess" mode="dsc"/>
                                 </fo:block>
                             </fo:block-container>
                         </fo:block-container>
@@ -372,7 +374,7 @@
                                     <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
                                         , ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
                                         , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
-                                        , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement" mode="dsc"/>
+                                        , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement, ead3:controlaccess" mode="dsc"/>
                                 </fo:block>
                             </fo:block-container>
                         </fo:block-container>
