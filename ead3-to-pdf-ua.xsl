@@ -77,13 +77,14 @@
     <xsl:param name="sans-serif-font" select="'Mallory'"/>
     <xsl:param name="backup-font" select="'ArialUnicode'"/>
     <xsl:param name="default-font-size" select="'10pt'"/>
-    <xsl:param name="include-audience-equals-internal" select="false()"/>
+    <!-- will pass false() when using this process to do staff-only PDF previews -->
+    <xsl:param name="suppressInternalComponents" select="true()" as="xs:boolean"/>
     <xsl:param name="start-page-1-after-table-of-contents" select="false()"/>
     <!-- if you change this to true, you'll lose the markers (e.g. series N continued)
     since those are currently in the table header, not the page headers.
     -->
     <xsl:param name="dsc-omit-table-header-at-break" select="false()"/>
-    <xsl:param name="include-paging-info" select="if ($repository-code = ('ypm', 'ycba', 'divinity')) then false() else true()"/>
+    <xsl:param name="include-paging-info" select="if ($repository-code = ('ypm', 'ycba')) then false() else true()"/>
     <xsl:param name="paging-info-title" select="'Requesting Instructions'"/>
     <!-- should make this a function since we might want to paramertize the abbreviations, but hard coding it for now -->
     <xsl:variable name="container-localtypes" select="distinct-values(ead3:ead/ead3:archdesc/ead3:dsc//ead3:container/@localtype)"/>
@@ -112,6 +113,7 @@
     <xsl:param name="staff-preview" select="false()"/>
      
     <!-- document-based variables -->
+    <xsl:variable name="unpublished-draft" select="if ($suppressInternalComponents eq false() and (ead3:ead/@audience='internal' or ead3:ead/ead3:archdesc/@audience='internal')) then true() else false()"/>
     <xsl:variable name="finding-aid-title" select="ead3:ead/ead3:control/ead3:filedesc/ead3:titlestmt/ead3:titleproper[1][not(@localtype = 'filing')]"/>
     <xsl:variable name="finding-aid-author" select="ead3:ead/ead3:control/ead3:filedesc/ead3:titlestmt/ead3:author"/>
     <xsl:variable name="finding-aid-summary"

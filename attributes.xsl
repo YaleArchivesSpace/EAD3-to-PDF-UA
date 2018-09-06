@@ -200,9 +200,13 @@
     
     <!-- Table Cell Block Attribute Set -->
     <xsl:attribute-set name="table.cell.block">
-        <xsl:attribute name="margin-top">
-            <xsl:text>10pt</xsl:text>
-        </xsl:attribute>
+        <xsl:attribute name="margin-top">10pt</xsl:attribute>
+    </xsl:attribute-set>
+    
+    <xsl:attribute-set name="unpublished">
+        <xsl:attribute name="border-width">2pt</xsl:attribute>
+        <xsl:attribute name="border-style">solid</xsl:attribute>
+        <xsl:attribute name="border-color">red</xsl:attribute>
     </xsl:attribute-set>
      
 </xsl:stylesheet>

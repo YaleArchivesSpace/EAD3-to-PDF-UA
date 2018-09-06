@@ -699,5 +699,13 @@
       <xsl:apply-templates/>
     </fo:inline>
   </xsl:template>
+  
+  
+  <!-- highlight unpublished notes -->
+  <xsl:template match="ead3:*[@audience='internal'][$suppressInternalComponents eq false()]" mode="collection-overview dsc">
+    <fo:block xsl:use-attribute-sets="unpublished">
+      <xsl:apply-templates mode="#current"/>
+    </fo:block>
+  </xsl:template>
 
 </xsl:stylesheet>

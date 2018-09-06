@@ -33,6 +33,11 @@
                 </fo:block>
             </fo:static-content>
             <fo:flow flow-name="xsl-region-body">
+                <xsl:if test="$unpublished-draft eq true()">
+                    <fo:block xsl:use-attribute-sets="unpublished">
+                        <xsl:text>*** UNPUBLISHED DRAFT ***</xsl:text> 
+                    </fo:block>
+                </xsl:if>
                 <fo:block xsl:use-attribute-sets="h1">
                     <xsl:apply-templates select="$finding-aid-title"/>
                 </fo:block>

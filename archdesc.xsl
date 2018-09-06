@@ -46,7 +46,7 @@
                 <fo:block margin-left="0.2in" margin-top="0.1in">
                     <xsl:apply-templates select="ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
                         , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
-                        , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan"/>
+                        , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan" mode="collection-overview"/>
                 </fo:block>
                 <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
                     , ead3:odd[not(matches(lower-case(normalize-space(ead3:head)), $odd-headings-to-add-at-end))]

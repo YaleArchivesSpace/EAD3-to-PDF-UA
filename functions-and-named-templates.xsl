@@ -312,20 +312,30 @@
     <xsl:template name="dsc-table-row-border">
         <xsl:param name="last-row"/>
         <xsl:param name="no-children"/>
-        <xsl:if test="$last-row or $no-children">
-            <xsl:attribute name="border-bottom-style">solid</xsl:attribute>
-            <xsl:attribute name="border-bottom-width">0.1mm</xsl:attribute>
-        </xsl:if>
+        <xsl:param name="audience"/>
         <xsl:choose>
-            <xsl:when test="$last-row">
-                <!--
+            <xsl:when test="$suppressInternalComponents eq false() and $audience eq 'internal'">
+                <xsl:attribute name="border-style">solid</xsl:attribute>
+                <xsl:attribute name="border-width">2px</xsl:attribute>
+                <xsl:attribute name="border-color">red</xsl:attribute>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:if test="$last-row or $no-children">
+                    <xsl:attribute name="border-bottom-style">solid</xsl:attribute>
+                    <xsl:attribute name="border-bottom-width">0.1mm</xsl:attribute>
+                </xsl:if>
+                <xsl:choose>
+                    <xsl:when test="$last-row">
+                        <!--
                 <xsl:attribute name="border-bottom-color">#222222</xsl:attribute>
                 -->
-                <xsl:attribute name="border-bottom-color">#dddddd</xsl:attribute>
-            </xsl:when>
-            <xsl:when test="$no-children">
-                <xsl:attribute name="border-bottom-color">#dddddd</xsl:attribute>
-            </xsl:when>
+                        <xsl:attribute name="border-bottom-color">#dddddd</xsl:attribute>
+                    </xsl:when>
+                    <xsl:when test="$no-children">
+                        <xsl:attribute name="border-bottom-color">#dddddd</xsl:attribute>
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
     
@@ -510,6 +520,17 @@
                              </fo:basic-link>
                          </fo:wrapper>
                          <xsl:text>.</xsl:text>
+                     </fo:block>
+                 </xsl:when>
+                 <xsl:when test="$repository-code eq 'divinity'">
+                     <fo:block xsl:use-attribute-sets="paragraph">
+                         <xsl:text>To view manuscript and archival materials at the Yale Divinity Library, please submit the request form at </xsl:text>
+                             <fo:wrapper xsl:use-attribute-sets="ref">
+                                 <fo:basic-link external-destination="https://web.library.yale.edu/divinity/form/yale-divinity-library-mss-request-form">
+                                     <xsl:text>https://web.library.yale.edu/divinity/form/yale-divinity-library-mss-request-form</xsl:text>
+                                 </fo:basic-link>
+                             </fo:wrapper>
+                             <xsl:text>.</xsl:text>
                      </fo:block>
                  </xsl:when>
                  <xsl:when test="$repository-code eq 'mssa'">
