@@ -114,7 +114,9 @@
                 <xsl:attribute name="break-before" select="'page'"/>
             </xsl:if>
             <xsl:if test="@audience='internal' and $suppressInternalComponents eq false()">
-                <xsl:attribute name="xsl:use-attribute-sets" select="'unpublished'"/>
+                <xsl:attribute name="border-style">solid</xsl:attribute>
+                <xsl:attribute name="border-width">2px</xsl:attribute>
+                <xsl:attribute name="border-color">red</xsl:attribute>
             </xsl:if>
             <xsl:choose>
                 <xsl:when test="parent::ead3:dsc and  (@level = ('series', 'collection', 'recordgrp') or @otherlevel = $otherlevels-to-force-a-page-break-and-process-before-a-table)">

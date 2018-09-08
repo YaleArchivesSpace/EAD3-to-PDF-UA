@@ -60,58 +60,54 @@
     <!--========== End: Cover Page ======== -->
 
     <xsl:template name="coverpage.image">
-        <xsl:choose>
-            <xsl:when test="$repository-code='divinity'">
-                <fo:block xsl:use-attribute-sets="margin-after-small">
+        <fo:block xsl:use-attribute-sets="margin-after-small">
+            <xsl:choose>
+                <xsl:when test="$repository-code='divinity'">
                     <fo:external-graphic src="url('logos/divshield.jpg')"
-                      content-width="scale-to-fit"
-                      scaling="uniform"
-                    fox:alt-text="Divinity school shield logo"/>
-                </fo:block>
-            </xsl:when>
-            <xsl:when test="$repository-code='med'">
-                <fo:block xsl:use-attribute-sets="margin-after-small">
+                        content-width="scale-to-fit"
+                        scaling="uniform"
+                        fox:alt-text="Divinity school shield logo"/>
+                </xsl:when>
+                <xsl:when test="$repository-code='med'">
                     <fo:external-graphic src="url('logos/medshield.jpg')"
-                      content-width="scale-to-fit"
-                      scaling="uniform"
-                    fox:alt-text="Medical school shield logo"/>
-                </fo:block>
-            </xsl:when>
-            <xsl:when test="$repository-code='beinecke'">
-                <fo:block xsl:use-attribute-sets="margin-after-small">
+                        content-width="scale-to-fit"
+                        scaling="uniform"
+                        fox:alt-text="Medical school shield logo"/>
+                </xsl:when>
+                <xsl:when test="$repository-code='beinecke'">
                     <fo:external-graphic src="url('logos/brbl_bldg.jpg')"
                         content-width="scale-to-fit"
                         scaling="uniform"
-                    fox:alt-text="A drawing of an exterior view of the Beinecke Library"/>
-                </fo:block>
-            </xsl:when>
-            <xsl:when test="$repository-code='ypm'">
-                <fo:block xsl:use-attribute-sets="margin-after-small">
+                        fox:alt-text="A drawing of an exterior view of the Beinecke Library"/>
+                </xsl:when>
+                <xsl:when test="$repository-code='ypm'">
                     <fo:external-graphic src="url('logos/peabody.jpg')"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="A view from outside the Peabody Museum, with a statue of a triceratops horridus in the foreground"/>
-                </fo:block>
-            </xsl:when>
-            <xsl:when test="$repository-code='lwl'">
-                <fo:block xsl:use-attribute-sets="margin-after-small">
+                </xsl:when>
+                <xsl:when test="$repository-code='lwl'">
                     <fo:external-graphic src="url('logos/walpole-summer.jpg')"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="A view of the Lewis Walpole Library, during summertime"/>
-                </fo:block>
-            </xsl:when>
-            <xsl:otherwise>
-                <fo:block xsl:use-attribute-sets="margin-after-small">
-                  <fo:external-graphic src="url('logos/Yale_University_Shield_1.svg')"
-                      width="70%"
-                      content-height="70%"
-                      content-width="scale-to-fit"
-                      scaling="uniform"
-                      fox:alt-text="Yale University logo, with the Lux et Veritas motto"/>
-              </fo:block>
-            </xsl:otherwise>
-        </xsl:choose>
+                </xsl:when>
+                <xsl:when test="$repository-code='ycba'">
+                    <fo:external-graphic src="url('logos/ycba.png')"
+                        content-width="scale-to-fit"
+                        scaling="uniform"
+                        fox:alt-text="A view inside the Yale Center for British Art Library. Photograph by Richard Caspole, 2016"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <fo:external-graphic src="url('logos/Yale_University_Shield_1.svg')"
+                        width="70%"
+                        content-height="70%"
+                        content-width="scale-to-fit"
+                        scaling="uniform"
+                        fox:alt-text="Yale University logo, with the Lux et Veritas motto"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </fo:block>
     </xsl:template>
 
     <xsl:template match="ead3:addressline">

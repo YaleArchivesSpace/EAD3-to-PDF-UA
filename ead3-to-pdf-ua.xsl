@@ -30,15 +30,11 @@
           
           remove series header on first page???
           
-          consider removing the footer and putting page number at top (per Sandra's request; also how YFAD does it).  could add total page size to overview section?
-          
           fix up block and inline stylings.
           
-          add red boxes around anything that has audience = internal. (also flag in table of contents / bookmarks?)
+          flag unpublished in table of contents / bookmarks?)
             update oXygen project for staff.
-          
-          embiggen subseries titles when they're a direct child of series?
-          
+      
           add running page headers for appendices (why should series get all the fun?)
           
           do NOT assume that collection-level dates will be normalized (including bulk dates).  ours are, but i should anticipate both cases.
@@ -108,9 +104,6 @@
     <xsl:param name="odd-headings-to-add-at-end" select="'index|appendix'"/>
     <xsl:param name="levels-to-include-in-toc" select="('series', 'subseries', 'collection', 'fonds', 'recordgrp', 'subgrp')"/>
     <xsl:param name="otherlevels-to-include-in-toc" select="('accession', 'acquisition')"/>
-    
-    <!-- is this necessary, or should i always just wrap internal-only sections in a red box?  the files will be pre-processed-->
-    <xsl:param name="staff-preview" select="false()"/>
      
     <!-- document-based variables -->
     <xsl:variable name="unpublished-draft" select="if ($suppressInternalComponents eq false() and (ead3:ead/@audience='internal' or ead3:ead/ead3:archdesc/@audience='internal')) then true() else false()"/>
