@@ -71,11 +71,13 @@
         <fo:list-item space-after="1em">
             <fo:list-item-label>
                 <fo:block>
-                    <xsl:apply-templates select="ead3:name"/>
+                    <!-- ASpace doesn't support groups within indices -->
+                    <xsl:apply-templates select="ead3:corpname|ead3:famname|ead3:function|ead3:genreform|ead3:geogname|ead3:name|ead3:occupation|ead3:persname|ead3:subject|ead3:title"/>
                 </fo:block>
             </fo:list-item-label>
             <fo:list-item-body start-indent="body-start()" end-indent="5mm">
                 <fo:block>
+                    <!-- ASpace doesn't support groups within indices -->
                     <xsl:apply-templates select="ead3:ref"/>
                 </fo:block>
             </fo:list-item-body>
