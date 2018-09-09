@@ -7,7 +7,8 @@
     <!-- this file is imported by "ead3-to-pdf-ua.xsl" -->
     
     <!-- Headings -->
-    <xsl:attribute-set name="h1" use-attribute-sets="header-serif"> <!-- used only for the finding aid title on the cover page right now -->
+    <!-- removed the Yale font since so many collection titles have characters not included in that font -->
+    <xsl:attribute-set name="h1"> <!-- used only for the finding aid title on the cover page right now -->
         <xsl:attribute name="role">H1</xsl:attribute>
         <xsl:attribute name="font-size">22pt</xsl:attribute>
         <xsl:attribute name="font-weight">bold</xsl:attribute>

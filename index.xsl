@@ -20,9 +20,13 @@
                 <xsl:call-template name="section-start"/>
                 <xsl:variable name="id-for-link" select="if (@id) then @id else generate-id(.)"/> 
                 <fo:block xsl:use-attribute-sets="h3" id="{@id-for-link}">
+                    <xsl:if test="@audience='internal' and $suppressInternalComponents eq false()">
+                        <xsl:attribute name="border-style">solid</xsl:attribute>
+                        <xsl:attribute name="border-width">2px</xsl:attribute>
+                        <xsl:attribute name="border-color">red</xsl:attribute>
+                    </xsl:if>
                     <xsl:apply-templates select="ead3:head"/>
                 </fo:block>
-                <xsl:apply-templates select="* except ead3:head"/>
                 
                 <xsl:apply-templates select="* except (ead3:indexentry, ead3:head)"/>
                 <!-- need to check and see if EAD3 enforces -->
@@ -46,6 +50,11 @@
         <xsl:call-template name="section-start"/>
         <xsl:variable name="id-for-link" select="if (@id) then @id else generate-id(.)"/> 
         <fo:block xsl:use-attribute-sets="h3" id="{@id-for-link}">
+            <xsl:if test="@audience='internal' and $suppressInternalComponents eq false()">
+                <xsl:attribute name="border-style">solid</xsl:attribute>
+                <xsl:attribute name="border-width">2px</xsl:attribute>
+                <xsl:attribute name="border-color">red</xsl:attribute>
+            </xsl:if>
             <xsl:apply-templates select="ead3:head"/>
         </fo:block>
         <xsl:apply-templates select="* except (ead3:indexentry, ead3:head)"/>
