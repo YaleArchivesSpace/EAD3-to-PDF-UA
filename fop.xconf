@@ -75,20 +75,21 @@
           <font-triplet name="Yale" style="italic" weight="normal"/>
         </font>
 
-        <!--original test files-->
-        <font kerning="yes" embed-url="fonts/PT_Sans/PT_Sans-Web-Regular.ttf">
-          <font-triplet name="PT_Sans" style="normal" weight="normal"/>
+        <!--font for previews -->
+        <font kerning="yes" embed-url="fonts/Open_Sans/OpenSans-Regular.ttf">
+          <font-triplet name="Open_Sans" style="normal" weight="normal"/>
         </font>
-        <font kerning="yes" embed-url="fonts/PT_Sans/PT_Sans-Web-Bold.ttf">
-          <font-triplet name="PT_Sans" style="normal" weight="bold"/>
+        <font kerning="yes" embed-url="fonts/Open_Sans/OpenSans-Bold.ttf">
+          <font-triplet name="Open_Sans" style="normal" weight="bold"/>
         </font>
-        <font kerning="yes" embed-url="fonts/PT_Sans/PT_Sans-Web-BoldItalic.ttf">
-          <font-triplet name="PT_Sans" style="italic" weight="bold"/>
+        <font kerning="yes" embed-url="fonts/OPen_Sans/OpenSans-BoldItalic.ttf">
+          <font-triplet name="Open_Sans" style="italic" weight="bold"/>
         </font>
-        <font kerning="yes" embed-url="fonts/PT_Sans/PT_Sans-Web-Italic.ttf">
-          <font-triplet name="PT_Sans" style="italic" weight="normal"/>
+        <font kerning="yes" embed-url="fonts/Open_Sans/OpenSans-Italic.ttf">
+          <font-triplet name="Open_Sans" style="italic" weight="normal"/>
         </font>
-        <!-- we might need to revert to and call this font in some finding aids, so keeping it around just in case -->
+        
+        <!-- backup font -->
         <font kerning="yes" embed-url="fonts/Arial/ARIALUNI.TTF">
           <font-triplet name="ArialUnicode" style="normal" weight="normal"/>
         </font>
