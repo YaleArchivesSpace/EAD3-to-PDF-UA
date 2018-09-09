@@ -20,13 +20,18 @@
             <fo:bookmark internal-destination="contents">
                 <fo:bookmark-title><xsl:value-of select="$archdesc-did-title"/></fo:bookmark-title>
             </fo:bookmark>
+            <xsl:if test="$include-paging-info">
+                <fo:bookmark internal-destination="paging-info">
+                    <fo:bookmark-title><xsl:value-of select="$paging-info-title"/></fo:bookmark-title>
+                </fo:bookmark>
+            </xsl:if>
             <fo:bookmark internal-destination="admin-info">
                 <xsl:attribute name="starting-state">hide</xsl:attribute>
                 <fo:bookmark-title>Adminstrative Information</fo:bookmark-title>
                 <!-- do we even want these here?  we can still display them in the ToC -->
                 <xsl:apply-templates select="ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
                     , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
-                    , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan" mode="bookmarks"/>
+                    , ead3:originalsloc, ead3:otherfindaid, ead3:phystech, ead3:fileplan" mode="bookmarks"/>
             </fo:bookmark>
             <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
                 , ead3:odd[not(matches(lower-case(normalize-space(ead3:head)), $odd-headings-to-add-at-end))]
@@ -47,6 +52,11 @@
     </xsl:template>
     
     <xsl:template match="ead3:*" mode="bookmarks">
+        <xsl:if test="not(ead3:head)">
+            <xsl:message terminate="yes">
+                <xsl:text>No head element. Need to update the post-process to include a header, otherwise the links won't work.</xsl:text>
+            </xsl:message>
+        </xsl:if>
         <fo:bookmark internal-destination="{if (@id) then @id else generate-id(.)}">
             <fo:bookmark-title><xsl:value-of select="ead3:head"/></fo:bookmark-title>
         </fo:bookmark>

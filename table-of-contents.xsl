@@ -21,14 +21,23 @@
                 <fo:block/>
             </fo:static-content>
             <!-- Content of page -->
-            <fo:flow flow-name="xsl-region-body">
+            <fo:flow flow-name="xsl-region-body" xsl:use-attribute-sets="header-serif">
                 <xsl:call-template name="section-start"/>
                 <fo:block xsl:use-attribute-sets="h3" id="toc">Table of Contents</fo:block>
                 <fo:block xsl:use-attribute-sets="toc-block">
                     <xsl:apply-templates select="ead3:did" mode="toc"/>
+                    <xsl:if test="$include-paging-info">
+                        <fo:block text-align-last="justify">
+                            <fo:basic-link internal-destination="paging-info">
+                                <xsl:value-of select="$paging-info-title"/>
+                                <xsl:text> </xsl:text><fo:leader leader-pattern="dots"/><xsl:text> </xsl:text>
+                                <fo:page-number-citation ref-id="paging-info"/>
+                            </fo:basic-link>
+                        </fo:block>
+                    </xsl:if>
                     <xsl:if test="ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
                         , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
-                        , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan">
+                        , ead3:originalsloc, ead3:otherfindaid, ead3:phystech, ead3:fileplan">
                         <fo:block text-align-last="justify">
                             <fo:basic-link internal-destination="admin-info">
                                 <xsl:value-of select="$admin-info-title"/>
@@ -38,7 +47,7 @@
                         </fo:block>
                         <xsl:apply-templates select="ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
                             , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
-                            , ead3:originalsloc, ead3:otherfindingaid, ead3:phystech, ead3:fileplan" mode="toc">
+                            , ead3:originalsloc, ead3:otherfindaid, ead3:phystech, ead3:fileplan" mode="toc">
                             <xsl:with-param name="margin-left" select="'10pt'"/>
                         </xsl:apply-templates>
                     </xsl:if>
