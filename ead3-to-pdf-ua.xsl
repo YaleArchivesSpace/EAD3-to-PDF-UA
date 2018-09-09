@@ -100,6 +100,8 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:param>
+    <xsl:param name="resource-unpublished-note" select="'*** UNPUBLISHED DRAFT ***'"/>
+    <xsl:param name="sub-resource-unpublished-note" select="'Includes unpublished notes and/or components'"/>
     
     <xsl:param name="odd-headings-to-add-at-end" select="'index|appendix'"/>
     <xsl:param name="levels-to-include-in-toc" select="('series', 'subseries', 'collection', 'fonds', 'recordgrp', 'subgrp')"/>
@@ -107,6 +109,7 @@
      
     <!-- document-based variables -->
     <xsl:variable name="unpublished-draft" select="if ($suppressInternalComponents eq false() and (ead3:ead/@audience='internal' or ead3:ead/ead3:archdesc/@audience='internal')) then true() else false()"/>
+    <xsl:variable name="unpublished-subelements" select="if ($suppressInternalComponents eq false() and (ead3:ead/*/*//@audience='internal')) then true() else false()"/>
     <xsl:variable name="finding-aid-title" select="ead3:ead/ead3:control/ead3:filedesc/ead3:titlestmt/ead3:titleproper[1][not(@localtype = 'filing')]"/>
     <xsl:variable name="finding-aid-author" select="ead3:ead/ead3:control/ead3:filedesc/ead3:titlestmt/ead3:author"/>
     <xsl:variable name="finding-aid-summary"

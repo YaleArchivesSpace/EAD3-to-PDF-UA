@@ -35,12 +35,17 @@
             <fo:flow flow-name="xsl-region-body">
                 <xsl:if test="$unpublished-draft eq true()">
                     <fo:block xsl:use-attribute-sets="unpublished">
-                        <xsl:text>*** UNPUBLISHED DRAFT ***</xsl:text> 
+                        <xsl:value-of select="$resource-unpublished-note"/>
                     </fo:block>
                 </xsl:if>
                 <fo:block xsl:use-attribute-sets="h1">
                     <xsl:apply-templates select="$finding-aid-title"/>
                 </fo:block>
+                <xsl:if test="$unpublished-subelements">
+                    <fo:block xsl:use-attribute-sets="unpublished">
+                        <xsl:value-of select="$sub-resource-unpublished-note"/>
+                    </fo:block>
+                </xsl:if>
                 <fo:block xsl:use-attribute-sets="h2 margin-after-large">
                     <xsl:apply-templates select="$collection-identifier"/>
                 </fo:block>
