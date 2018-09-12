@@ -98,10 +98,11 @@
                         fox:alt-text="A view of the Lewis Walpole Library, during summertime"/>
                 </xsl:when>
                 <xsl:when test="$repository-code='ycba'">
-                    <fo:external-graphic src="url('logos/ycba.png')"
+                    <fo:external-graphic src="url('logos/YCBA_logo.jpg')"
                         content-width="scale-to-fit"
+                        width="75%"
                         scaling="uniform"
-                        fox:alt-text="A view inside the Yale Center for British Art Library. Photograph by Richard Caspole, 2016"/>
+                        fox:alt-text="Yale Center for British Art, Library Court. Photograph by Richard Caspole, YCBA, 2016."/>
                 </xsl:when>
                 <xsl:otherwise>
                     <fo:external-graphic src="url('logos/Yale_University_Shield_1.svg')"
