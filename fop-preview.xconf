@@ -47,6 +47,19 @@
         <font kerning="yes" embed-url="font-preview/Open_Sans/OpenSans-Italic.ttf">
           <font-triplet name="Open_Sans" style="italic" weight="normal"/>
         </font>
+		
+		<font kerning="yes" embed-url="font-preview/NotoSans/NotoSans-Regular.ttf">
+          <font-triplet name="NotoSans" style="normal" weight="normal"/>
+        </font>
+        <font kerning="yes" embed-url="font-preview/NotoSans/NotoSans-Bold.ttf">
+          <font-triplet name="NotoSans" style="normal" weight="bold"/>
+        </font>
+        <font kerning="yes" embed-url="font-preview/NotoSans/NotoSans-BoldItalic.ttf">
+          <font-triplet name="NotoSans" style="italic" weight="bold"/>
+        </font>
+        <font kerning="yes" embed-url="font-preview/NotoSans/NotoSans-Italic.ttf">
+          <font-triplet name="NotoSans" style="italic" weight="normal"/>
+        </font>
         
 
       </fonts>
