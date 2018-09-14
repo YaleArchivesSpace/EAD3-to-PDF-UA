@@ -42,7 +42,8 @@
     match="
       ead3:unitid | ead3:abstract | ead3:addressline | ead3:langmaterial | ead3:materialspec | ead3:origination | ead3:physdesc[not(@localtype = 'container_summary')]
       | ead3:physloc | ead3:repository"
-    mode="dsc">
+    mode="dsc" priority="2">
+    <!-- need to add an unpublish bit here, as well, i'd think -->
     <!-- add a call number header in front of unitid elements, and italicize physdesc notes
     removed keep-with-previous.within-page="always"
     -->
