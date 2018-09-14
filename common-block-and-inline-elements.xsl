@@ -260,7 +260,7 @@
   <xsl:template match="ead3:list" mode="#all" priority="2">
     <xsl:variable name="numeration-type" select="@numeration"/>
     <fo:list-block>
-      <xsl:if test="@audience='internal' and $suppressInternalComponents eq false()">
+      <xsl:if test="@audience='internal' and $suppressInternalComponentsInPDF eq false()">
         <xsl:attribute name="border-width">1pt</xsl:attribute>
         <xsl:attribute name="border-style">solid</xsl:attribute>
         <xsl:attribute name="border-color">red</xsl:attribute>
@@ -274,7 +274,7 @@
   
   <xsl:template match="ead3:list[ead3:defitem]" mode="#all" priority="2">
     <fo:list-block start-indent="5mm" provisional-distance-between-starts="40mm">
-      <xsl:if test="@audience='internal' and $suppressInternalComponents eq false()">
+      <xsl:if test="@audience='internal' and $suppressInternalComponentsInPDF eq false()">
         <xsl:attribute name="border-width">1pt</xsl:attribute>
         <xsl:attribute name="border-style">solid</xsl:attribute>
         <xsl:attribute name="border-color">red</xsl:attribute>
@@ -737,7 +737,7 @@
   <!-- highlight unpublished notes 
   this doesn't work right now for lists, since it'll just output a red border 
   around a blob of text, but i can change that later. -->
-  <xsl:template match="ead3:*[@audience='internal'][$suppressInternalComponents eq false()]" mode="collection-overview dsc">
+  <xsl:template match="ead3:*[@audience='internal'][$suppressInternalComponentsInPDF eq false()]" mode="collection-overview dsc">
     <fo:block xsl:use-attribute-sets="unpublished">
       <xsl:apply-templates mode="#current"/>
     </fo:block>

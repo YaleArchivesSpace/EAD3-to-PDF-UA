@@ -20,7 +20,7 @@
                 <xsl:call-template name="section-start"/>
                 <xsl:variable name="id-for-link" select="if (@id) then @id else generate-id(.)"/>
                 <fo:block xsl:use-attribute-sets="h3" id="{@id-for-link}">
-                    <xsl:if test="@audience='internal' and $suppressInternalComponents eq false()">
+                    <xsl:if test="@audience='internal' and $suppressInternalComponentsInPDF eq false()">
                         <xsl:attribute name="border-style">solid</xsl:attribute>
                         <xsl:attribute name="border-width">2px</xsl:attribute>
                         <xsl:attribute name="border-color">red</xsl:attribute>
@@ -50,7 +50,7 @@
         <xsl:call-template name="section-start"/>
         <xsl:variable name="id-for-link" select="if (@id) then @id else generate-id(.)"/>
         <fo:block xsl:use-attribute-sets="h3" id="{@id-for-link}">
-            <xsl:if test="@audience='internal' and $suppressInternalComponents eq false()">
+            <xsl:if test="@audience='internal' and $suppressInternalComponentsInPDF eq false()">
                 <xsl:attribute name="border-style">solid</xsl:attribute>
                 <xsl:attribute name="border-width">2px</xsl:attribute>
                 <xsl:attribute name="border-color">red</xsl:attribute>
