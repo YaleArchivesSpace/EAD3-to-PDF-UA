@@ -68,44 +68,44 @@
         <fo:block xsl:use-attribute-sets="margin-after-small">
             <xsl:choose>
                 <xsl:when test="$repository-code='divinity'">
-                    <fo:external-graphic src="url('logos/divshield.jpg')"
+                    <fo:external-graphic src="url('config/logos/divshield.jpg')"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="Divinity school shield logo"/>
                 </xsl:when>
                 <xsl:when test="$repository-code='med'">
-                    <fo:external-graphic src="url('logos/medshield.jpg')"
+                    <fo:external-graphic src="url('config/logos/medshield.jpg')"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="Medical school shield logo"/>
                 </xsl:when>
                 <xsl:when test="$repository-code='beinecke'">
-                    <fo:external-graphic src="url('logos/brbl_bldg.jpg')"
+                    <fo:external-graphic src="url('config/logos/brbl_bldg.jpg')"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="A drawing of an exterior view of the Beinecke Library"/>
                 </xsl:when>
                 <xsl:when test="$repository-code='ypm'">
-                    <fo:external-graphic src="url('logos/peabody.jpg')"
+                    <fo:external-graphic src="url('config/logos/peabody.jpg')"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="A view from outside the Peabody Museum, with a statue of a triceratops horridus in the foreground"/>
                 </xsl:when>
                 <xsl:when test="$repository-code='lwl'">
-                    <fo:external-graphic src="url('logos/walpole-summer.jpg')"
+                    <fo:external-graphic src="url('config/logos/walpole-summer.jpg')"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="A view of the Lewis Walpole Library, during summertime"/>
                 </xsl:when>
                 <xsl:when test="$repository-code='ycba'">
-                    <fo:external-graphic src="url('logos/YCBA_logo.jpg')"
+                    <fo:external-graphic src="url('config/logos/YCBA_logo.jpg')"
                         content-width="scale-to-fit"
                         width="75%"
                         scaling="uniform"
                         fox:alt-text="Yale Center for British Art, Library Court. Photograph by Richard Caspole, YCBA, 2016."/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <fo:external-graphic src="url('logos/Yale_University_Shield_1.svg')"
+                    <fo:external-graphic src="url('config/logos/Yale_University_Shield_1.svg')"
                         width="70%"
                         content-height="70%"
                         content-width="scale-to-fit"

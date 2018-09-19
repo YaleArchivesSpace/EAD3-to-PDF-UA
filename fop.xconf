@@ -28,69 +28,69 @@
 
       <fonts>
         <!-- for fun icons, why not? -->
-        <font embed-url="fonts/FontAwesome/FontAwesome5_Free-Regular-400.otf">
+        <font embed-url="config/fonts/FontAwesome/FontAwesome5_Free-Regular-400.otf">
           <font-triplet name="FontAwesomeRegular" style="normal" weight="normal"/>
         </font>
-        <font embed-url="fonts/FontAwesome/FontAwesome5_Free-Solid-900.otf">
+        <font embed-url="config/fonts/FontAwesome/FontAwesome5_Free-Solid-900.otf">
           <font-triplet name="FontAwesomeSolid" style="normal" weight="normal"/>
         </font>
 
-        <font kerning="yes" embed-url="fonts/Mallory/Mallory-Book.otf">
+        <font kerning="yes" embed-url="config/fonts/Mallory/Mallory-Book.otf">
           <font-triplet name="Mallory" style="normal" weight="normal"/>
         </font>
-        <font kerning="yes" embed-url="fonts/Mallory/Mallory-BookItalic.otf">
+        <font kerning="yes" embed-url="config/fonts/Mallory/Mallory-BookItalic.otf">
           <font-triplet name="Mallory" style="italic" weight="normal"/>
         </font>
-        <font kerning="yes" embed-url="fonts/Mallory/Mallory-Bold.otf">
+        <font kerning="yes" embed-url="config/fonts/Mallory/Mallory-Bold.otf">
           <font-triplet name="Mallory" style="normal" weight="bold"/>
         </font>
-        <font kerning="yes" embed-url="fonts/Mallory/Mallory-BoldItalic.otf">
+        <font kerning="yes" embed-url="config/fonts/Mallory/Mallory-BoldItalic.otf">
           <font-triplet name="Mallory" style="italic" weight="bold"/>
         </font>
 
         <!-- try out MP as well -->
-        <font kerning="yes" embed-url="fonts/Mallory/MalloryMP-Book.otf">
+        <font kerning="yes" embed-url="config/fonts/Mallory/MalloryMP-Book.otf">
           <font-triplet name="MalloryMP" style="normal" weight="normal"/>
         </font>
-        <font kerning="yes" embed-url="fonts/Mallory/MalloryMP-BookItalic.otf">
+        <font kerning="yes" embed-url="config/fonts/Mallory/MalloryMP-BookItalic.otf">
           <font-triplet name="MalloryMP" style="italic" weight="normal"/>
         </font>
-        <font kerning="yes" embed-url="fonts/Mallory/MalloryMP-Bold.otf">
+        <font kerning="yes" embed-url="config/fonts/Mallory/MalloryMP-Bold.otf">
           <font-triplet name="MalloryMP" style="normal" weight="bold"/>
         </font>
-        <font kerning="yes" embed-url="fonts/Mallory/MalloryMP-BoldItalic.otf">
+        <font kerning="yes" embed-url="config/fonts/Mallory/MalloryMP-BoldItalic.otf">
           <font-triplet name="MalloryMP" style="italic" weight="bold"/>
         </font>
 
-        <font kerning="yes" embed-url="fonts/Yale/YaleNew-Bold.otf">
+        <font kerning="yes" embed-url="config/fonts/Yale/YaleNew-Bold.otf">
           <font-triplet name="Yale" style="normal" weight="bold"/>
         </font>
-        <font kerning="yes" embed-url="fonts/Yale/YaleNew-Roman.otf">
+        <font kerning="yes" embed-url="config/fonts/Yale/YaleNew-Roman.otf">
           <font-triplet name="Yale" style="normal" weight="normal"/>
         </font>
-        <font kerning="yes" embed-url="fonts/Yale/YaleNew-BoldItalic.otf">
+        <font kerning="yes" embed-url="config/fonts/Yale/YaleNew-BoldItalic.otf">
           <font-triplet name="Yale" style="italic" weight="bold"/>
         </font>
-        <font kerning="yes" embed-url="fonts/Yale/YaleNew-Italic.otf">
+        <font kerning="yes" embed-url="config/fonts/Yale/YaleNew-Italic.otf">
           <font-triplet name="Yale" style="italic" weight="normal"/>
         </font>
 
         <!--font for previews -->
-        <font kerning="yes" embed-url="fonts/Open_Sans/OpenSans-Regular.ttf">
+        <font kerning="yes" embed-url="config/fonts/Open_Sans/OpenSans-Regular.ttf">
           <font-triplet name="Open_Sans" style="normal" weight="normal"/>
         </font>
-        <font kerning="yes" embed-url="fonts/Open_Sans/OpenSans-Bold.ttf">
+        <font kerning="yes" embed-url="config/fonts/Open_Sans/OpenSans-Bold.ttf">
           <font-triplet name="Open_Sans" style="normal" weight="bold"/>
         </font>
-        <font kerning="yes" embed-url="fonts/OPen_Sans/OpenSans-BoldItalic.ttf">
+        <font kerning="yes" embed-url="config/fonts/OPen_Sans/OpenSans-BoldItalic.ttf">
           <font-triplet name="Open_Sans" style="italic" weight="bold"/>
         </font>
-        <font kerning="yes" embed-url="fonts/Open_Sans/OpenSans-Italic.ttf">
+        <font kerning="yes" embed-url="config/fonts/Open_Sans/OpenSans-Italic.ttf">
           <font-triplet name="Open_Sans" style="italic" weight="normal"/>
         </font>
-        
+
         <!-- backup font -->
-        <font kerning="yes" embed-url="fonts/Arial/ARIALUNI.TTF">
+        <font kerning="yes" embed-url="config/fonts/Arial/ARIALUNI.TTF">
           <font-triplet name="ArialUnicode" style="normal" weight="normal"/>
         </font>
 
