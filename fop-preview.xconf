@@ -27,37 +27,37 @@
 
       <fonts>
         <!-- for fun icons, why not? -->
-        <font embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/FontAwesome/FontAwesome5_Free-Regular-400.otf?raw=true">
+        <font embed-url="config/font-preview/FontAwesome/FontAwesome5_Free-Regular-400.otf">
           <font-triplet name="FontAwesomeRegular" style="normal" weight="normal"/>
         </font>
-        <font embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/FontAwesome/FontAwesome5_Free-Solid-900.otf?raw=true">
+        <font embed-url="config/font-preview/FontAwesome/FontAwesome5_Free-Solid-900.otf">
           <font-triplet name="FontAwesomeSolid" style="normal" weight="normal"/>
         </font>
 
         <!--font for previews -->
-        <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Open_Sans/OpenSans-Regular.ttf?raw=true">
+        <font kerning="yes" embed-url="config/font-preview/Open_Sans/OpenSans-Regular.ttf">
           <font-triplet name="Open_Sans" style="normal" weight="normal"/>
         </font>
-        <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Open_Sans/OpenSans-Bold.ttf?raw=true">
+        <font kerning="yes" embed-url="config/font-preview/Open_Sans/OpenSans-Bold.ttf">
           <font-triplet name="Open_Sans" style="normal" weight="bold"/>
         </font>
-        <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/OPen_Sans/OpenSans-BoldItalic.ttf?raw=true">
+        <font kerning="yes" embed-url="config/font-preview/OPen_Sans/OpenSans-BoldItalic.ttf">
           <font-triplet name="Open_Sans" style="italic" weight="bold"/>
         </font>
-        <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Open_Sans/OpenSans-Italic.ttf?raw=true">
+        <font kerning="yes" embed-url="config/font-preview/Open_Sans/OpenSans-Italic.ttf">
           <font-triplet name="Open_Sans" style="italic" weight="normal"/>
         </font>
 
-		<font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/NotoSans/NotoSans-Regular.ttf?raw=true">
+		<font kerning="yes" embed-url="config/font-preview/NotoSans/NotoSans-Regular.ttf">
           <font-triplet name="NotoSans" style="normal" weight="normal"/>
         </font>
-        <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/NotoSans/NotoSans-Bold.ttf?raw=true">
+        <font kerning="yes" embed-url="config/font-preview/NotoSans/NotoSans-Bold.ttf">
           <font-triplet name="NotoSans" style="normal" weight="bold"/>
         </font>
-        <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/NotoSans/NotoSans-BoldItalic.ttf?raw=true">
+        <font kerning="yes" embed-url="config/font-preview/NotoSans/NotoSans-BoldItalic.ttf">
           <font-triplet name="NotoSans" style="italic" weight="bold"/>
         </font>
-        <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/NotoSans/NotoSans-Italic.ttf?raw=true">
+        <font kerning="yes" embed-url="config/font-preview/NotoSans/NotoSans-Italic.ttf">
           <font-triplet name="NotoSans" style="italic" weight="normal"/>
         </font>
 
