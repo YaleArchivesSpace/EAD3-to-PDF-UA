@@ -318,7 +318,7 @@
             <xsl:attribute name="keep-together.within-column">always</xsl:attribute>
         </xsl:if>
         <xsl:choose>
-            <xsl:when test="$suppressInternalComponents eq false() and $audience eq 'internal'">
+            <xsl:when test="$suppressInternalComponentsInPDF eq false() and $audience eq 'internal'">
                 <xsl:attribute name="border-style">solid</xsl:attribute>
                 <xsl:attribute name="border-width">2px</xsl:attribute>
                 <xsl:attribute name="border-color">red</xsl:attribute>

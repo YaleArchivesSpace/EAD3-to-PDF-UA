@@ -42,7 +42,8 @@
     match="
       ead3:unitid | ead3:abstract | ead3:addressline | ead3:langmaterial | ead3:materialspec | ead3:origination | ead3:physdesc[not(@localtype = 'container_summary')]
       | ead3:physloc | ead3:repository"
-    mode="dsc">
+    mode="dsc" priority="2">
+    <!-- need to add an unpublish bit here, as well, i'd think -->
     <!-- add a call number header in front of unitid elements, and italicize physdesc notes
     removed keep-with-previous.within-page="always"
     -->
@@ -260,7 +261,7 @@
   <xsl:template match="ead3:list" mode="#all" priority="2">
     <xsl:variable name="numeration-type" select="@numeration"/>
     <fo:list-block>
-      <xsl:if test="@audience='internal' and $suppressInternalComponents eq false()">
+      <xsl:if test="@audience='internal' and $suppressInternalComponentsInPDF eq false()">
         <xsl:attribute name="border-width">1pt</xsl:attribute>
         <xsl:attribute name="border-style">solid</xsl:attribute>
         <xsl:attribute name="border-color">red</xsl:attribute>
@@ -274,7 +275,7 @@
   
   <xsl:template match="ead3:list[ead3:defitem]" mode="#all" priority="2">
     <fo:list-block start-indent="5mm" provisional-distance-between-starts="40mm">
-      <xsl:if test="@audience='internal' and $suppressInternalComponents eq false()">
+      <xsl:if test="@audience='internal' and $suppressInternalComponentsInPDF eq false()">
         <xsl:attribute name="border-width">1pt</xsl:attribute>
         <xsl:attribute name="border-style">solid</xsl:attribute>
         <xsl:attribute name="border-color">red</xsl:attribute>
@@ -737,7 +738,7 @@
   <!-- highlight unpublished notes 
   this doesn't work right now for lists, since it'll just output a red border 
   around a blob of text, but i can change that later. -->
-  <xsl:template match="ead3:*[@audience='internal'][$suppressInternalComponents eq false()]" mode="collection-overview dsc">
+  <xsl:template match="ead3:*[@audience='internal'][$suppressInternalComponentsInPDF eq false()]" mode="collection-overview dsc">
     <fo:block xsl:use-attribute-sets="unpublished">
       <xsl:apply-templates mode="#current"/>
     </fo:block>

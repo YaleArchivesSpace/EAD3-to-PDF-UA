@@ -74,7 +74,7 @@
     <xsl:param name="backup-font" select="'ArialUnicode'"/>
     <xsl:param name="default-font-size" select="'10pt'"/>
     <!-- will pass false() when using this process to do staff-only PDF previews -->
-    <xsl:param name="suppressInternalComponents" select="true()" as="xs:boolean"/>
+    <xsl:param name="suppressInternalComponentsInPDF" select="true()" as="xs:boolean"/>
     <xsl:param name="start-page-1-after-table-of-contents" select="false()"/>
     <!-- if you change this to true, you'll lose the markers (e.g. series N continued)
     since those are currently in the table header, not the page headers.
@@ -108,8 +108,8 @@
     <xsl:param name="otherlevels-to-include-in-toc" select="('accession', 'acquisition')"/>
 
     <!-- document-based variables -->
-    <xsl:variable name="unpublished-draft" select="if ($suppressInternalComponents eq false() and (ead3:ead/@audience='internal' or ead3:ead/ead3:archdesc/@audience='internal')) then true() else false()"/>
-    <xsl:variable name="unpublished-subelements" select="if ($suppressInternalComponents eq false() and (ead3:ead/*/*//@audience='internal')) then true() else false()"/>
+    <xsl:variable name="unpublished-draft" select="if ($suppressInternalComponentsInPDF eq false() and (ead3:ead/@audience='internal' or ead3:ead/ead3:archdesc/@audience='internal')) then true() else false()"/>
+    <xsl:variable name="unpublished-subelements" select="if ($suppressInternalComponentsInPDF eq false() and (ead3:ead/*/*//@audience='internal')) then true() else false()"/>
     <xsl:variable name="finding-aid-title" select="ead3:ead/ead3:control/ead3:filedesc/ead3:titlestmt/ead3:titleproper[1][not(@localtype = 'filing')]"/>
     <xsl:variable name="finding-aid-author" select="ead3:ead/ead3:control/ead3:filedesc/ead3:titlestmt/ead3:author"/>
     <xsl:variable name="finding-aid-summary"
