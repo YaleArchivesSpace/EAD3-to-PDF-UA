@@ -107,6 +107,8 @@
     <xsl:param name="levels-to-include-in-toc" select="('series', 'subseries', 'collection', 'fonds', 'recordgrp', 'subgrp')"/>
     <xsl:param name="otherlevels-to-include-in-toc" select="('accession', 'acquisition')"/>
 
+    <xsl:param name="logo-location"/>
+
     <!-- document-based variables -->
     <xsl:variable name="unpublished-draft" select="if ($suppressInternalComponentsInPDF eq false() and (ead3:ead/@audience='internal' or ead3:ead/ead3:archdesc/@audience='internal')) then true() else false()"/>
     <xsl:variable name="unpublished-subelements" select="if ($suppressInternalComponentsInPDF eq false() and (ead3:ead/*/*//@audience='internal')) then true() else false()"/>
