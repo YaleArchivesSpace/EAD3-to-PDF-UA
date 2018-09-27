@@ -68,44 +68,52 @@
         <fo:block xsl:use-attribute-sets="margin-after-small">
             <xsl:choose>
                 <xsl:when test="$repository-code='divinity'">
-                    <fo:external-graphic src="url(concat($logo-location, 'config/logos/divshield.jpg'))"
+                    <xsl:variable name="image" select="concat($logo-location, 'config/logos/divshield.jpg')"/>
+                    <fo:external-graphic src="url(concat({$image})"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="Divinity school shield logo"/>
                 </xsl:when>
                 <xsl:when test="$repository-code='med'">
-                    <fo:external-graphic src="url(concat($logo-location, 'config/logos/medshield.jpg'))"
+                    <xsl:variable name="image" select="concat($logo-location, 'config/logos/medshield.jpg')"/>
+                    <fo:external-graphic src="url(concat({$image})"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="Medical school shield logo"/>
                 </xsl:when>
                 <xsl:when test="$repository-code='beinecke'">
-                    <fo:external-graphic src="url(concat($logo-location, 'config/logos/brbl_bldg.jpg'))"
+                    <xsl:variable name="image" select="concat($logo-location, 'config/logos/brbl_bldg.jpg')"/>
+                    <fo:external-graphic src="url({$image})"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="A drawing of an exterior view of the Beinecke Library"/>
                 </xsl:when>
                 <xsl:when test="$repository-code='ypm'">
-                    <fo:external-graphic src="url(concat($logo-location, 'config/logos/peabody.jpg'))"
+                    <xsl:variable name="image" select="concat($logo-location, 'config/logos/peabody.jpg')"/>
+                    <fo:external-graphic src="url({$image})"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="A view from outside the Peabody Museum, with a statue of a triceratops horridus in the foreground"/>
                 </xsl:when>
                 <xsl:when test="$repository-code='lwl'">
-                    <fo:external-graphic src="url(concat($logo-location, 'config/logos/walpole-summer.jpg'))"
+                    <xsl:variable name="image" select="concat($logo-location, 'config/logos/walpole-summer.jpg')"/>
+                    <fo:external-graphic src="url({$image})"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="A view of the Lewis Walpole Library, during summertime"/>
                 </xsl:when>
                 <xsl:when test="$repository-code='ycba'">
-                    <fo:external-graphic src="url(concat($logo-location, 'config/logos/YCBA_logo.jpg'))"
+                    <xsl:variable name="image" select="concat($logo-location, 'config/logos/YCBA_logo.jpg')"/>
+                    <fo:external-graphic src="url({$image})"
                         content-width="scale-to-fit"
                         width="75%"
                         scaling="uniform"
                         fox:alt-text="Yale Center for British Art, Library Court. Photograph by Richard Caspole, YCBA, 2016."/>
+   
                 </xsl:when>
                 <xsl:otherwise>
-                    <fo:external-graphic src="url(concat($logo-location, 'config/logos/Yale_University_Shield_1.svg'))"
+                    <xsl:variable name="image" select="concat($logo-location, 'config/logos/Yale_University_Shield_1.svg')"/>
+                    <fo:external-graphic src="url({$image})"
                         width="70%"
                         content-height="70%"
                         content-width="scale-to-fit"
