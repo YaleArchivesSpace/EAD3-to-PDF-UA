@@ -69,14 +69,14 @@
             <xsl:choose>
                 <xsl:when test="$repository-code='divinity'">
                     <xsl:variable name="image" select="concat($logo-location, 'config/logos/divshield.jpg')"/>
-                    <fo:external-graphic src="url(concat({$image})"
+                    <fo:external-graphic src="url({$image})"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="Divinity school shield logo"/>
                 </xsl:when>
                 <xsl:when test="$repository-code='med'">
                     <xsl:variable name="image" select="concat($logo-location, 'config/logos/medshield.jpg')"/>
-                    <fo:external-graphic src="url(concat({$image})"
+                    <fo:external-graphic src="url({$image})"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="Medical school shield logo"/>
