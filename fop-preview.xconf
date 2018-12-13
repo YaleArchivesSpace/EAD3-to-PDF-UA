@@ -41,7 +41,7 @@
         <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Open_Sans/OpenSans-Bold.ttf?raw=true">
           <font-triplet name="Open_Sans" style="normal" weight="bold"/>
         </font>
-        <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/OPen_Sans/OpenSans-BoldItalic.ttf?raw=true">
+        <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Open_Sans/OpenSans-BoldItalic.ttf?raw=true">
           <font-triplet name="Open_Sans" style="italic" weight="bold"/>
         </font>
         <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Open_Sans/OpenSans-Italic.ttf?raw=true">
