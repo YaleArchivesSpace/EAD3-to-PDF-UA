@@ -14,6 +14,11 @@
 
          Gotta get rid of that extra emph, and put the text
          of emph into part.  geez.
+         
+         three rules needed?:  
+         1) remove any title/emph elements. 
+         2) remove empty part elements without a previous emph. 
+         3) add the emph element to the following empty part element
 
   to do:
 
@@ -252,7 +257,7 @@
   </xsl:param>
 
   <!-- standard identity template -->
-  <xsl:template match="@* | node()">
+  <xsl:template match="@* | node()" mode="#default copy">
     <xsl:copy>
       <xsl:apply-templates select="@* | node()"/>
     </xsl:copy>
@@ -350,6 +355,18 @@
   <xsl:template match="ead3:part/text()">
     <xsl:value-of select="replace(., '\$\w:', '')"/>
   </xsl:template>
+    
+  
+  <xsl:template match="ead3:title/ead3:emph"/>
+  
+  <xsl:template match="ead3:part[preceding-sibling::ead3:emph[1]]">
+    <xsl:copy>
+      <xsl:apply-templates select="preceding-sibling::ead3:emph[1], node()" mode="copy"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="ead3:part[not(preceding-sibling::*)][not(node())]"/>
+    
 
 
 
@@ -508,6 +525,7 @@
 
   <!-- let's remove those AT database IDs even if we keep internal-only elements around.
   those should be the only unitids exported with an invalid @type attribute, so just remove 'em.
+  should also take care of "local_surrogate_call_number"... but will check that out once we have examples in place from MSSA.
   -->
   <xsl:template match="ead3:unitid[@type]" priority="2"/>
 
@@ -729,7 +747,7 @@ So, all that we need to do here
   <xsl:template match="ead3:dao/ead3:descriptivenote"/>
      -->
 
-  <!-- a very wacky hack to fix the dao title comparisons for the 2 kissiner finding aids, which include a date string as part of the dao title
+  <!-- a very wacky hack to fix the dao title comparisons for the 2 kissinger finding aids, which include a date string as part of the dao title
     after the last comma (which we strip out below) -->
   <xsl:template match="ead3:dao/ead3:descriptivenote/ead3:p/text()[last()][$finding-aid-identifier = ('mssa.ms.2004', 'mssa.ms.1980')]" priority="2">
     <xsl:variable name="tokens" select="tokenize(string-join(., ' '), ', ')"/>
