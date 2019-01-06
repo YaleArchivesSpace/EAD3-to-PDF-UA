@@ -835,5 +835,11 @@ So, all that we need to do here
       <xsl:value-of select="@href"/>
     </xsl:element>
   </xsl:template>
+  
+  <xsl:template match="@role">
+    <xsl:attribute name="linkrole">
+      <xsl:value-of select="."/>
+    </xsl:attribute>
+  </xsl:template>
 
 </xsl:stylesheet>
