@@ -332,7 +332,10 @@
     <xsl:value-of select="replace(., '\$\w:', '')"/>
   </xsl:template>
     
-  
+ <!-- going with a less extreme strategy for the time being.  
+   see the ead3:title/ead3:emph template much further down,
+   which replaces these 3 templates ...
+   
   <xsl:template match="ead3:title/ead3:emph"/>
   
   <xsl:template match="ead3:part[preceding-sibling::ead3:emph[1]]">
@@ -342,7 +345,7 @@
   </xsl:template>
   
   <xsl:template match="ead3:part[not(preceding-sibling::*)][not(node())]"/>
-    
+  -->
 
 
 
