@@ -3,22 +3,8 @@
   Transform ArchivesSpace EAD output to be EAD compliant with Yale's EAD best practice guidelines
 
   maintained by: mark.custer@yale.edu
-  updated to conform with ASpace versions 2.x
-
- another example problem:
-
-              <p>Includes <title localtype="simple" render="italic">
-                  <emph render="italic">By-laws of the Hudson River Spathic Iron Ore Company</emph>
-                  <part/>
-                </title> (1875)</p>
-
-         Gotta get rid of that extra emph, and put the text
-         of emph into part.  geez.
-         
-         three rules needed?:  
-         1) remove any title/emph elements. 
-         2) remove empty part elements without a previous emph. 
-         3) add the emph element to the following empty part element
+  updated to conform with ASpace versions 2.x  
+             
 
   to do:
 
@@ -31,21 +17,10 @@
   update all repo records in ASpace and remove the "respository_code" parameter from this file.
 
 
-  3)
-  remove elements that aren't legal in EAD3...  e.g. linebreaks in title elements.
-  e.g.
-  <title localtype="simple" render="italic">
-                <part>Bumarap:</part>
-                <lb/>
-                <part>the Story of a Male Virgin</part>
-              </title>
-    there should only be one <part> element!
 
   figure out how to handle titles that are exported incorrectly in EAD3 from ASpace
-  if a note has two title elements, those get exported as a single one!
-  ead2002 example:
-
-  ead3 example:
+  if a note has two title elements, those get exported as a single one.
+  find an example!
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ead3="http://ead3.archivists.org/schema/"
   xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -843,5 +818,51 @@ So, all that we need to do here
       <xsl:value-of select="."/>
     </xsl:attribute>
   </xsl:template>
+  
+  <!-- should re-join split title part elements, but for now
+    it's probably safest to just replace "lb" elements with a textual space
+ 
+  e.g.
+     <title localtype="simple" render="italic">
+                <part>Bumarap:</part>
+                <lb/>
+                <part>the Story of a Male Virgin</part>
+     </title>
+  there should only be one <part> element.
+  should be simple/safe to group adjacent elements
+  but i'm not sure if ASpace could ever export multiple part elements and we'd actually need to keep those separate.
+  because of that, let's go with a stupid space.
+  but we could just remove this rule once we delete those "lb"s from the database!
+  -->
+  <xsl:template match="ead3:title/ead3:lb">
+    <xsl:element name="part" namespace="http://ead3.archivists.org/schema/">
+      <xsl:text xml:space="preserve"> </xsl:text>
+    </xsl:element>
+  </xsl:template>
+  
+  <!-- 
+    another example problem:
+    
+                <title localtype="simple" render="italic">
+                  <emph render="italic">By-laws of the Hudson River Spathic Iron Ore Company</emph>
+                  <part/>
+                </title>
+                
+                <title localtype="simple" render="italic"><part>The Baron's</part><lb></lb><part>War</part></title>
+                
+     should check the logic of the render attributes and clean up data in the database,
+     but for now, let's just wrap any "emph" elements within a title within a part element and be done with.
+     the empty part shouldn't cause any harm, and that's just inserted by the ASpace EAD3 exporter since it doesn't know how to handle the "emph" element.
+     that said, we should be able to safely strip any empty part elements.
+    -->
+  <xsl:template match="ead3:title/ead3:emph">
+    <xsl:element name="part" namespace="http://ead3.archivists.org/schema/">
+      <xsl:copy>
+        <xsl:apply-templates select="@* | node()"/>
+      </xsl:copy>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="ead3:part[not(node())]"/>
 
 </xsl:stylesheet>
