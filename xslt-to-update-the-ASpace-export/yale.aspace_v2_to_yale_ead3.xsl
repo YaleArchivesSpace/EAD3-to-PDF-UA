@@ -57,6 +57,8 @@
 
   <!-- will pass false() when using this process to do staff-only PDF previews -->
   <xsl:param name="suppressInternalComponents" select="true()" as="xs:boolean"/>
+  
+  <xsl:param name="moveCreatorsToControlAccess" select="true()" as="xs:boolean"/>
 
   <xsl:variable name="finding-aid-identifier" select="ead3:ead/ead3:control/ead3:recordid[1]"/>
   <xsl:variable name="holding-repository" select="ead3:ead/ead3:archdesc/ead3:did/ead3:repository[1]"/>
@@ -270,7 +272,6 @@
   <!-- rather than fix the formatting (e.g. adding a paragraph element within controlnote),
     let's just keep this note internal only -->
   <xsl:template match="ead3:notestmt"/>
-
 
   <xsl:template match="ead3:conventiondeclaration[$include-cc0-rights-statement eq true()]">
     <xsl:copy>
@@ -499,6 +500,7 @@
   <!-- mdc: hack for beinecke.edwards (and any other collections/sections we
     need to model deliverable units within top containers)-->
   <xsl:template match="ead3:container[@localtype = ('parent_barcode', 'parent_box')]"/>
+  
   <xsl:template match="ead3:container[@localtype eq 'folder'][following-sibling::ead3:container[1][@localtype eq 'parent_box']]">
     <xsl:copy>
       <xsl:attribute name="localtype" select="'box'"/>

@@ -130,10 +130,16 @@
         </fo:block>
     </xsl:template>
 
-    <xsl:template match="ead3:eventdatetime" mode="titlepage.pdf.creation.date">
+    <xsl:template match="ead3:eventdatetime" mode="titlepage.pdf.creation.date">        
+        <!-- if kept like this, we'll need paramertize the time zone
+        if no parameter is passed, it should still be able to get the time zone, but not sure about the timezone
+        if the server becomes hosted, etc., so i'm passing the value for now.
+        -->
+        <xsl:variable name="adjustedDateTime" select="adjust-dateTime-to-timezone(xs:dateTime(.), xs:dayTimeDuration('-PT5H0M'))"/>
+        
         <fo:block font-size="9pt">
-            <xsl:text>Last modified at </xsl:text>
-            <xsl:value-of select="format-dateTime(xs:dateTime(.), '[h]:[m01] [Pn] on [FNn], [MNn] [D1o], [Y0001]')"/>
+            <xsl:text>Last exported at </xsl:text>
+            <xsl:value-of select="format-dateTime($adjustedDateTime, '[h]:[m01] [Pn] on [FNn], [MNn] [D1o], [Y0001]')"/>
         </fo:block>
     </xsl:template>
 

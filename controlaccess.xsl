@@ -4,6 +4,12 @@
     xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"
     xmlns:ead3="http://ead3.archivists.org/schema/" exclude-result-prefixes="xs ead3 fox"
     version="2.0">
+    
+    <xsl:include href="relators.xsl"/>
+    
+    <xsl:key name="relator-code" match="relator" use="code"/>
+    
+    <!-- to do: update so that these two templates aren't so repetive, since the structure should only differ slightly, I think -->
 
     <!-- this file is imported by "ead3-to-pdf-ua.xsl" -->
     <xsl:template match="ead3:archdesc" mode="control-access-section">
@@ -77,6 +83,10 @@
                                 <fo:list-item-body>
                                     <fo:block>
                                         <xsl:apply-templates/>
+                                        <xsl:if test="@relator">
+                                            <xsl:text>, </xsl:text>
+                                            <xsl:value-of select="key('relator-code', @relator, $cached-list-of-relators)/lower-case(label)"/>
+                                        </xsl:if>
                                     </fo:block>
                                 </fo:list-item-body>
                             </fo:list-item>
@@ -126,6 +136,10 @@
                                 <fo:list-item-body>
                                     <fo:block>
                                         <xsl:apply-templates/>
+                                        <xsl:if test="@relator">
+                                            <xsl:text>, </xsl:text>
+                                            <xsl:value-of select="key('relator-code', @relator, $cached-list-of-relators)/lower-case(label)"/>
+                                        </xsl:if>
                                     </fo:block>
                                 </fo:list-item-body>
                             </fo:list-item>
