@@ -12,6 +12,7 @@
     <!-- also need to make sure that the top-level dates display if those are NOT normalized
         -->
     
+    
     <!-- header and footer templates (start)-->
     <xsl:template name="header-right">
         <fo:block text-align="right" font-size="9pt">

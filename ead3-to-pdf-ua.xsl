@@ -23,6 +23,10 @@
     <xsl:include href="odd-index.xsl"/>
     <xsl:include href="index.xsl"/>
     <xsl:include href="controlaccess.xsl"/>
+    
+    <xsl:include href="relators.xsl"/>
+    
+    <xsl:key name="relator-code" match="relator" use="code"/>
 
     <!-- to do:
 
