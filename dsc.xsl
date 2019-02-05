@@ -92,7 +92,6 @@
             then add a custom sort, or just sort those alphabetically -->
         <xsl:variable name="container-groupings">
             <xsl:for-each-group select="ead3:did/ead3:container" group-by="if (@parent) then @parent else @id">
-                <xsl:sort select="mdc:container-to-number(.)"/>
                 <container-group>
                     <xsl:apply-templates select="current-group()" mode="copy"/>
                 </container-group>
@@ -179,7 +178,6 @@
         <xsl:variable name="cell-margin" select="concat(xs:string($depth * 8), 'pt')"/> <!-- e.g. 0, 8pt for c02, 16pt for c03, etc.-->
         <xsl:variable name="container-groupings">
             <xsl:for-each-group select="ead3:did/ead3:container" group-by="if (@parent) then @parent else @id">
-                <xsl:sort select="mdc:container-to-number(.)"/>
                 <container-group>
                     <xsl:apply-templates select="current-group()" mode="copy"/>
                 </container-group>

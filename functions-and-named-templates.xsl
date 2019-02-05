@@ -12,58 +12,6 @@
     <!-- also need to make sure that the top-level dates display if those are NOT normalized
         -->
     
-    <xsl:function name="mdc:container-to-number" as="xs:decimal">
-        <xsl:param name="current-container" as="node()*"/>
-        <xsl:variable name="primary-container-number" select="if (contains($current-container, '-'))
-            then replace(substring-before($current-container, '-'), '\D', '')
-            else if (contains($current-container, '/')) then 
-            format-number(number(replace(substring-before($current-container, '/'), '\D', '')), '000000')
-            else replace($current-container, '\D', '')"/>
-        <xsl:variable name="primary-container-modify">
-            <xsl:choose>
-                <xsl:when test="matches($current-container, '\D')">
-                    <xsl:analyze-string select="$current-container" regex="(\D)(\s?)">
-                        <xsl:matching-substring>
-                            <xsl:value-of select="number(string-to-codepoints(upper-case(regex-group(1))))"/>
-                        </xsl:matching-substring>
-                    </xsl:analyze-string>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="00"/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-        <xsl:variable name="id-attribute" select="$current-container/@id"/>
-        <xsl:variable name="secondary-container-number">
-            <!-- changed this xpath slightly so as to ignore containers that start with a # -->
-            <xsl:value-of select="if (contains($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '-')
-                and matches($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '^\d')) then 
-                format-number(number(replace(substring-before($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '-'), '\D', '')), '000000')
-                else if (contains($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '/')) then 
-                format-number(number(replace(substring-before($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '/'), '\D', '')), '000000')
-                else if (string-length(replace($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '\D', '')) eq 0)
-                then '000000'
-                else if ($current-container/following-sibling::ead3:container[not(starts-with(., '#'))][@parent eq $id-attribute][1])
-                then format-number(number(replace($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '\D', '')), '000000')
-                else '000000'"/>
-        </xsl:variable>
-        <!-- could do this recursively, instead, but ASpace can only have container1,2,3 as a group... and i've
-            never seen more than that needed, anyway -->
-        <xsl:variable name="tertiary-container-number">
-            <xsl:value-of select="if (contains($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '-')
-                and matches($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '^\d'))  then 
-                format-number(number(replace(substring-before($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '-'), '\D', '')), '000000')
-                else if (contains($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '/')) then 
-                format-number(number(replace(substring-before($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '/'), '\D', '')), '000000')
-                else if (string-length(replace($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '\D', '')) eq 0)
-                then '000000'
-                else if ($current-container/following-sibling::ead3:container[not(starts-with(., '#'))][@parent eq $id-attribute][2])
-                then format-number(number(replace($current-container/following-sibling::ead3:container[@parent eq $id-attribute][2], '\D', '')), '000000')
-                else '000000'"/>
-        </xsl:variable>
-        <xsl:value-of select="xs:decimal(concat($primary-container-number, '.', $primary-container-modify, $secondary-container-number, $tertiary-container-number))"/>
-    </xsl:function>
-    
     <!-- header and footer templates (start)-->
     <xsl:template name="header-right">
         <fo:block text-align="right" font-size="9pt">
