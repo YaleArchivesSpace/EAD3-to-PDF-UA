@@ -635,7 +635,7 @@ So, all that we need to do here
     <xsl:variable name="grouping-element-name" select="local-name()"/>
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
-      <xsl:element name="head" namespace="urn:isbn:1-931666-22-9">
+      <xsl:element name="head" namespace="http://ead3.archivists.org/schema/">
         <xsl:value-of select="substring-after(ead3:head, ') ')"/>
       </xsl:element>
       <xsl:apply-templates select="ead3:* except ead3:head"/>
