@@ -359,6 +359,11 @@
       <xsl:value-of select="concat('aspace_', .)"/>
     </xsl:attribute>
   </xsl:template>
+  <xsl:template match="@target[not(starts-with(., 'ref'))][contains(., 'ref')][starts-with(., 'aspace_')]">
+    <xsl:attribute name="target">
+      <xsl:value-of select="substring-after(., 'aspace_')"/>
+    </xsl:attribute>
+  </xsl:template>
 
   <!--remove any ref/@type attributes -->
   <xsl:template match="ead3:ref/@type"/>
