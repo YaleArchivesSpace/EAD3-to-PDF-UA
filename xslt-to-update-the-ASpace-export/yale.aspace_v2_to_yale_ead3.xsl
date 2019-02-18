@@ -858,7 +858,11 @@ So, all that we need to do here
      the empty part shouldn't cause any harm, and that's just inserted by the ASpace EAD3 exporter since it doesn't know how to handle the "emph" element.
      that said, we should be able to safely strip any empty part elements.
     -->
-  <xsl:template match="ead3:title/ead3:emph">
+  <xsl:template match="ead3:corpname/ead3:emph | ead3:famname/ead3:emph
+    | ead3:function/ead3:emph | ead3:genreform/ead3:emph 
+    | ead3:geogname/ead3:emph | ead3:name/ead3:emph 
+    | ead3:occupation/ead3:emph | ead3:persname/ead3:emph 
+    | ead3:subject/ead3:emph | ead3:title/ead3:emph">
     <xsl:element name="part" namespace="http://ead3.archivists.org/schema/">
       <xsl:copy>
         <xsl:apply-templates select="@* | node()"/>

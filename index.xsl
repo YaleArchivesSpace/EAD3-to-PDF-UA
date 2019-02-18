@@ -69,7 +69,7 @@
     <xsl:template match="ead3:indexentry">
         <!-- gotta update this once i'm online again, with a copy of the schema -->
         <fo:list-item space-after="1em">
-            <fo:list-item-label>
+            <fo:list-item-label end-indent="label-end()">
                 <fo:block>
                     <!-- ASpace doesn't support groups within indices -->
                     <xsl:apply-templates select="ead3:corpname|ead3:famname|ead3:function|ead3:genreform|ead3:geogname|ead3:name|ead3:occupation|ead3:persname|ead3:subject|ead3:title"/>
