@@ -735,7 +735,7 @@ So, all that we need to do here
   <!-- a very wacky hack to fix the dao title comparisons for the 2 kissinger finding aids, which include a date string as part of the dao title
     after the last comma (which we strip out below) -->
   <xsl:template match="ead3:dao/ead3:descriptivenote/ead3:p/text()[last()][$finding-aid-identifier = ('mssa.ms.2004', 'mssa.ms.1980')]" priority="2">
-    <xsl:variable name="tokens" select="tokenize(string-join(., ' '), ', ')"/>
+    <xsl:variable name="tokens" select="tokenize(string-join(normalize-space(.), ' '), ', ')"/>
     <xsl:value-of select="$tokens[position() &lt; last()]" separator=", "/>
   </xsl:template>
 
@@ -746,8 +746,8 @@ So, all that we need to do here
     </xsl:attribute>
   </xsl:template>
 
-  <!-- for now, we're going to remove any thumbnail only style links-->
-  <xsl:template match="ead3:dao[@show='embed']"/>
+  <!-- for now, we're going to remove any thumbnail only style links.  adding a priority here, in case the embedded link is from preservica or kaltura.-->
+  <xsl:template match="ead3:dao[@show='embed']" priority="2"/>
   <!-- also taking out staff-only dao links until we figure out what to do with those -->
   <xsl:template match="ead3:dao[contains(@href, 'preservica')]"/>
   <xsl:template match="ead3:dao[contains(@href, 'kaltura')]"/>
