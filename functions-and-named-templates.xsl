@@ -475,17 +475,6 @@
                          <xsl:text>.</xsl:text>
                      </fo:block>
                  </xsl:when>
-                 <xsl:when test="$repository-code eq 'divinity'">
-                     <fo:block xsl:use-attribute-sets="paragraph">
-                         <xsl:text>To view manuscript and archival materials at the Yale Divinity Library, please submit the request form at </xsl:text>
-                             <fo:wrapper xsl:use-attribute-sets="ref">
-                                 <fo:basic-link external-destination="https://web.library.yale.edu/divinity/form/yale-divinity-library-mss-request-form">
-                                     <xsl:text>https://web.library.yale.edu/divinity/form/yale-divinity-library-mss-request-form</xsl:text>
-                                 </fo:basic-link>
-                             </fo:wrapper>
-                             <xsl:text>.</xsl:text>
-                     </fo:block>
-                 </xsl:when>
                  <xsl:when test="$repository-code eq 'mssa'">
                      <xsl:element name="fo:block">
                          <xsl:text>To request items from this collection for use in 
