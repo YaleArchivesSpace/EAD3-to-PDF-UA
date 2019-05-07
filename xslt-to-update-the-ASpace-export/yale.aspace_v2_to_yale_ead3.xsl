@@ -821,6 +821,9 @@ So, all that we need to do here
     </xsl:element>
   </xsl:template>
   
+  <!-- note:  
+    persname/@role (and likely quite a few others) should be changed to something else...  like @localtype?
+    -->
   <xsl:template match="@role">
     <xsl:attribute name="linkrole">
       <xsl:value-of select="."/>
