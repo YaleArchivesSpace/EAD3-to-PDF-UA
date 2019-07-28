@@ -367,6 +367,16 @@
 
   <!--remove any ref/@type attributes -->
   <xsl:template match="ead3:ref/@type"/>
+  
+  <!-- new stuff to stabilize the value supplied by ASpace for the container id and parent attributes.
+  
+  right now, ASpace will change the ID and Parent attributes upon every export.  these next two templates will ensure that they don't change every time, unless warranted. -->
+  <xsl:template match="ead3:container/@id">
+    <xsl:attribute name="id" select="generate-id(..)"/>
+  </xsl:template>
+  <xsl:template match="ead3:container/@parent">
+    <xsl:attribute name="parent" select="generate-id(../preceding-sibling::ead3:container[1][@id])"/>
+  </xsl:template>
 
   <!-- let's make top-container ranges, if the component has nothing but top containers -->
   <xsl:template match="ead3:did[ead3:container[2]][not(ead3:container/@parent)]">
