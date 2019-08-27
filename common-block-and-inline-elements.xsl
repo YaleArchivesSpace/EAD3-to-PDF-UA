@@ -262,9 +262,9 @@
     <xsl:variable name="numeration-type" select="@numeration"/>
     <fo:list-block>
       <xsl:if test="@audience='internal' and $suppressInternalComponentsInPDF eq false()">
-        <xsl:attribute name="border-width">1pt</xsl:attribute>
-        <xsl:attribute name="border-style">solid</xsl:attribute>
-        <xsl:attribute name="border-color">red</xsl:attribute>
+        <xsl:attribute name="border-right-width">1pt</xsl:attribute>
+        <xsl:attribute name="border-right-style">solid</xsl:attribute>
+        <xsl:attribute name="border-right-color">red</xsl:attribute>
       </xsl:if>
       <xsl:apply-templates select="ead3:head | ead3:listhead" mode="list-header"/>
       <xsl:apply-templates select="ead3:item">
@@ -276,9 +276,9 @@
   <xsl:template match="ead3:list[ead3:defitem]" mode="#all" priority="2">
     <fo:list-block start-indent="5mm" provisional-distance-between-starts="40mm">
       <xsl:if test="@audience='internal' and $suppressInternalComponentsInPDF eq false()">
-        <xsl:attribute name="border-width">1pt</xsl:attribute>
-        <xsl:attribute name="border-style">solid</xsl:attribute>
-        <xsl:attribute name="border-color">red</xsl:attribute>
+        <xsl:attribute name="border-right-width">1pt</xsl:attribute>
+        <xsl:attribute name="border-right-style">solid</xsl:attribute>
+        <xsl:attribute name="border-right-color">red</xsl:attribute>
       </xsl:if>
       <xsl:apply-templates select="ead3:head | ead3:listhead" mode="list-header"/>
       <xsl:apply-templates select="ead3:defitem"/>
@@ -742,6 +742,10 @@
     <fo:block xsl:use-attribute-sets="unpublished">
       <xsl:apply-templates mode="#current"/>
     </fo:block>
+  </xsl:template>
+  
+  <xsl:template match="@relator">
+    <xsl:value-of select="concat(', ', key('relator-code', ., $cached-list-of-relators)/lower-case(label))"/>
   </xsl:template>
 
 </xsl:stylesheet>

@@ -84,7 +84,7 @@
     since those are currently in the table header, not the page headers.
     -->
     <xsl:param name="dsc-omit-table-header-at-break" select="false()"/>
-    <xsl:param name="include-paging-info" select="if ($repository-code = ('ypm')) then false() else true()"/>
+    <xsl:param name="include-paging-info" select="if ($repository-code = ('ypm', 'oham')) then false() else true()"/>
     <xsl:param name="paging-info-title" select="'Requesting Instructions'"/>
     <!-- should make this a function since we might want to paramertize the abbreviations, but hard coding it for now -->
     <xsl:variable name="container-localtypes" select="distinct-values(ead3:ead/ead3:archdesc/ead3:dsc//ead3:container/@localtype)"/>

@@ -486,7 +486,7 @@
 
   <xsl:template match="ead3:container/@localtype">
     <xsl:attribute name="{local-name()}">
-      <xsl:value-of select="lower-case(.)"/>
+      <xsl:value-of select="lower-case(replace(., '\s', '_'))"/>
     </xsl:attribute>
   </xsl:template>
 

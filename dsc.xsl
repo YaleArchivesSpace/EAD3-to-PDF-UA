@@ -27,6 +27,21 @@
     <xsl:param name="levels-to-force-a-page-break" select="('series', 'collection', 'fonds', 'recordgrp')"/>
     <xsl:param name="otherlevels-to-force-a-page-break-and-process-before-a-table" select="('accession', 'acquisition')"/>
 
+    <!-- new function... might move elsewhere, but adding it here for now since it's only called on containers -->
+    <xsl:function name="mdc:find-the-ultimate-parent-id" as="xs:string">
+        <!-- given that there can be multiple parent/id pairings, this occasionally recursive function will find and select the top container ID attribute, which will be used to do the groupings, rather than depenidng on entirely document order -->
+        <xsl:param name="current-container" as="node()"/>
+        <xsl:variable name="parent" select="$current-container/@parent"/>
+        <xsl:choose>
+            <xsl:when test="not ($parent)">
+                <xsl:value-of select="$current-container/@id"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="mdc:find-the-ultimate-parent-id($current-container/preceding-sibling::ead3:container[@id eq $parent])"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+    
     <!-- not worrying about multiple DSC sections.  ASpace can only export 1 DSC -->
     <xsl:template match="ead3:dsc">
         <xsl:variable name="column-types" select="
@@ -91,7 +106,7 @@
         <!-- do a second grouping based on the container grouping's primary localtype (i.e. box, volume, reel, etc.)
             then add a custom sort, or just sort those alphabetically -->
         <xsl:variable name="container-groupings">
-            <xsl:for-each-group select="ead3:did/ead3:container" group-by="if (@parent) then @parent else @id">
+            <xsl:for-each-group select="ead3:did/ead3:container" group-by="mdc:find-the-ultimate-parent-id(.)">
                 <container-group>
                     <xsl:apply-templates select="current-group()" mode="copy"/>
                 </container-group>
@@ -113,9 +128,9 @@
                 <xsl:attribute name="break-before" select="'page'"/>
             </xsl:if>
             <xsl:if test="@audience='internal' and $suppressInternalComponentsInPDF eq false()">
-                <xsl:attribute name="border-style">solid</xsl:attribute>
-                <xsl:attribute name="border-width">2px</xsl:attribute>
-                <xsl:attribute name="border-color">red</xsl:attribute>
+                <xsl:attribute name="border-right-style">solid</xsl:attribute>
+                <xsl:attribute name="border-right-width">2px</xsl:attribute>
+                <xsl:attribute name="border-right-color">red</xsl:attribute>
             </xsl:if>
             <xsl:choose>
                 <xsl:when test="parent::ead3:dsc and  (@level = ('series', 'collection', 'recordgrp') or @otherlevel = $otherlevels-to-force-a-page-break-and-process-before-a-table)">
@@ -177,7 +192,7 @@
         <xsl:param name="column-types"/>
         <xsl:variable name="cell-margin" select="concat(xs:string($depth * 8), 'pt')"/> <!-- e.g. 0, 8pt for c02, 16pt for c03, etc.-->
         <xsl:variable name="container-groupings">
-            <xsl:for-each-group select="ead3:did/ead3:container" group-by="if (@parent) then @parent else @id">
+            <xsl:for-each-group select="ead3:did/ead3:container" group-by="mdc:find-the-ultimate-parent-id(.)">
                 <container-group>
                     <xsl:apply-templates select="current-group()" mode="copy"/>
                 </container-group>
@@ -433,7 +448,17 @@
             </xsl:otherwise>
         </xsl:choose>
         <xsl:text> </xsl:text>
-        <xsl:apply-templates/>
+        <!-- and here's where we print out the actual container indicator... and since barcodes could extend the margin without having a space for a newline, we'll make those smaller, at 7pt. -->
+        <xsl:choose>
+            <xsl:when test="$container-lower-case eq 'item_barcode'">
+                <fo:inline font-size="7pt">
+                    <xsl:apply-templates/>
+                </fo:inline>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:apply-templates/>
+            </xsl:otherwise>
+        </xsl:choose>
 
         <!-- comma separator or no? -->
         <xsl:if test="position() ne last()">
