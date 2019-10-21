@@ -162,6 +162,13 @@
       <xsl:text>, </xsl:text>
     </xsl:if>
   </xsl:template>
+  
+  <xsl:template match="ead3:unitdatestructured[@altrender]" mode="#all" priority="2">
+    <xsl:value-of select="normalize-space(@altrender)"/>
+    <xsl:if test="position() ne last()">
+      <xsl:text>, </xsl:text>
+    </xsl:if>
+  </xsl:template>
 
   <xsl:template match="ead3:daterange" mode="#all">
     <xsl:apply-templates select="ead3:fromdate"/>

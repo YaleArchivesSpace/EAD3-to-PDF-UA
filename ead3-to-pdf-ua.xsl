@@ -41,9 +41,6 @@
 
           add running page headers for appendices (why should series get all the fun?)
 
-          do NOT assume that collection-level dates will be normalized (including bulk dates).  ours are, but i should anticipate both cases.
-            in other words, we may need to process unitdate elements at the collection level.
-
           check that the use of "modes" is consistent and makes sense. it doesn't right now, so...
 
 		  future dev:

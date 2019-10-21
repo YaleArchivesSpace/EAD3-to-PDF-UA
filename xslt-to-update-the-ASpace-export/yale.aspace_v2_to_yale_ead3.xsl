@@ -796,14 +796,17 @@ So, all that we need to do here
       eventually, it would be great if EAD3 just had a unitdate element, defined the same way as unitdatestructured,
       with the additional ability to have a display form of the date in another element, such as "displayform"
   -->
+  <!-- okay, so here's our new hack.  if there's a unitdate child, which is illegal and only there to capture the 'date expression' field,
+      we'll add that to an @altrender.  boom, custom 'date expression', which we can use when we create the PDF without worry (once we update that process)
+      , and at the same time we can still also keep the structured date information around.  
+  this also means that we can do the same for collection level dates (in case someone wants textual information there), so the other template that had a priority of 3  has been removed.-->
   <xsl:template match="ead3:unitdatestructured[ead3:unitdate]" priority="2">
-    <xsl:apply-templates select="ead3:unitdate"/>
-  </xsl:template>
-  <!-- since we're only allowing normalized dates at the collection levels, we'll suppress any date expressions
-    during this step -->
-  <xsl:template match="ead3:archdesc/ead3:did/ead3:unitdatestructured[ead3:unitdate]" priority="3">
     <xsl:copy>
-      <xsl:apply-templates select="@* | * except ead3:unitdate"/>
+      <xsl:apply-templates select="@* except @altrender"/>
+      <xsl:attribute name="altrender">
+        <xsl:value-of select="ead3:unitdate"/>
+      </xsl:attribute>
+      <xsl:apply-templates select="ead3:daterange | ead3:dateset | ead3:datesingle"/>
     </xsl:copy>
   </xsl:template>
 

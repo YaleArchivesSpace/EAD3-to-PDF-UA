@@ -122,7 +122,7 @@
     
     <!-- it would be great to combine the next two templates, but i'd have to change how the "for-each" section works, which i need to keep right now
         so that the dates can be sorted -->
-    <xsl:template match="ead3:unitdatestructured[not(@unitdatetype='bulk')][1]" mode="collection-overview-table-row">
+    <xsl:template match="ead3:unitdatestructured[not(@unitdatetype='bulk')][1]" mode="collection-overview-table-row" priority="3">
         <fo:list-item xsl:use-attribute-sets="collection-overview-list-item">
             <fo:list-item-label xsl:use-attribute-sets="collection-overview-list-label">
                 <xsl:call-template name="select-header"/>
@@ -134,10 +134,19 @@
                 doing a refactor. -->
                 <fo:block>
                     <xsl:for-each select="../ead3:unitdatestructured[not(@unitdatetype='bulk')]">
-                        <!-- short sort more precisely, but for now i'm just grabbing the year -->
+                        <!-- could sort more precisely, but for now i'm just grabbing the year -->
                         <xsl:sort select="if (ead3:daterange//ead3:fromdate/@standarddate) then ead3:daterange//ead3:fromdate/substring(@standarddate, 1, 4)
                             else ead3:datesingle/substring(@standarddate, 1, 4)" data-type="number"/>
-                        <xsl:apply-templates/>
+                        <!-- just adding this for non bulk dates.  we shouldn't have anything like "bulk 1980-circa 1990"
+                            -->
+                        <xsl:choose>
+                            <xsl:when test="@altrender">
+                                <xsl:value-of select="normalize-space(@altrender)"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:apply-templates/>
+                            </xsl:otherwise>
+                        </xsl:choose>
                         <xsl:if test="position() != last()">
                             <xsl:text>, </xsl:text>
                         </xsl:if>
@@ -147,7 +156,7 @@
         </fo:list-item>
     </xsl:template>
     
-    <xsl:template match="ead3:unitdatestructured[@unitdatetype='bulk'][1]" mode="collection-overview-table-row">
+    <xsl:template match="ead3:unitdatestructured[@unitdatetype='bulk'][1]" mode="collection-overview-table-row" priority="3">
         <fo:list-item xsl:use-attribute-sets="collection-overview-list-item">
             <fo:list-item-label xsl:use-attribute-sets="collection-overview-list-label">
                 <xsl:call-template name="select-header"/>
@@ -155,7 +164,7 @@
             <fo:list-item-body xsl:use-attribute-sets="collection-overview-list-body">
                 <fo:block>
                     <xsl:for-each select="../ead3:unitdatestructured[@unitdatetype='bulk']"> 
-                        <!-- short sort more precisely, but for now i'm just grabbing the year -->
+                        <!-- could sort more precisely, but for now i'm just grabbing the year -->
                         <xsl:sort select="if (ead3:daterange//ead3:fromdate/@standarddate) then ead3:daterange//ead3:fromdate/substring(@standarddate, 1, 4)
                             else ead3:datesingle/substring(@standarddate, 1, 4)" data-type="number"/>
                         <xsl:apply-templates/>
