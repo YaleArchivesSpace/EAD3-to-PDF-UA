@@ -751,8 +751,9 @@
     </fo:block>
   </xsl:template>
   
-  <xsl:template match="@relator">
-    <xsl:value-of select="concat(', ', key('relator-code', ., $cached-list-of-relators)/lower-case(label))"/>
+  <xsl:template match="ead3:*[@relator]" mode="#all">
+    <xsl:apply-templates/>
+    <xsl:value-of select="concat(', ', key('relator-code', @relator, $cached-list-of-relators)/lower-case(label))"/>
   </xsl:template>
 
 </xsl:stylesheet>

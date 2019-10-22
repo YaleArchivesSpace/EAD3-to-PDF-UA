@@ -29,6 +29,29 @@
                 </fo:block>
                 <fo:block>
                     <xsl:apply-templates select="ead3:controlaccess"/>
+                    <!-- a bit of tom foolery to deal with contributors... but only if more than one 'creator' -->
+                    <xsl:if test="ead3:did/ead3:origination[2]">
+                        <fo:block margin-top="25pt" margin-left="10pt">
+                            <fo:block font-weight="700" xsl:use-attribute-sets="h4">
+                                <xsl:value-of select="$control-access-origination-grouping-title"/>
+                            </fo:block>
+                            <fo:list-block>
+                                <xsl:for-each select="ead3:did/ead3:origination">      
+                                    <fo:list-item>
+                                        <fo:list-item-label>
+                                            <fo:block/>
+                                        </fo:list-item-label>
+                                        <fo:list-item-body>
+                                            <fo:block>
+                                                <xsl:apply-templates/>
+                                            </fo:block>
+                                        </fo:list-item-body>
+                                    </fo:list-item>      
+                                </xsl:for-each>
+                            </fo:list-block>
+                        </fo:block>
+                    </xsl:if>
+
                 </fo:block>
                 <!-- adding this to grab the last page number-->
                 <xsl:if test="$last-page eq 'controlaccess'">
@@ -80,10 +103,6 @@
                                 <fo:list-item-body>
                                     <fo:block>
                                         <xsl:apply-templates/>
-                                        <xsl:if test="@relator">
-                                            <xsl:text>, </xsl:text>
-                                            <xsl:value-of select="key('relator-code', @relator, $cached-list-of-relators)/lower-case(label)"/>
-                                        </xsl:if>
                                     </fo:block>
                                 </fo:list-item-body>
                             </fo:list-item>
@@ -133,10 +152,6 @@
                                 <fo:list-item-body>
                                     <fo:block>
                                         <xsl:apply-templates/>
-                                        <xsl:if test="@relator">
-                                            <xsl:text>, </xsl:text>
-                                            <xsl:value-of select="key('relator-code', @relator, $cached-list-of-relators)/lower-case(label)"/>
-                                        </xsl:if>
                                     </fo:block>
                                 </fo:list-item-body>
                             </fo:list-item>

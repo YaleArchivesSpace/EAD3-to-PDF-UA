@@ -101,6 +101,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:param>
+    <xsl:param name="control-access-origination-grouping-title" select="'Contributors'"/>
     <xsl:param name="resource-unpublished-note" select="'*** UNPUBLISHED DRAFT ***'"/>
     <xsl:param name="sub-resource-unpublished-note" select="'Includes unpublished notes and/or components'"/>
 
