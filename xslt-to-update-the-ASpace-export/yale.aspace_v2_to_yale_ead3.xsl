@@ -375,13 +375,13 @@
     <xsl:variable name="container-id" select="."/>
     <xsl:variable name="container-position" select="1 + ../../ead3:container[@id eq $container-id]/count(preceding-sibling::ead3:container)"/>
     <xsl:variable name="component-id" select="../../../@id"/>
-    <xsl:attribute name="id" select="if ($component-id) then $component-id || '_c' || $container-position else generate-id(..)"/>
+    <xsl:attribute name="id" select="if ($component-id) then concat($component-id, '_c', $container-position) else generate-id(..)"/>
   </xsl:template>
   <xsl:template match="ead3:container/@parent">
     <xsl:variable name="parent-id" select="."/>
     <xsl:variable name="parent-position" select="1 + ../../ead3:container[@id eq $parent-id]/count(preceding-sibling::ead3:container)"/>
     <xsl:variable name="component-id" select="../../../@id"/>
-    <xsl:attribute name="parent" select="if ($component-id)  then $component-id || '_c' || $parent-position else generate-id(../preceding-sibling::ead3:container[1][@id])"/>
+    <xsl:attribute name="parent" select="if ($component-id)  then concat($component-id, '_c', $parent-position) else generate-id(../preceding-sibling::ead3:container[1][@id])"/>
   </xsl:template>
 
   <!-- let's make top-container ranges, if the component has nothing but top containers -->
