@@ -130,6 +130,17 @@
     </xsl:template>
     <!-- archdesc named templates (end)-->
     
+    <xsl:template name="combine-identifier-title-and-dates">
+        <xsl:if test="ead3:did/ead3:unitid/normalize-space()">
+            <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), '. ')"/>
+        </xsl:if>
+        <xsl:apply-templates select="ead3:did/ead3:unittitle"/>
+        <xsl:if test="ead3:did/ead3:unittitle and (ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate)">
+            <xsl:text>, </xsl:text>
+        </xsl:if>
+        <xsl:apply-templates select="ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate"/>
+    </xsl:template>
+    
     <!-- dsc named templates (start)-->
     <xsl:template name="dsc-block-identifier-and-title">
         <xsl:if test="ead3:did/ead3:unitid/normalize-space()">

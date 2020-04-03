@@ -150,7 +150,7 @@
             <xsl:choose>
                 <xsl:when test="$depth = 0 and (@level = ('series', 'collection', 'recordgrp') or @otherlevel = $otherlevels-to-force-a-page-break-and-process-before-a-table)">
                     <fo:block xsl:use-attribute-sets="h4">
-                        <xsl:call-template name="dsc-block-identifier-and-title"/>
+                        <xsl:call-template name="combine-identifier-title-and-dates"/>
                     </fo:block>
                 </xsl:when>
                 <xsl:otherwise>
@@ -158,7 +158,7 @@
                 </xsl:otherwise>
             </xsl:choose>
 
-            <!-- still need ot add the other did elements, and select an order -->
+            <!-- still need to add the other did elements, and select an order -->
             <xsl:apply-templates select="ead3:did" mode="dsc"/>
             <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
                 , ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite

@@ -64,11 +64,13 @@
     
     <xsl:template match="ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c']
         [@level=$levels-to-include-in-toc or @otherlevel=$otherlevels-to-include-in-toc]"
-        mode="bookmarks">
+        mode="bookmarks" priority="2">
         <fo:bookmark internal-destination="{if (@id) then @id else generate-id(.)}">
             <xsl:attribute name="starting-state">hide</xsl:attribute>
             <!-- update here to use a Combine that Title and Date function, or something else that will use Dates when a unittitle is missing. -->
             <!-- do we want Series I stuff here, too? -->
+            <!-- keeping as is for now, though we should add a test to ensure we always have a unittitle.
+                i tried adding the dates, and it looks way too cluttered in the bookmarks section, i think -->
             <fo:bookmark-title>
                 <xsl:if test="ead3:did/ead3:unitid/normalize-space()">
                     <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), '. ')"/>

@@ -54,7 +54,9 @@
                     <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
                         , ead3:odd[not(matches(lower-case(normalize-space(ead3:head)), $odd-headings-to-add-at-end))]
                         , ead3:bibliography, ead3:arrangement" mode="toc"/>
-                    <xsl:apply-templates select="ead3:dsc" mode="toc"/>
+                    <!-- new, to make sure that there's no DSC in ToC in those cases where the container list is still unpublished -->
+                    <xsl:apply-templates select="ead3:dsc[*[local-name()=('c', 'c01')]]" mode="toc"/>   
+                    
                     <xsl:apply-templates select="ead3:odd[matches(lower-case(normalize-space(ead3:head)), $odd-headings-to-add-at-end)]
                         , ead3:index
                         , ead3:controlaccess" mode="toc"/>
@@ -107,10 +109,7 @@
         <xsl:variable name="margin-left" select="concat(xs:string($depth * 10), 'pt')"/>       
         <fo:block text-align-last="justify" margin-left="{$margin-left}">
             <fo:basic-link internal-destination="{$id-for-link}">
-                <xsl:if test="ead3:did/ead3:unitid/normalize-space()">
-                    <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), '. ')"/>
-                </xsl:if>
-                <xsl:apply-templates select="ead3:did/ead3:unittitle"/>
+                <xsl:call-template name="combine-identifier-title-and-dates"/>
                 <xsl:text> </xsl:text><fo:leader leader-pattern="dots"/><xsl:text> </xsl:text>
                 <fo:page-number-citation ref-id="{$id-for-link}"/>
             </fo:basic-link>
