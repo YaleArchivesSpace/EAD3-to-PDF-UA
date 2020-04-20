@@ -102,7 +102,7 @@
                                 </fo:list-item-label>
                                 <fo:list-item-body>
                                     <fo:block>
-                                        <xsl:apply-templates/>
+                                        <xsl:apply-templates select="."/>
                                     </fo:block>
                                 </fo:list-item-body>
                             </fo:list-item>
@@ -151,7 +151,7 @@
                                 </fo:list-item-label>
                                 <fo:list-item-body>
                                     <fo:block>
-                                        <xsl:apply-templates/>
+                                        <xsl:apply-templates select="."/>
                                     </fo:block>
                                 </fo:list-item-body>
                             </fo:list-item>
