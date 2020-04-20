@@ -66,6 +66,15 @@
   </xsl:template>
 
   <!-- no need for so many labels, usually -->
+  <!-- time to update this due to how some of the "notes" are applied???
+    we have a lot of notes that need the header to display, but not the standard ASpace ones -->
+  <!-- e.g.   <scopecontent>
+                  <head>Interview Location</head>
+                  <p>London</p>
+               </scopecontent>
+   -->
+  <!-- and at the lower levels, we could just add this to the beginning of the same block.  
+    e.g. "Interview Location: London". -->
   <xsl:template match="ead3:head" mode="dsc"/>
 
   <!-- currently used in the adminstrative info section of the collection overview -->
@@ -754,6 +763,11 @@
   <xsl:template match="ead3:*[@relator]" mode="#all">
     <xsl:apply-templates/>
     <xsl:value-of select="concat(', ', key('relator-code', @relator, $cached-list-of-relators)/lower-case(label))"/>
+  </xsl:template>
+  
+  <xsl:template match="ead3:part[position() gt 1]" mode="#all">
+    <xsl:text> -- </xsl:text>
+    <xsl:apply-templates/>
   </xsl:template>
 
 </xsl:stylesheet>
