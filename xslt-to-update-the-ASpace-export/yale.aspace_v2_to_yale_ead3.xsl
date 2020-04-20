@@ -329,7 +329,7 @@
     to ASpace's qualifier field.  Here's where we strip those values out, since they're pointless for the display
     -->
   <xsl:template match="ead3:part/text()">
-    <xsl:value-of select="replace(., '\$\w:', '')"/>
+    <xsl:value-of select="replace(., '\$\w: ', '')"/>
   </xsl:template>
     
  <!-- going with a less extreme strategy for the time being.  
