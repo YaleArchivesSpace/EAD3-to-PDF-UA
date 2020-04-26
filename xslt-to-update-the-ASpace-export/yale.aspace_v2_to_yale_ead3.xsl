@@ -32,8 +32,6 @@
 
   <!-- will pass false() when using this process to do staff-only PDF previews -->
   <xsl:param name="suppressInternalComponents" select="true()" as="xs:boolean"/>
-  
-  <xsl:param name="moveCreatorsToControlAccess" select="true()" as="xs:boolean"/>
 
   <xsl:variable name="finding-aid-identifier" select="ead3:ead/ead3:control/ead3:recordid[1]"/>
   <xsl:variable name="holding-repository" select="ead3:ead/ead3:archdesc/ead3:did/ead3:repository[1]"/>
@@ -242,7 +240,7 @@
 
   <!-- if it's listed "unpublished" in ASpace, let's keep it unpublished no matter how the file is serialized into EAD
   (and we'll change the paraemter as needed for previewing PDF files) -->
-  <xsl:template match="*[@audience = 'internal'][$suppressInternalComponents = true()]" priority="5"/>
+  <xsl:template match="*[@audience = 'internal'][$suppressInternalComponents = true()]" priority="10"/>
 
   <!-- rather than fix the formatting (e.g. adding a paragraph element within controlnote),
     let's just keep this note internal only -->
@@ -670,7 +668,12 @@ So, all that we need to do here
     for odd elements with that head element -->
 
   <!-- do we still need this?? -->
-  <xsl:template match="ead3:archdesc/ead3:did/ead3:origination[@label = 'source']"/>
+  <!-- no.  we're now going to keep the sources as is and display them in a control access section under a specific heading-->
+  <!-- <xsl:template match="ead3:archdesc/ead3:did/ead3:origination[@label = 'source']"/> -->
+  <!-- but we now need to remove empty controlaccess elements, since we've changed the aspace behavior of DUPLICATING every source in the EAD output.  for shame, aspace -->
+  <!-- normally we wouldn't delete an element like this, but since EAD requires the element to have children elements, we don't need to worry about any attributes, etc. -->
+  <!-- this also holds true for an empty controlacess element, which won't have any element matches, so we can eliminate both instances of empty controlaccess sections with the same xpath -->
+  <xsl:template match="ead3:controlaccess[every $x in * satisfies $x[@audience='internal']]"/>
 
 
   <xsl:template match="ead3:physdesc">
@@ -898,5 +901,8 @@ So, all that we need to do here
   </xsl:template>
   
   <xsl:template match="ead3:part[not(node())]"/>
+  
+  <!-- temp hack to deal with repeated notes in a MSSA finding aid -->
+  <xsl:template match="ead3:scopecontent[@id = preceding-sibling::ead3:scopecontent/@id]" priority="5" mode="#all"/>
 
 </xsl:stylesheet>
