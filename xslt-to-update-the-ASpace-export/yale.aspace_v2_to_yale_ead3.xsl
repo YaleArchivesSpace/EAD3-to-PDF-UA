@@ -902,7 +902,4 @@ So, all that we need to do here
   
   <xsl:template match="ead3:part[not(node())]"/>
   
-  <!-- temp hack to deal with repeated notes in a MSSA finding aid -->
-  <xsl:template match="ead3:scopecontent[@id = preceding-sibling::ead3:scopecontent/@id]" priority="5" mode="#all"/>
-
 </xsl:stylesheet>
