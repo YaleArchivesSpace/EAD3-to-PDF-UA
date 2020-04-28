@@ -473,9 +473,13 @@
   </xsl:template>
 
   <!-- Block <table> Template -->
+  <!-- need to revisit these inherited table transformations, but previously i forgot to account for ead3:table/ead3:head, so here -->
+
   <xsl:template match="ead3:table" mode="#all">
+    <!-- probably only impacts one collection (music.mss.0028), but perhaps see about styling this better if/when there's time -->
+    <xsl:apply-templates select="ead3:head" mode="table-header"/>
     <fo:table xsl:use-attribute-sets="table">
-      <xsl:apply-templates/>
+      <xsl:apply-templates select="ead3:tgroup"/>
     </fo:table>
   </xsl:template>
 
