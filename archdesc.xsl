@@ -65,9 +65,10 @@
             <xsl:call-template name="holding-repository"/>
             <!-- should i group, up front, when the elements should be grouped into the same row?
                 e.g. 2 origination elements
+                okay...  we've now got a mixture of Creators and Sources in origination.  therefore, we just want the first Creator in this case.
                 -->
             <xsl:apply-templates select="ead3:unitid[not(@audience='internal')][1]
-                , ead3:origination[1]
+                , ead3:origination[lower-case(@label )= 'creator'][1]
                 , ead3:unittitle[1]
                 , ead3:unitdatestructured[not(@unidatetype='bulk')][1]
                 , ead3:unitdatestructured[@unitdatetype='bulk'][1]
