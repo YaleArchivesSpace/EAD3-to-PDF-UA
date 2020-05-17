@@ -40,119 +40,20 @@
     <xsl:param name="date" as="xs:string"/>
     <xsl:variable name="months"
       select="('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')"/>
-    <xsl:analyze-string select="$date" flags="x" regex="(\d{{4}})(\d{{2}})?(\d{{2}})?">
-      <xsl:matching-substring>
-        <!-- year -->
-        <xsl:value-of select="regex-group(1)"/>
-        <!-- month (can't add an if,then,else '' statement here without getting an extra space at the end of the result-->
-        <xsl:if test="regex-group(2)">
-          <xsl:value-of select="subsequence($months, number(regex-group(2)), 1)"/>
-        </xsl:if>
-        <!-- day -->
-        <xsl:if test="regex-group(3)">
-          <xsl:number value="regex-group(3)" format="1"/>
-        </xsl:if>
-        <!-- still need to handle time... but if that's there, then I can just use xs:dateTime !!!! -->
-      </xsl:matching-substring>
-    </xsl:analyze-string>
-  </xsl:function>
-
-  <xsl:function name="mdc:month-name-2-number" as="xs:string">
-    <xsl:param name="month-name" as="xs:string"/>
-    <xsl:variable name="months" as="xs:string*" select="'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'"/>
-    <xsl:sequence select="format-number(index-of($months, $month-name), '00')"/>
-  </xsl:function>
-
-  <xsl:function name="mdc:date-expression-2-iso-date" as="xs:string*">
-    <xsl:param name="date-expression" as="xs:string"/>
-  <!-- (1 year, 2 months, 2 days... repeat the year value)
-  1942 Apr 21 - Jun 9
-  needs to become
-  1942042119420609
-
-  1942 Apr 21 - 1946 Jun 9 (2 years, 2 months, 2 days)
-  needs to become
-  1942042119460609
-
-  1942 Apr 21 - 25 (1 year, 1 month, 2 days.... repeat the month)
-  needs to become
-  1942042119420425
-
-  1945 April 5 (1 year, 1 month, 1 day)
-  to become
-  19450405
-
-  1945 April (1 year, 1 month)
-  to become
-  194504
-
-  1945, undated (1 year, extra text)
-  to become
-  1945
-
-  Another wrinkle:
-
-                   <unitdatestructured unitdatetype="inclusive">
-                     <daterange>
-                        <fromdate standarddate="1960">1960</fromdate>
-                        <todate standarddate="1999">1999</todate>
-                     </daterange>
-                  </unitdatestructured>
-                  <unitdate unitdatetype="inclusive">1960s-1990s</unitdate>
-     (so, if a pattern of \d{4}s then replace
-  as appropriate for first and second date)
-
-  MDC (2018/08/28): At this point, I've decided it best to modify the EAD3 exporter so this issue doesn't happen in the first place.
-  Keeping the templates/functions around for now, since they won't hurt anything, but they should no longer be necessary.
-  -->
-    <xsl:variable name="years">
-      <xsl:analyze-string select="$date-expression" regex="(\d{{4}})">
-        <xsl:matching-substring>
-          <xsl:sequence select="regex-group(1)"/>
-        </xsl:matching-substring>
-      </xsl:analyze-string>
+    <xsl:variable name="date-numbers" select="for $num in tokenize($date, '-') return number($num)"/>    
+    <xsl:variable name="year">
+      <xsl:value-of select="format-number($date-numbers[1], '0001')"/>
     </xsl:variable>
-    <xsl:variable name="months">
-      <xsl:analyze-string select="lower-case($date-expression)" regex="(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)">
-        <xsl:matching-substring>
-          <xsl:sequence select="mdc:month-name-2-number(regex-group(1))"/>
-        </xsl:matching-substring>
-      </xsl:analyze-string>
+  <xsl:variable name="month">
+      <xsl:value-of select="if ($date-numbers[2]) then subsequence($months, $date-numbers[2], 1) else ()"/>
     </xsl:variable>
-    <xsl:variable name="days">
-      <xsl:analyze-string select="$date-expression" regex="[^\d](\d{{1,2}})($|[^\d])">
-        <xsl:matching-substring>
-          <xsl:sequence select="regex-group(1)"/>
-        </xsl:matching-substring>
-      </xsl:analyze-string>
-    </xsl:variable>
-    <!-- sure there's a better way to do this, but next
-            we'll tokenize the sequence to find out if we have more than one year, month, and/or day to deal with -->
-    <xsl:variable name="year1" select="tokenize($years, ' ')[1]"/>
-    <xsl:variable name="year2" select="tokenize($years, ' ')[2]"/>
-    <xsl:variable name="month1" select="tokenize($months, ' ')[1]"/>
-    <xsl:variable name="month2" select="tokenize($months, ' ')[2]"/>
-    <xsl:variable name="day1" select="tokenize($days, ' ')[1]"/>
-    <xsl:variable name="day2" select="tokenize($days, ' ')[2]"/>
+    <xsl:variable name="day">
+      <xsl:value-of select="if ($date-numbers[3]) then format-number($date-numbers[3], '01') else ()"/>
+    </xsl:variable>   
 
-    <xsl:value-of select="concat(
-      $year1,
-      $month1,
-      if (string-length($day1)=1) then concat('0', $day1) else $day1,
-      if ($month2 and not($year2) or (not($year2) and not($month2))) then $year1 else $year2,
-      if ($month1 and $day2 and not($month2)) then $month1 else $month2,
-      if (string-length($day2)=1) then concat('0', $day2) else $day2
-      )"/>
+    <xsl:sequence select="string-join(($year, $month, $day), ' ') => normalize-space()"/>
+
   </xsl:function>
-
-  <xsl:function name="mdc:remove-this-date" as="xs:boolean">
-    <!-- update this to compare with the display form -->
-    <xsl:param name="unitdate" as="node()"/>
-    <xsl:variable name="first-date" select="string-join($unitdate//replace(@standarddate, '-', ''), '')"/>
-    <xsl:variable name="second-date" select="$unitdate/following-sibling::*[1]/mdc:date-expression-2-iso-date(text())"/>
-    <xsl:value-of select="if ($first-date eq $second-date) then true() else false()"/>
-  </xsl:function>
-
 
   <xsl:function name="mdc:top-container-to-number" as="xs:decimal">
     <xsl:param name="current-container" as="node()*"/>
@@ -732,25 +633,6 @@ So, all that we need to do here
     <xsl:apply-templates/>
   </xsl:template>
 
-  <!-- here's a fun fact:  ASpace still has issues with exporting &s and stuff in EAD3,  and when it comes to DAOs, which get the titles exported in two places...
-    title attribute and the daodesc element, the daodesc element can get messed up.
-    here's an example:
-                  <dao actuate="onrequest" daotype="unknown"
-                href="http://hdl.handle.net/10079/digcoll/1193830"
-                linktitle="MT&amp;R International Councillors Meeting in Beijing, China with Nancy Kissinger, 2002 November 4-7"
-                show="new">
-                <descriptivenote>MT</descriptivenote>
-              </dao>
-     Because of this, we're going to strip those daodescs.
-     and for the Kissinger collections (which repeats the dao title as the archival object title)
-     we're going to need to replace the dang unittitle with the dao/@title since the unittitle in this case
-     is exported as:
-     <unittitle>MT</unittitle>.
-     Oi.
-
-  <xsl:template match="ead3:dao/ead3:descriptivenote"/>
-     -->
-
   <!-- a very wacky hack to fix the dao title comparisons for the 2 kissinger finding aids, which include a date string as part of the dao title
     after the last comma (which we strip out below) -->
   <xsl:template match="ead3:dao/ead3:descriptivenote/ead3:p/text()[last()][$finding-aid-identifier = ('mssa.ms.2004', 'mssa.ms.1980')]" priority="2">
@@ -765,11 +647,17 @@ So, all that we need to do here
     </xsl:attribute>
   </xsl:template>
 
-  <!-- for now, we're going to remove any thumbnail only style links.  adding a priority here, in case the embedded link is from preservica or kaltura.-->
+  <!-- for now, we're going to remove any thumbnail only style links.  adding a priority here, in case the embedded link is from preservica or kaltura.
+    REMOVING this, since we're now going to inlcoude daoset in the output.
+    UPDATE... and add daoset here somewhere, since we could group on dao/@altrender now.
   <xsl:template match="ead3:dao[@show='embed']" priority="2"/>
+  -->
   <!-- also taking out staff-only dao links until we figure out what to do with those -->
+  <!-- should revisit since these could (and shoulb) be marked as unpublished if we don't want to display them -->
+  <!-- UPDATE...   only remove these if they are unpublished.  if they shouldn't be published, unpublish them.
   <xsl:template match="ead3:dao[contains(@href, 'preservica')]"/>
   <xsl:template match="ead3:dao[contains(@href, 'kaltura')]"/>
+  -->
 
   <!-- we want ead3:c elements in the final product, so if enumerated elements are exported by mistake,
     we'll change those here -->
@@ -777,19 +665,6 @@ So, all that we need to do here
     <xsl:element name="c" namespace="http://ead3.archivists.org/schema/">
       <xsl:apply-templates select="@*|node()"/>
     </xsl:element>
-  </xsl:template>
-
-  <!-- we need to check on unitdatestructureds to see if we need to remove those and only process the unitdate that follows.
-    here's where we do that (until we can get ASpace updated to align better with EAD3).
-  this will no longer be necessary once the EAD3 exporter is updated (and possibly the EAD3 schema)
-  but keeping it in for now since it won't hurt anything. -->
-  <xsl:template match="ead3:unitdatestructured[following-sibling::*[1][local-name() eq 'unitdate']]">
-    <xsl:variable name="remove" select="mdc:remove-this-date(.)"/>
-    <xsl:if test="$remove eq false()">
-      <xsl:copy>
-        <xsl:apply-templates select="@*|node()"/>
-      </xsl:copy>
-    </xsl:if>
   </xsl:template>
 
   <!-- we're changing the EAD3 export options to make dealing with dates easier.  here's an example output:
@@ -902,4 +777,18 @@ So, all that we need to do here
   
   <xsl:template match="ead3:part[not(node())]"/>
   
+  <xsl:template match="ead3:datesingle | ead3:fromdate | ead3:todate">
+    <xsl:copy>
+      <xsl:apply-templates select="@*"/>
+      <xsl:choose>
+        <xsl:when test="contains(., '-')">
+          <xsl:value-of select="mdc:iso-date-2-display-form(.)"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:copy>
+  </xsl:template>
+
 </xsl:stylesheet>
