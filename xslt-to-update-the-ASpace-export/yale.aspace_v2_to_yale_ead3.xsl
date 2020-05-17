@@ -51,7 +51,7 @@
       <xsl:value-of select="if ($date-numbers[3]) then format-number($date-numbers[3], '01') else ()"/>
     </xsl:variable>   
 
-    <xsl:sequence select="string-join(($year, $month, $day), ' ') => normalize-space()"/>
+    <xsl:sequence select="normalize-space(string-join(($year, $month, $day), ' '))"/>
 
   </xsl:function>
 
