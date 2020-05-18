@@ -666,6 +666,19 @@ So, all that we need to do here
       <xsl:apply-templates select="@*|node()"/>
     </xsl:element>
   </xsl:template>
+  
+  <!-- let's keep this hack around until we actually get the plugin updates into PROD.
+    and, once those are there, this template won't match anything any longer -->
+  <xsl:template match="ead3:unitdatestructured[ead3:unitdate]" priority="2">
+    <xsl:copy>
+      <xsl:apply-templates select="@* except @altrender"/>
+      <xsl:attribute name="altrender">
+        <xsl:value-of select="ead3:unitdate"/>
+      </xsl:attribute>
+      <xsl:apply-templates select="ead3:daterange | ead3:dateset | ead3:datesingle"/>
+    </xsl:copy>
+  </xsl:template>
+ 
 
   <!-- ptr to ref
   this assumes that the ptr is directed to a component.
