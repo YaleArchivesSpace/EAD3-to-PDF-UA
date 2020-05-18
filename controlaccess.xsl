@@ -117,7 +117,7 @@
                 </fo:block>
                 <fo:list-block>
                     <xsl:for-each select="current-group()">
-                        <xsl:sort select="." data-type="text"/>
+                        <xsl:sort select="." data-type="text" lang="en"/>
                         <xsl:for-each select=".">
                             <fo:list-item>
                                 <fo:list-item-label>
@@ -166,7 +166,7 @@
                 </fo:block>
                 <fo:list-block margin-left="1em">
                     <xsl:for-each select="current-group()">
-                        <xsl:sort select="." data-type="text"/>
+                        <xsl:sort select="." data-type="text" lang="en"/>
                         <xsl:for-each select=".">
                             <fo:list-item>
                                 <fo:list-item-label>
