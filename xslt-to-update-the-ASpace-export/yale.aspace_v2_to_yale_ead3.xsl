@@ -667,33 +667,6 @@ So, all that we need to do here
     </xsl:element>
   </xsl:template>
 
-  <!-- we're changing the EAD3 export options to make dealing with dates easier.  here's an example output:
-      <unitdatestructured unitdatetype="inclusive">
-        <daterange>
-          <fromdate standarddate="1961">1961</fromdate>
-          <todate standarddate="1993">1993</todate>
-        </daterange>
-        <unitdate unitdatetype="inclusive">date expression</unitdate>
-      </unitdatestructured>
-      as always, we'll let the date expression override the normalized dates for display purposes.
-      so, in this case, we remove the unitdatestructured element and replace it with the unitdate.
-      eventually, it would be great if EAD3 just had a unitdate element, defined the same way as unitdatestructured,
-      with the additional ability to have a display form of the date in another element, such as "displayform"
-  -->
-  <!-- okay, so here's our new hack.  if there's a unitdate child, which is illegal and only there to capture the 'date expression' field,
-      we'll add that to an @altrender.  boom, custom 'date expression', which we can use when we create the PDF without worry (once we update that process)
-      , and at the same time we can still also keep the structured date information around.  
-  this also means that we can do the same for collection level dates (in case someone wants textual information there), so the other template that had a priority of 3  has been removed.-->
-  <xsl:template match="ead3:unitdatestructured[ead3:unitdate]" priority="2">
-    <xsl:copy>
-      <xsl:apply-templates select="@* except @altrender"/>
-      <xsl:attribute name="altrender">
-        <xsl:value-of select="ead3:unitdate"/>
-      </xsl:attribute>
-      <xsl:apply-templates select="ead3:daterange | ead3:dateset | ead3:datesingle"/>
-    </xsl:copy>
-  </xsl:template>
-
   <!-- ptr to ref
   this assumes that the ptr is directed to a component.
   adjust after investigating the data, but eventually we can remove this feature since we'll be converting our ptr elements to ref elements.
