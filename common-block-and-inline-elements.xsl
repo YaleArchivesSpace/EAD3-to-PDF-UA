@@ -44,15 +44,17 @@
       | ead3:physloc | ead3:repository"
     mode="dsc" priority="2">
     <!-- need to add an unpublish bit here, as well, i'd think -->
-    <!-- add a call number header in front of unitid elements, and italicize physdesc notes
+    <!--  italicize physdesc notes
     removed keep-with-previous.within-page="always"
     -->
     <fo:block>
       <xsl:choose>
+        <!-- let's not.  should we consider prepending the title with the unitid?  that's what was done in YFAD. 
         <xsl:when test="self::ead3:unitid">
           <fo:inline>Call Number: </fo:inline>
           <xsl:apply-templates/>
         </xsl:when>
+        -->
         <xsl:when test="self::ead3:physdesc">
           <fo:inline font-style="italic">
             <xsl:apply-templates/>
