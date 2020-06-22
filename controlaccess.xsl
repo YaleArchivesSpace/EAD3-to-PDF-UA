@@ -57,7 +57,7 @@
                     <xsl:if test="ead3:did/ead3:origination[lower-case(@label )= 'source']">
                         <fo:block margin-top="25pt" margin-left="10pt">
                             <fo:block font-weight="700" xsl:use-attribute-sets="h4">
-                                <xsl:value-of select="$control-access-origination-sourcees-grouping-title"/>
+                                <xsl:value-of select="$control-access-origination-sources-grouping-title"/>
                             </fo:block>
                             <fo:list-block>
                                 <xsl:for-each select="ead3:did/ead3:origination[lower-case(@label )= 'source']">      
