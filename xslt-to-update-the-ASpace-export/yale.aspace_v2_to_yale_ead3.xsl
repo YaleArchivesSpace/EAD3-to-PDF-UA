@@ -763,6 +763,15 @@ So, all that we need to do here
   
   <xsl:template match="ead3:part[not(node())]"/>
   
+  <!-- what else do we need to account for here due to issues with database values and translation values in ASpace?
+    add this list to a map and just use a single template to handle it.-->
+  <xsl:template match="@source[. = 'Library of Congress Subject Headings']">
+    <xsl:attribute name="source" select="'lcsh'"/>
+  </xsl:template>
+  <xsl:template match="@source[. = 'Art and Architecture Thesaurus']">
+    <xsl:attribute name="source" select="'aat'"/>
+  </xsl:template>
+  
   <xsl:template match="ead3:datesingle | ead3:fromdate | ead3:todate">
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
