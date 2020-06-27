@@ -29,6 +29,8 @@
   version="2.0">
 
   <xsl:output method="xml" indent="yes" encoding="UTF-8" omit-xml-declaration="no"/>
+  
+  <xsl:include href="ead3-holdings-notes.xsl"/>
 
   <!-- will pass false() when using this process to do staff-only PDF previews -->
   <xsl:param name="suppressInternalComponents" select="true()" as="xs:boolean"/>
@@ -142,10 +144,6 @@
   <!-- if it's listed "unpublished" in ASpace, let's keep it unpublished no matter how the file is serialized into EAD
   (and we'll change the paraemter as needed for previewing PDF files) -->
   <xsl:template match="*[@audience = 'internal'][$suppressInternalComponents = true()]" priority="10"/>
-
-  <!-- rather than fix the formatting (e.g. adding a paragraph element within controlnote),
-    let's just keep this note internal only -->
-  <xsl:template match="ead3:notestmt"/>
 
   <xsl:template match="ead3:conventiondeclaration[$include-cc0-rights-statement eq true()]">
     <xsl:copy>
