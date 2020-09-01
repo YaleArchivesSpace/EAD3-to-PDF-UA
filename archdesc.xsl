@@ -90,7 +90,15 @@
             </fo:list-item-label>
             <fo:list-item-body xsl:use-attribute-sets="collection-overview-list-body">
                 <fo:block>
-                    <xsl:apply-templates/>
+                    <xsl:choose>
+                        <!-- or, if it's okay to be repetive when there's a note and codes, just remove this and go back to apply-templates -->
+                        <xsl:when test="self::ead3:langmaterial and ead3:descriptivenote/*">
+                            <xsl:apply-templates select="ead3:descriptivenote"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:apply-templates/>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </fo:block>
             </fo:list-item-body>      
         </fo:list-item>

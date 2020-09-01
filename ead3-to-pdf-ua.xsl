@@ -7,7 +7,7 @@
 
     <xsl:output method="xml" encoding="UTF-8"/>
     <!-- adding this to fix a spacing issue in the overview section.  not sure if this should be needed, but keep an eye out on it -->
-    <xsl:strip-space elements="ead3:unitdatestructured"/>
+    <xsl:strip-space elements="ead3:unitdatestructured ead3:languageset"/>
 
     <xsl:include href="embedded-metadata.xsl"/>
     <xsl:include href="attributes.xsl"/>

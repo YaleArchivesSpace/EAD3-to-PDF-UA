@@ -774,5 +774,20 @@
     <xsl:text> -- </xsl:text>
     <xsl:apply-templates/>
   </xsl:template>
+  
+  <xsl:template match="ead3:langmaterial/ead3:language | ead3:langmaterial/ead3:languageset">
+    <xsl:apply-templates/>
+    <xsl:if test="following-sibling::ead3:*[local-name() = ('language', 'languageset')]">
+      <xsl:text>; </xsl:text>
+    </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="ead3:script">
+    <xsl:if test="preceding-sibling::ead3:language[1]">
+      <xsl:text> </xsl:text>
+    </xsl:if>
+    <!-- add a translated value -->
+    <xsl:value-of select="concat('(', ., ' script)')"/>
+  </xsl:template>
 
 </xsl:stylesheet>
