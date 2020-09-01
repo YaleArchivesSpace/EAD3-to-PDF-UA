@@ -139,7 +139,16 @@
                             <xsl:if test="ead3:did/ead3:unitid/normalize-space()">
                                 <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), '. ')"/>
                             </xsl:if>
-                            <xsl:apply-templates select="ead3:did/ead3:unittitle[1]"/>
+                            <xsl:choose>
+                                <!-- bad hack to deal with really-long series titles. think of another way to handle this with FOP -->
+                                <xsl:when test="string-length(ead3:did/ead3:unittitle[1]) gt 140">
+                                    <xsl:value-of select="concat(substring(., 1, 140), '[...]')"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:apply-templates select="ead3:did/ead3:unittitle[1]"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+
                         </fo:inline>
                     </fo:marker>
                 </xsl:when>
