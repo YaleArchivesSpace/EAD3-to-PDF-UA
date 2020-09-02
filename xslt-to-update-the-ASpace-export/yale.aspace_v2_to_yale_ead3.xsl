@@ -195,6 +195,22 @@
   -->
   <xsl:template match="ead3:archdesc/ead3:did/ead3:langmaterial[not(@id)][../ead3:langmaterial[@id]]"/>
 
+  <!-- 
+    For now, we might have... (with no language or script codes)
+  <langmaterial>
+      <descriptivenote><p>In English and Greek.</p></descriptivenote>
+  </langmaterial
+  If so, to be valid EAD3, we need to add an empty tag.  Sigh.  
+   We could also add language codes by analazying the note, but better to get those code added directly to ASpace.
+  -->
+  <xsl:template match="ead3:langmaterial[not(ead3:language) and not(ead3:languageset)]">
+    <xsl:copy>
+      <xsl:apply-templates select="@*"/>
+      <xsl:element name="language" namespace="http://ead3.archivists.org/schema/"/>
+      <xsl:apply-templates select="node()"/>
+    </xsl:copy>
+  </xsl:template>
+  
   <!-- we might get something like this:
           <physloc>Some files include photographs; negatives for some prints are stored in
             <title localtype="simple" render="italic">
