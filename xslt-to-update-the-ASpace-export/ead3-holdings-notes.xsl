@@ -138,7 +138,7 @@
         </xsl:for-each>
     </xsl:template>
     
-    <xsl:template match="ead:controlnote[$all-containers/container-list]">
+    <xsl:template match="ead:controlnote[$all-containers/container-list/*]">
         <xsl:copy>
             <xsl:apply-templates select="@*|node()"/>
         </xsl:copy>
@@ -147,7 +147,7 @@
         </xsl:call-template>
     </xsl:template>
     
-    <xsl:template match="ead:filedesc[not(ead:notestmt)][$all-containers/container-list]">
+    <xsl:template match="ead:filedesc[not(ead:notestmt)][$all-containers/container-list/*]">
         <xsl:copy>
             <xsl:apply-templates select="@*|node()"/>
             <xsl:element name="notestmt" namespace="http://ead3.archivists.org/schema/">
