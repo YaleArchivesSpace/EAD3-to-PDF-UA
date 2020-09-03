@@ -35,15 +35,15 @@
         'record album storage': .08,
         'roll': .09
         }"/>
-
+    
     <xsl:function name="mdc:container-to-number" as="xs:decimal">
         <xsl:param name="current-container" as="node()*"/>
         <xsl:variable name="primary-container-number"
             select="
-                if (contains($current-container, '-')) then
-                    replace(substring-before($current-container, '-'), '\D', '')
-                else
-                    replace($current-container, '\D', '')"/>
+            if (contains($current-container, '-')) then
+            replace(substring-before($current-container, '-'), '\D', '')
+            else
+            replace($current-container, '\D', '')"/>
         <xsl:variable name="primary-container-modifier">
             <xsl:choose>
                 <xsl:when test="matches($current-container, '\D')">
@@ -60,7 +60,7 @@
         </xsl:variable>
         <xsl:value-of select="xs:decimal(concat($primary-container-number, '.', $primary-container-modifier))"/>
     </xsl:function>
-
+    
     <xsl:function name="mdc:container-to-decimal-for-grouping" as="xs:decimal">
         <xsl:param name="current-container" as="item()"/>
         <xsl:variable name="primary-container"
@@ -74,7 +74,7 @@
         
         <!-- ignore () or expect them???.  eventually they should not exist in the container indicators, per a policy decision, but we have a way to go to get there. -->
         <xsl:variable name="suffix" select="substring-before(substring-after(lower-case($current-container), '('), ')')"/>
-                 
+        
         <xsl:variable name="primary-container-modifier">
             <xsl:value-of select="(map:get($acknowledged-indicator-suffixes, $suffix), 0)[1]"/>
         </xsl:variable>
@@ -96,7 +96,7 @@
     
     <xsl:variable name="all-containers">
         <!-- for mssa, would probably need to do this for each series, rather than the collection, right? -->
-        <xsl:if test="not($repository=('mssa', 'peabody'))">
+        <xsl:if test="not($repository = ('mssa', 'ypm'))">
             <container-list>
                 <!-- keep an eye on performance, but the preceding predicate will dedupe duplicate container numbers...  e.g 1, 1, 1 become 1 -->
                 <xsl:for-each-group select="ead:ead/ead:archdesc/ead:dsc//ead:container[@altrender][not(@altrender = preceding::ead:container/@altrender)]"
@@ -117,7 +117,7 @@
             </container-list>
         </xsl:if> 
     </xsl:variable>
-  
+    
     <xsl:template name="container-summary">
         <xsl:param name="containers"/>
         <xsl:for-each select="$containers/*">
@@ -137,8 +137,8 @@
             </xsl:element>
         </xsl:for-each>
     </xsl:template>
-
-    <xsl:template match="ead:controlnote[$all-containers]">
+    
+    <xsl:template match="ead:controlnote[$all-containers/container-list]">
         <xsl:copy>
             <xsl:apply-templates select="@*|node()"/>
         </xsl:copy>
@@ -147,7 +147,7 @@
         </xsl:call-template>
     </xsl:template>
     
-    <xsl:template match="ead:filedesc[not(ead:notestmt)][$all-containers]">
+    <xsl:template match="ead:filedesc[not(ead:notestmt)][$all-containers/container-list]">
         <xsl:copy>
             <xsl:apply-templates select="@*|node()"/>
             <xsl:element name="notestmt" namespace="http://ead3.archivists.org/schema/">
