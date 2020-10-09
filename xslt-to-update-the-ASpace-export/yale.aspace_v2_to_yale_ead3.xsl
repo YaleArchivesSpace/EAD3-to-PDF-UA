@@ -44,7 +44,7 @@
       select="('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')"/>
     <xsl:variable name="date-numbers" select="for $num in tokenize($date, '-') return number($num)"/>    
     <xsl:variable name="year">
-      <xsl:value-of select="format-number($date-numbers[1], '0001')"/>
+      <xsl:value-of select="format-number($date-numbers[1], '#')"/>
     </xsl:variable>
   <xsl:variable name="month">
       <xsl:value-of select="if ($date-numbers[2]) then subsequence($months, $date-numbers[2], 1) else ()"/>
