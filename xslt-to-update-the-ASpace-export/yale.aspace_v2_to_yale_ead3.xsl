@@ -50,7 +50,7 @@
       <xsl:value-of select="if ($date-numbers[2]) then subsequence($months, $date-numbers[2], 1) else ()"/>
     </xsl:variable>
     <xsl:variable name="day">
-      <xsl:value-of select="if ($date-numbers[3]) then format-number($date-numbers[3], '01') else ()"/>
+      <xsl:value-of select="if ($date-numbers[3]) then format-number($date-numbers[3], '#') else ()"/>
     </xsl:variable>   
 
     <xsl:sequence select="normalize-space(string-join(($year, $month, $day), ' '))"/>
