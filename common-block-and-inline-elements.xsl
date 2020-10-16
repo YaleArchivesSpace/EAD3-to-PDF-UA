@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"
+  xmlns:mdc="http://mdc"
   xmlns:ead3="http://ead3.archivists.org/schema/" exclude-result-prefixes="xs ead3 fox"
   version="2.0">
 
@@ -143,7 +144,7 @@
     when the two match -->
   <xsl:template match="ead3:dao[not(@show='embed')][@href]" mode="#all">
     <xsl:choose>
-      <xsl:when test="deep-equal(ead3:descriptivenote/ead3:p//text()/normalize-space(), ../ead3:unittitle//text()/normalize-space())"/>
+      <xsl:when test="deep-equal(ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]), ../mdc:extract-text-no-spaces(ead3:unittitle[1]))"/>
       <xsl:otherwise>
         <fo:block>
           <fo:basic-link external-destination="url('{@href}')" xsl:use-attribute-sets="ref">
@@ -155,7 +156,7 @@
   </xsl:template>
   <xsl:template match="ead3:daoset/ead3:dao[not(@show='embed')][@href]" mode="#all" priority="5">
     <xsl:choose>
-      <xsl:when test="deep-equal(../ead3:descriptivenote/ead3:p//text()/normalize-space(), ../../ead3:unittitle//text()/normalize-space())"/>
+      <xsl:when test="deep-equal(../ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]), ../../mdc:extract-text-no-spaces(ead3:unittitle[1]))"/>
       <xsl:otherwise>
         <fo:block>
           <fo:basic-link external-destination="url('{@href}')" xsl:use-attribute-sets="ref">
@@ -168,7 +169,7 @@
 
   <xsl:template match="ead3:unittitle[../ead3:dao[not(@show='embed')]]" mode="#all">
     <xsl:choose>
-      <xsl:when test="deep-equal(.//text()/normalize-space(), ../ead3:dao[1]/ead3:descriptivenote/ead3:p//text()/normalize-space())">
+      <xsl:when test="deep-equal(mdc:extract-text-no-spaces(.), ../ead3:dao[1]/ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]))">
         <fo:basic-link external-destination="url('{../ead3:dao[1]/@href}')" xsl:use-attribute-sets="ref">
           <xsl:apply-templates select="../ead3:dao[1]/ead3:descriptivenote/ead3:p" mode="dao"/>
         </fo:basic-link>
@@ -180,7 +181,7 @@
   </xsl:template>
   <xsl:template match="ead3:unittitle[../ead3:daoset/ead3:dao[not(@show='embed')]]" mode="#all">
     <xsl:choose>
-      <xsl:when test="deep-equal(.//text()/normalize-space(), ../ead3:daoset[1]/ead3:descriptivenote/ead3:p//text()/normalize-space())">
+      <xsl:when test="deep-equal(mdc:extract-text-no-spaces(.), ../ead3:daoset[1]/ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]))">
         <fo:basic-link external-destination="url('{../ead3:daoset[1]/ead3:dao[1]/@href}')" xsl:use-attribute-sets="ref">
           <xsl:apply-templates select="../ead3:daoset[1]/ead3:descriptivenote/ead3:p" mode="dao"/>
         </fo:basic-link>

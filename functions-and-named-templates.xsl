@@ -11,6 +11,11 @@
     
     <!-- also need to make sure that the top-level dates display if those are NOT normalized
         -->
+    <!-- just used for the unittitle + dao/descriptivenote/p deep-equal tests -->
+    <xsl:function name="mdc:extract-text-no-spaces" as="xs:string">
+        <xsl:param name="input" as="node()"/>
+        <xsl:value-of select="replace(string-join($input//text()/normalize-space()), '\s', '')"/>
+    </xsl:function>
     
     
     <!-- header and footer templates (start)-->
