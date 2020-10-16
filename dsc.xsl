@@ -415,7 +415,7 @@
     <xsl:template match="ead3:did" mode="dsc">
         <xsl:apply-templates select="ead3:abstract, ead3:physdescstructured, ead3:physdesc,
             ead3:physdescset, ead3:physloc,
-            ead3:langmaterial, ead3:materialspec, ead3:origination, ead3:repository, ead3:dao" mode="#current"/>
+            ead3:langmaterial, ead3:materialspec, ead3:origination, ead3:repository, ead3:dao, ead3:daoset" mode="#current"/>
     </xsl:template>
 
     <xsl:template match="ead3:container">

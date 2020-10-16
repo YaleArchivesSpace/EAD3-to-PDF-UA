@@ -153,7 +153,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  <xsl:template match="ead3:daoset/ead3:dao[not(@show='embed')][@href]" mode="#all">
+  <xsl:template match="ead3:daoset/ead3:dao[not(@show='embed')][@href]" mode="#all" priority="5">
     <xsl:choose>
       <xsl:when test="deep-equal(../ead3:descriptivenote/ead3:p//text()/normalize-space(), ../../ead3:unittitle//text()/normalize-space())"/>
       <xsl:otherwise>
