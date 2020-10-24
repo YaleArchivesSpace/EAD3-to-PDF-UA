@@ -7,7 +7,7 @@
     xmlns:mdc="http://mdc"
     xmlns:ead3="http://ead3.archivists.org/schema/" 
     exclude-result-prefixes="xs math mdc fox"
-    version="2.0">
+    version="3.0">
     
     <!-- also need to make sure that the top-level dates display if those are NOT normalized
         -->

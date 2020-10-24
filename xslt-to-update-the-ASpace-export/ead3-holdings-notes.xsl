@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ead="http://ead3.archivists.org/schema/"
     xmlns:mdc="http://mdc/local-functions" xmlns:map="http://www.w3.org/2005/xpath-functions/map"
-    exclude-result-prefixes="xs ead mdc map" version="2.0">
+    exclude-result-prefixes="xs ead mdc map" version="3.0">
     
     <!-- depends on yale.aspace_v2_to_yale_ead3.xsl, right now at least, for $repository variable -->
     
