@@ -25,14 +25,18 @@
                     <fo:bookmark-title><xsl:value-of select="$paging-info-title"/></fo:bookmark-title>
                 </fo:bookmark>
             </xsl:if>
-            <fo:bookmark internal-destination="admin-info">
-                <xsl:attribute name="starting-state">hide</xsl:attribute>
-                <fo:bookmark-title>Adminstrative Information</fo:bookmark-title>
-                <!-- do we even want these here?  we can still display them in the ToC -->
-                <xsl:apply-templates select="ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
-                    , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
-                    , ead3:originalsloc, ead3:otherfindaid, ead3:phystech, ead3:fileplan" mode="bookmarks"/>
-            </fo:bookmark>
+            <xsl:if test="ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
+                , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
+                , ead3:originalsloc, ead3:otherfindaid, ead3:phystech, ead3:fileplan">
+                <fo:bookmark internal-destination="admin-info">
+                    <xsl:attribute name="starting-state">hide</xsl:attribute>
+                    <fo:bookmark-title>Adminstrative Information</fo:bookmark-title>
+                    <!-- do we even want these here?  we can still display them in the ToC -->
+                    <xsl:apply-templates select="ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
+                        , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
+                        , ead3:originalsloc, ead3:otherfindaid, ead3:phystech, ead3:fileplan" mode="bookmarks"/>
+                </fo:bookmark>
+            </xsl:if>
             <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
                 , ead3:odd[not(matches(lower-case(normalize-space(ead3:head)), $odd-headings-to-add-at-end))]
                 , ead3:bibliography, ead3:arrangement" mode="bookmarks"/>
@@ -64,11 +68,13 @@
     
     <xsl:template match="ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c']
         [@level=$levels-to-include-in-toc or @otherlevel=$otherlevels-to-include-in-toc]"
-        mode="bookmarks">
+        mode="bookmarks" priority="2">
         <fo:bookmark internal-destination="{if (@id) then @id else generate-id(.)}">
             <xsl:attribute name="starting-state">hide</xsl:attribute>
             <!-- update here to use a Combine that Title and Date function, or something else that will use Dates when a unittitle is missing. -->
             <!-- do we want Series I stuff here, too? -->
+            <!-- keeping as is for now, though we should add a test to ensure we always have a unittitle.
+                i tried adding the dates, and it looks way too cluttered in the bookmarks section, i think -->
             <fo:bookmark-title>
                 <xsl:if test="ead3:did/ead3:unitid/normalize-space()">
                     <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), '. ')"/>

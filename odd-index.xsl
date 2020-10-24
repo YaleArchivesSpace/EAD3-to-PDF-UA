@@ -18,9 +18,9 @@
             </fo:static-content>
             <fo:flow flow-name="xsl-region-body">
                 <xsl:call-template name="section-start"/>
-                <xsl:variable name="id-for-link" select="if (@id) then @id else generate-id(.)"/> 
+                <xsl:variable name="id-for-link" select="if (@id) then @id else generate-id(.)"/>
                 <fo:block xsl:use-attribute-sets="h3" id="{@id-for-link}">
-                    <xsl:if test="@audience='internal' and $suppressInternalComponents eq false()">
+                    <xsl:if test="@audience='internal' and $suppressInternalComponentsInPDF eq false()">
                         <xsl:attribute name="border-style">solid</xsl:attribute>
                         <xsl:attribute name="border-width">2px</xsl:attribute>
                         <xsl:attribute name="border-color">red</xsl:attribute>
@@ -36,12 +36,12 @@
             </fo:flow>
         </fo:page-sequence>
     </xsl:template>
-    
+
     <xsl:template match="ead3:archdesc/ead3:odd[matches(lower-case(normalize-space(ead3:head)), $odd-headings-to-add-at-end)][position() gt 1]">
         <xsl:call-template name="section-start"/>
-        <xsl:variable name="id-for-link" select="if (@id) then @id else generate-id(.)"/> 
+        <xsl:variable name="id-for-link" select="if (@id) then @id else generate-id(.)"/>
         <fo:block xsl:use-attribute-sets="h3" id="{@id-for-link}">
-            <xsl:if test="@audience='internal' and $suppressInternalComponents eq false()">
+            <xsl:if test="@audience='internal' and $suppressInternalComponentsInPDF eq false()">
                 <xsl:attribute name="border-style">solid</xsl:attribute>
                 <xsl:attribute name="border-width">2px</xsl:attribute>
                 <xsl:attribute name="border-color">red</xsl:attribute>

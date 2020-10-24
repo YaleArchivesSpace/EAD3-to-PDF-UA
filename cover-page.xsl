@@ -68,43 +68,52 @@
         <fo:block xsl:use-attribute-sets="margin-after-small">
             <xsl:choose>
                 <xsl:when test="$repository-code='divinity'">
-                    <fo:external-graphic src="url('logos/divshield.jpg')"
+                    <xsl:variable name="image" select="concat($logo-location, 'config/logos/divshield.jpg')"/>
+                    <fo:external-graphic src="url({$image})"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="Divinity school shield logo"/>
                 </xsl:when>
                 <xsl:when test="$repository-code='med'">
-                    <fo:external-graphic src="url('logos/medshield.jpg')"
+                    <xsl:variable name="image" select="concat($logo-location, 'config/logos/medshield.jpg')"/>
+                    <fo:external-graphic src="url({$image})"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="Medical school shield logo"/>
                 </xsl:when>
                 <xsl:when test="$repository-code='beinecke'">
-                    <fo:external-graphic src="url('logos/brbl_bldg.jpg')"
+                    <xsl:variable name="image" select="concat($logo-location, 'config/logos/brbl_bldg.jpg')"/>
+                    <fo:external-graphic src="url({$image})"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="A drawing of an exterior view of the Beinecke Library"/>
                 </xsl:when>
                 <xsl:when test="$repository-code='ypm'">
-                    <fo:external-graphic src="url('logos/peabody.jpg')"
+                    <xsl:variable name="image" select="concat($logo-location, 'config/logos/peabody.jpg')"/>
+                    <fo:external-graphic src="url({$image})"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="A view from outside the Peabody Museum, with a statue of a triceratops horridus in the foreground"/>
                 </xsl:when>
                 <xsl:when test="$repository-code='lwl'">
-                    <fo:external-graphic src="url('logos/walpole-summer.jpg')"
+                    <xsl:variable name="image" select="concat($logo-location, 'config/logos/walpole-summer.jpg')"/>
+                    <fo:external-graphic src="url({$image})"
                         content-width="scale-to-fit"
                         scaling="uniform"
                         fox:alt-text="A view of the Lewis Walpole Library, during summertime"/>
                 </xsl:when>
                 <xsl:when test="$repository-code='ycba'">
-                    <fo:external-graphic src="url('logos/ycba.png')"
+                    <xsl:variable name="image" select="concat($logo-location, 'config/logos/YCBA_logo.jpg')"/>
+                    <fo:external-graphic src="url({$image})"
                         content-width="scale-to-fit"
+                        width="75%"
                         scaling="uniform"
-                        fox:alt-text="A view inside the Yale Center for British Art Library. Photograph by Richard Caspole, 2016"/>
+                        fox:alt-text="Yale Center for British Art, Library Court. Photograph by Richard Caspole, YCBA, 2016."/>
+   
                 </xsl:when>
                 <xsl:otherwise>
-                    <fo:external-graphic src="url('logos/Yale_University_Shield_1.svg')"
+                    <xsl:variable name="image" select="concat($logo-location, 'config/logos/Yale_University_Shield_1.svg')"/>
+                    <fo:external-graphic src="url({$image})"
                         width="70%"
                         content-height="70%"
                         content-width="scale-to-fit"
@@ -121,10 +130,16 @@
         </fo:block>
     </xsl:template>
 
-    <xsl:template match="ead3:eventdatetime" mode="titlepage.pdf.creation.date">
+    <xsl:template match="ead3:eventdatetime" mode="titlepage.pdf.creation.date">        
+        <!-- if kept like this, we'll need paramertize the time zone
+        if no parameter is passed, it should still be able to get the time zone, but not sure about the timezone
+        if the server becomes hosted, etc., so i'm passing the value for now.
+        -->
+        <xsl:variable name="adjustedDateTime" select="adjust-dateTime-to-timezone(xs:dateTime(.), xs:dayTimeDuration('-PT5H0M'))"/>
+        
         <fo:block font-size="9pt">
-            <xsl:text>Last modified at </xsl:text>
-            <xsl:value-of select="format-dateTime(xs:dateTime(.), '[h]:[m01] [Pn] on [FNn], [MNn] [D1o], [Y0001]')"/>
+            <xsl:text>Last exported at </xsl:text>
+            <xsl:value-of select="format-dateTime($adjustedDateTime, '[h]:[m01] [Pn] on [FNn], [MNn] [D1o], [Y0001]')"/>
         </fo:block>
     </xsl:template>
 

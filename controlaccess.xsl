@@ -5,6 +5,9 @@
     xmlns:ead3="http://ead3.archivists.org/schema/" exclude-result-prefixes="xs ead3 fox"
     version="2.0">
 
+    
+    <!-- to do: update so that these two templates aren't so repetive, since the structure should only differ slightly, I think -->
+
     <!-- this file is imported by "ead3-to-pdf-ua.xsl" -->
     <xsl:template match="ead3:archdesc" mode="control-access-section">
         <fo:page-sequence master-reference="control-access">
@@ -26,6 +29,52 @@
                 </fo:block>
                 <fo:block>
                     <xsl:apply-templates select="ead3:controlaccess"/>
+                    <!-- a bit of tom foolery to deal with contributors... but only if more than one 'creator' -->
+                    <xsl:if test="ead3:did/ead3:origination[lower-case(@label )= 'creator'][2]">
+                        <fo:block margin-top="25pt" margin-left="10pt">
+                            <fo:block font-weight="700" xsl:use-attribute-sets="h4">
+                                <xsl:value-of select="$control-access-origination-grouping-title"/>
+                            </fo:block>
+                            <fo:list-block>
+                                <!-- we were requested to put the primary creator name in both Names and Contributors.
+                                so, that's why we don't start with the second "creator" here in this yucky for-each loop.-->
+                                <xsl:for-each select="ead3:did/ead3:origination[lower-case(@label )= 'creator']">      
+                                    <fo:list-item>
+                                        <fo:list-item-label>
+                                            <fo:block/>
+                                        </fo:list-item-label>
+                                        <fo:list-item-body>
+                                            <fo:block>
+                                                <xsl:apply-templates/>
+                                            </fo:block>
+                                        </fo:list-item-body>
+                                    </fo:list-item>      
+                                </xsl:for-each>
+                            </fo:list-block>
+                        </fo:block>
+                    </xsl:if>
+                    <!-- new tom foolery to deal with agents linked as sources, now not repeated in the controlaccess section (since we've updated the EAD3 exporter) -->
+                    <xsl:if test="ead3:did/ead3:origination[lower-case(@label )= 'source']">
+                        <fo:block margin-top="25pt" margin-left="10pt">
+                            <fo:block font-weight="700" xsl:use-attribute-sets="h4">
+                                <xsl:value-of select="$control-access-origination-sources-grouping-title"/>
+                            </fo:block>
+                            <fo:list-block>
+                                <xsl:for-each select="ead3:did/ead3:origination[lower-case(@label )= 'source']">      
+                                    <fo:list-item>
+                                        <fo:list-item-label>
+                                            <fo:block/>
+                                        </fo:list-item-label>
+                                        <fo:list-item-body>
+                                            <fo:block>
+                                                <xsl:apply-templates/>
+                                            </fo:block>
+                                        </fo:list-item-body>
+                                    </fo:list-item>      
+                                </xsl:for-each>
+                            </fo:list-block>
+                        </fo:block>
+                    </xsl:if>
                 </fo:block>
                 <!-- adding this to grab the last page number-->
                 <xsl:if test="$last-page eq 'controlaccess'">
@@ -68,7 +117,7 @@
                 </fo:block>
                 <fo:list-block>
                     <xsl:for-each select="current-group()">
-                        <xsl:sort select="." data-type="text"/>
+                        <xsl:sort select="." data-type="text" lang="en"/>
                         <xsl:for-each select=".">
                             <fo:list-item>
                                 <fo:list-item-label>
@@ -76,7 +125,7 @@
                                 </fo:list-item-label>
                                 <fo:list-item-body>
                                     <fo:block>
-                                        <xsl:apply-templates/>
+                                        <xsl:apply-templates select="."/>
                                     </fo:block>
                                 </fo:list-item-body>
                             </fo:list-item>
@@ -117,7 +166,7 @@
                 </fo:block>
                 <fo:list-block margin-left="1em">
                     <xsl:for-each select="current-group()">
-                        <xsl:sort select="." data-type="text"/>
+                        <xsl:sort select="." data-type="text" lang="en"/>
                         <xsl:for-each select=".">
                             <fo:list-item>
                                 <fo:list-item-label>
@@ -125,7 +174,7 @@
                                 </fo:list-item-label>
                                 <fo:list-item-body>
                                     <fo:block>
-                                        <xsl:apply-templates/>
+                                        <xsl:apply-templates select="."/>
                                     </fo:block>
                                 </fo:list-item-body>
                             </fo:list-item>

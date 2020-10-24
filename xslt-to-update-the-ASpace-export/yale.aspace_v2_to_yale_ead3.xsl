@@ -3,21 +3,12 @@
   Transform ArchivesSpace EAD output to be EAD compliant with Yale's EAD best practice guidelines
 
   maintained by: mark.custer@yale.edu
-  updated to conform with ASpace versions 2.x
-  
- another example problem:
-  
-              <p>Includes <title localtype="simple" render="italic">
-                  <emph render="italic">By-laws of the Hudson River Spathic Iron Ore Company</emph>
-                  <part/>
-                </title> (1875)</p>
-                
-         Gotta get rid of that extra emph, and put the text
-         of emph into part.  geez.
-                        
+  updated to conform with ASpace versions 2.x  
+             
+
   to do:
 
-  
+
   1)
   strip any notes that only have a head element, and no text otheriwse.
 
@@ -26,21 +17,10 @@
   update all repo records in ASpace and remove the "respository_code" parameter from this file.
 
 
-  3)
-  remove elements that aren't legal in EAD3...  e.g. linebreaks in title elements.
-  e.g.
-  <title localtype="simple" render="italic">
-                <part>Bumarap:</part>
-                <lb/>
-                <part>the Story of a Male Virgin</part>
-              </title>
-    there should only be one <part> element!
 
   figure out how to handle titles that are exported incorrectly in EAD3 from ASpace
-  if a note has two title elements, those get exported as a single one!
-  ead2002 example:
-
-  ead3 example:
+  if a note has two title elements, those get exported as a single one.
+  find an example!
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ead3="http://ead3.archivists.org/schema/"
   xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -49,6 +29,8 @@
   version="2.0">
 
   <xsl:output method="xml" indent="yes" encoding="UTF-8" omit-xml-declaration="no"/>
+  
+  <xsl:include href="ead3-holdings-notes.xsl"/>
 
   <!-- will pass false() when using this process to do staff-only PDF previews -->
   <xsl:param name="suppressInternalComponents" select="true()" as="xs:boolean"/>
@@ -60,119 +42,20 @@
     <xsl:param name="date" as="xs:string"/>
     <xsl:variable name="months"
       select="('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')"/>
-    <xsl:analyze-string select="$date" flags="x" regex="(\d{{4}})(\d{{2}})?(\d{{2}})?">
-      <xsl:matching-substring>
-        <!-- year -->
-        <xsl:value-of select="regex-group(1)"/>
-        <!-- month (can't add an if,then,else '' statement here without getting an extra space at the end of the result-->
-        <xsl:if test="regex-group(2)">
-          <xsl:value-of select="subsequence($months, number(regex-group(2)), 1)"/>
-        </xsl:if>
-        <!-- day -->
-        <xsl:if test="regex-group(3)">
-          <xsl:number value="regex-group(3)" format="1"/>
-        </xsl:if>
-        <!-- still need to handle time... but if that's there, then I can just use xs:dateTime !!!! -->
-      </xsl:matching-substring>
-    </xsl:analyze-string>
-  </xsl:function>
-
-  <xsl:function name="mdc:month-name-2-number" as="xs:string">
-    <xsl:param name="month-name" as="xs:string"/>
-    <xsl:variable name="months" as="xs:string*" select="'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'"/>
-    <xsl:sequence select="format-number(index-of($months, $month-name), '00')"/>
-  </xsl:function>
-
-  <xsl:function name="mdc:date-expression-2-iso-date" as="xs:string*">
-    <xsl:param name="date-expression" as="xs:string"/>
-  <!-- (1 year, 2 months, 2 days... repeat the year value)
-  1942 Apr 21 - Jun 9
-  needs to become
-  1942042119420609
-
-  1942 Apr 21 - 1946 Jun 9 (2 years, 2 months, 2 days)
-  needs to become
-  1942042119460609
-
-  1942 Apr 21 - 25 (1 year, 1 month, 2 days.... repeat the month)
-  needs to become
-  1942042119420425
-
-  1945 April 5 (1 year, 1 month, 1 day)
-  to become
-  19450405
-
-  1945 April (1 year, 1 month)
-  to become
-  194504
-
-  1945, undated (1 year, extra text)
-  to become
-  1945
-
-  Another wrinkle:
-
-                   <unitdatestructured unitdatetype="inclusive">
-                     <daterange>
-                        <fromdate standarddate="1960">1960</fromdate>
-                        <todate standarddate="1999">1999</todate>
-                     </daterange>
-                  </unitdatestructured>
-                  <unitdate unitdatetype="inclusive">1960s-1990s</unitdate>
-     (so, if a pattern of \d{4}s then replace
-  as appropriate for first and second date)
-  
-  MDC (2018/08/28): At this point, I've decided it best to modify the EAD3 exporter so this issue doesn't happen in the first place.
-  Keeping the templates/functions around for now, since they won't hurt anything, but they should no longer be necessary.
-  -->
-    <xsl:variable name="years">
-      <xsl:analyze-string select="$date-expression" regex="(\d{{4}})">
-        <xsl:matching-substring>
-          <xsl:sequence select="regex-group(1)"/>
-        </xsl:matching-substring>
-      </xsl:analyze-string>
+    <xsl:variable name="date-numbers" select="for $num in tokenize($date, '-') return number($num)"/>    
+    <xsl:variable name="year">
+      <xsl:value-of select="format-number($date-numbers[1], '#')"/>
     </xsl:variable>
-    <xsl:variable name="months">
-      <xsl:analyze-string select="lower-case($date-expression)" regex="(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)">
-        <xsl:matching-substring>
-          <xsl:sequence select="mdc:month-name-2-number(regex-group(1))"/>
-        </xsl:matching-substring>
-      </xsl:analyze-string>
+  <xsl:variable name="month">
+      <xsl:value-of select="if ($date-numbers[2]) then subsequence($months, $date-numbers[2], 1) else ()"/>
     </xsl:variable>
-    <xsl:variable name="days">
-      <xsl:analyze-string select="$date-expression" regex="[^\d](\d{{1,2}})($|[^\d])">
-        <xsl:matching-substring>
-          <xsl:sequence select="regex-group(1)"/>
-        </xsl:matching-substring>
-      </xsl:analyze-string>
-    </xsl:variable>
-    <!-- sure there's a better way to do this, but next
-            we'll tokenize the sequence to find out if we have more than one year, month, and/or day to deal with -->
-    <xsl:variable name="year1" select="tokenize($years, ' ')[1]"/>
-    <xsl:variable name="year2" select="tokenize($years, ' ')[2]"/>
-    <xsl:variable name="month1" select="tokenize($months, ' ')[1]"/>
-    <xsl:variable name="month2" select="tokenize($months, ' ')[2]"/>
-    <xsl:variable name="day1" select="tokenize($days, ' ')[1]"/>
-    <xsl:variable name="day2" select="tokenize($days, ' ')[2]"/>
+    <xsl:variable name="day">
+      <xsl:value-of select="if ($date-numbers[3]) then format-number($date-numbers[3], '#') else ()"/>
+    </xsl:variable>   
 
-    <xsl:value-of select="concat(
-      $year1,
-      $month1,
-      if (string-length($day1)=1) then concat('0', $day1) else $day1,
-      if ($month2 and not($year2) or (not($year2) and not($month2))) then $year1 else $year2,
-      if ($month1 and $day2 and not($month2)) then $month1 else $month2,
-      if (string-length($day2)=1) then concat('0', $day2) else $day2
-      )"/>
+    <xsl:sequence select="normalize-space(string-join(($year, $month, $day), ' '))"/>
+
   </xsl:function>
-
-  <xsl:function name="mdc:remove-this-date" as="xs:boolean">
-    <!-- update this to compare with the display form -->
-    <xsl:param name="unitdate" as="node()"/>
-    <xsl:variable name="first-date" select="string-join($unitdate//replace(@standarddate, '-', ''), '')"/>
-    <xsl:variable name="second-date" select="$unitdate/following-sibling::*[1]/mdc:date-expression-2-iso-date(text())"/>
-    <xsl:value-of select="if ($first-date eq $second-date) then true() else false()"/>
-  </xsl:function>
-
 
   <xsl:function name="mdc:top-container-to-number" as="xs:decimal">
     <xsl:param name="current-container" as="node()*"/>
@@ -193,14 +76,14 @@
     </xsl:variable>
     <xsl:value-of select="xs:decimal(concat($primary-container-number, '.', $primary-container-modify))"/>
   </xsl:function>
-  
+
 
   <!-- Repository Parameter -->
   <xsl:param name="repository">
     <xsl:value-of select="substring-before(normalize-space(/ead3:ead/ead3:control/ead3:recordid), '.')"/>
   </xsl:param>
 
-  <xsl:param name="include-cc0-rights-statement" as="xs:boolean"> 
+  <xsl:param name="include-cc0-rights-statement" as="xs:boolean">
     <!-- need to get the okay from Peabody.  anyone else?-->
     <xsl:value-of select="if ($repository = ('mssa', 'beinecke', 'divinity', 'music', 'med', 'arts', 'vrc', 'lwl', 'ycba')) then true() else false()"/>
   </xsl:param>
@@ -252,7 +135,7 @@
   </xsl:param>
 
   <!-- standard identity template -->
-  <xsl:template match="@* | node()">
+  <xsl:template match="@* | node()" mode="#default copy">
     <xsl:copy>
       <xsl:apply-templates select="@* | node()"/>
     </xsl:copy>
@@ -260,12 +143,7 @@
 
   <!-- if it's listed "unpublished" in ASpace, let's keep it unpublished no matter how the file is serialized into EAD
   (and we'll change the paraemter as needed for previewing PDF files) -->
-  <xsl:template match="*[@audience = 'internal'][$suppressInternalComponents = true()]" priority="5"/>
-
-  <!-- rather than fix the formatting (e.g. adding a paragraph element within controlnote),
-    let's just keep this note internal only -->
-  <xsl:template match="ead3:notestmt"/>
-
+  <xsl:template match="*[@audience = 'internal'][$suppressInternalComponents = true()]" priority="10"/>
 
   <xsl:template match="ead3:conventiondeclaration[$include-cc0-rights-statement eq true()]">
     <xsl:copy>
@@ -317,6 +195,22 @@
   -->
   <xsl:template match="ead3:archdesc/ead3:did/ead3:langmaterial[not(@id)][../ead3:langmaterial[@id]]"/>
 
+  <!-- 
+    For now, we might have... (with no language or script codes)
+  <langmaterial>
+      <descriptivenote><p>In English and Greek.</p></descriptivenote>
+  </langmaterial
+  If so, to be valid EAD3, we need to add an empty tag.  Sigh.  
+   We could also add language codes by analazying the note, but better to get those code added directly to ASpace.
+  -->
+  <xsl:template match="ead3:langmaterial[not(ead3:language) and not(ead3:languageset)]">
+    <xsl:copy>
+      <xsl:apply-templates select="@*"/>
+      <xsl:element name="language" namespace="http://ead3.archivists.org/schema/"/>
+      <xsl:apply-templates select="node()"/>
+    </xsl:copy>
+  </xsl:template>
+  
   <!-- we might get something like this:
           <physloc>Some files include photographs; negatives for some prints are stored in
             <title localtype="simple" render="italic">
@@ -348,8 +242,23 @@
     to ASpace's qualifier field.  Here's where we strip those values out, since they're pointless for the display
     -->
   <xsl:template match="ead3:part/text()">
-    <xsl:value-of select="replace(., '\$\w:', '')"/>
+    <xsl:value-of select="replace(., '\$\w: ', '')"/>
   </xsl:template>
+    
+ <!-- going with a less extreme strategy for the time being.  
+   see the ead3:title/ead3:emph template much further down,
+   which replaces these 3 templates ...
+   
+  <xsl:template match="ead3:title/ead3:emph"/>
+  
+  <xsl:template match="ead3:part[preceding-sibling::ead3:emph[1]]">
+    <xsl:copy>
+      <xsl:apply-templates select="preceding-sibling::ead3:emph[1], node()" mode="copy"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="ead3:part[not(preceding-sibling::*)][not(node())]"/>
+  -->
 
 
 
@@ -363,10 +272,31 @@
       <xsl:value-of select="concat('aspace_', .)"/>
     </xsl:attribute>
   </xsl:template>
+  <xsl:template match="@target[not(starts-with(., 'ref'))][contains(., 'ref')][starts-with(., 'aspace_')]">
+    <xsl:attribute name="target">
+      <xsl:value-of select="substring-after(., 'aspace_')"/>
+    </xsl:attribute>
+  </xsl:template>
 
   <!--remove any ref/@type attributes -->
   <xsl:template match="ead3:ref/@type"/>
   
+  <!-- new stuff to stabilize the value supplied by ASpace for the container id and parent attributes.
+  
+  right now, ASpace will change the ID and Parent attributes upon every export.  these next two templates will ensure that they don't change every time, unless warranted. -->
+  <xsl:template match="ead3:container/@id">
+    <xsl:variable name="container-id" select="."/>
+    <xsl:variable name="container-position" select="1 + ../../ead3:container[@id eq $container-id]/count(preceding-sibling::ead3:container)"/>
+    <xsl:variable name="component-id" select="../../../@id"/>
+    <xsl:attribute name="id" select="if ($component-id) then concat($component-id, '_c', $container-position) else generate-id(..)"/>
+  </xsl:template>
+  <xsl:template match="ead3:container/@parent">
+    <xsl:variable name="parent-id" select="."/>
+    <xsl:variable name="parent-position" select="1 + ../../ead3:container[@id eq $parent-id]/count(preceding-sibling::ead3:container)"/>
+    <xsl:variable name="component-id" select="../../../@id"/>
+    <xsl:attribute name="parent" select="if ($component-id)  then concat($component-id, '_c', $parent-position) else generate-id(../preceding-sibling::ead3:container[1][@id])"/>
+  </xsl:template>
+
   <!-- let's make top-container ranges, if the component has nothing but top containers -->
   <xsl:template match="ead3:did[ead3:container[2]][not(ead3:container/@parent)]">
     <xsl:copy>
@@ -384,7 +314,7 @@
         </xsl:for-each-group>
       </xsl:variable>
       <!--
-      our variable will be structured like so:  
+      our variable will be structured like so:
         box
           container 1
           container 2
@@ -398,19 +328,19 @@
       <xsl:apply-templates select="$containers-sorted-by-localtype/*" mode="container-fun"/>
     </xsl:copy>
   </xsl:template>
-  
+
   <xsl:template match="*" mode="container-fun">
     <!--now we've got one more container children, which need to be condensed into ranges -->
       <xsl:apply-templates select="ead3:container[1]" mode="container-fun"/>
   </xsl:template>
- 
-  <!-- 
+
+  <!--
            but really should be (can handle that in the PDF tranformation bit):
            1-2, 2a-2c, 4-8, 9-11
            1
   -->
   <xsl:template match="ead3:container" mode="container-fun">
-    <xsl:param name="first-container-in-range" select="."/> 
+    <xsl:param name="first-container-in-range" select="."/>
     <xsl:variable name="current-container" select="."/>
     <xsl:variable name="next-container" select="following-sibling::ead3:container[1]"/>
     <xsl:choose>
@@ -419,7 +349,7 @@
         <xsl:copy>
           <xsl:apply-templates select="@localtype"/>
           <xsl:attribute name="id" select="generate-id()"/>
-          <xsl:value-of select="if ($first-container-in-range eq $current-container) 
+          <xsl:value-of select="if ($first-container-in-range eq $current-container)
             then $current-container
             else concat($first-container-in-range, '&#x2013;', $current-container)"/>
         </xsl:copy>
@@ -428,12 +358,12 @@
       perhaps: when has a remainder plus floor of current = floor of next. -->
       <xsl:when test="mdc:top-container-to-number($current-container) mod 1 gt 0
         and mdc:top-container-to-number($next-container) mod 1 gt 0
-        and (floor(mdc:top-container-to-number($current-container)) eq floor(mdc:top-container-to-number($next-container)))">       
+        and (floor(mdc:top-container-to-number($current-container)) eq floor(mdc:top-container-to-number($next-container)))">
         <xsl:apply-templates select="$next-container" mode="#current">
           <xsl:with-param name="first-container-in-range" select="$first-container-in-range"/>
           <xsl:with-param name="current-container" select="$next-container"/>
         </xsl:apply-templates>
-      </xsl:when> 
+      </xsl:when>
       <!-- e.g. 1, 2, 3, 4, 5, 6, 8
         when we're at 1 -5, we just want to keep going.
       -->
@@ -443,26 +373,26 @@
               <xsl:with-param name="current-container" select="$next-container"/>
             </xsl:apply-templates>
       </xsl:when>
-      <!-- e.g. in the above example, let's say we get to 6. 
+      <!-- e.g. in the above example, let's say we get to 6.
       -->
       <xsl:when test="mdc:top-container-to-number($current-container) + 1 ne mdc:top-container-to-number($next-container)">
         <xsl:copy>
           <xsl:apply-templates select="@localtype"/>
           <xsl:attribute name="id" select="generate-id()"/>
-          <xsl:value-of select="if ($first-container-in-range eq $current-container) 
+          <xsl:value-of select="if ($first-container-in-range eq $current-container)
             then $current-container
             else concat($first-container-in-range, '&#x2013;', $current-container)"/>
-        </xsl:copy>    
+        </xsl:copy>
         <xsl:if test="following-sibling::ead3:container">
           <xsl:apply-templates select="$next-container" mode="#current">
             <xsl:with-param name="first-container-in-range" select="$next-container"/>
             <xsl:with-param name="current-container" select="$next-container"/>
           </xsl:apply-templates>
-        </xsl:if>     
+        </xsl:if>
       </xsl:when>
     </xsl:choose>
-  </xsl:template>  
-  
+  </xsl:template>
+
 
   <!--aspace exports empty type/localtype attributes on containers that don't have a container type.
     for local purposes, we assume that these containers are "boxes".
@@ -472,16 +402,17 @@
       <xsl:text>box</xsl:text>
     </xsl:attribute>
   </xsl:template>
-  
+
   <xsl:template match="ead3:container/@localtype">
     <xsl:attribute name="{local-name()}">
-      <xsl:value-of select="lower-case(.)"/>
-    </xsl:attribute>  
+      <xsl:value-of select="lower-case(replace(., '\s', '_'))"/>
+    </xsl:attribute>
   </xsl:template>
-  
+
   <!-- mdc: hack for beinecke.edwards (and any other collections/sections we
     need to model deliverable units within top containers)-->
   <xsl:template match="ead3:container[@localtype = ('parent_barcode', 'parent_box')]"/>
+  
   <xsl:template match="ead3:container[@localtype eq 'folder'][following-sibling::ead3:container[1][@localtype eq 'parent_box']]">
     <xsl:copy>
       <xsl:attribute name="localtype" select="'box'"/>
@@ -508,6 +439,7 @@
 
   <!-- let's remove those AT database IDs even if we keep internal-only elements around.
   those should be the only unitids exported with an invalid @type attribute, so just remove 'em.
+  should also take care of "local_surrogate_call_number"... but will check that out once we have examples in place from MSSA.
   -->
   <xsl:template match="ead3:unitid[@type]" priority="2"/>
 
@@ -524,7 +456,7 @@
 
 
   <!-- ArchivesSpace Extent subrecords, EAD3 style (which is much easier to handle than EAD2002 style):  let's deal with 'em.
-  
+
   Here's what we're up against:
 
       <physdescstructured coverage="whole" physdescstructuredtype="spaceoccupied">
@@ -533,20 +465,20 @@
         <physfacet>physical details</physfacet>
         <dimensions>dimensions</dimensions>
       </physdescstructured>
-**immediately following physdesc with "container_summary" is part of the above, so take that into account for the display 
+**immediately following physdesc with "container_summary" is part of the above, so take that into account for the display
       <physdesc localtype="container_summary">container summary</physdesc>
-     
+
      though we can have whole/part statements, for now we just take them as they are in the PDF output.
-      
-**also, no distinction for the other physdesc notes. 
+
+**also, no distinction for the other physdesc notes.
       <physdesc id="aspace_c01a106a4cf1b9787c933ec0ae449fba">physical description</physdesc>
       <physdesc id="aspace_87278ac037e106a92efd44152b242089">physical facet</physdesc>
       <physdesc id="aspace_ed6aa58891d81e358bce0571bc4c823a">dimensions</physdesc>
 
-So, all that we need to do here 
+So, all that we need to do here
 1) is singularize the unittype values when the quantity = 1.
 2) remove any quantity/unittype values when the quantity is 0 OR unittype = 'see container summary', and replace with a generic physdesc element in case physfacet and dimensions were recorded.
-3) [also consider formatting the numbers?  e.g. if 1000 is entered, display as 1,000.  need feedback about this.  
+3) [also consider formatting the numbers?  e.g. if 1000 is entered, display as 1,000.  need feedback about this.
   for now, we'll display whatever is entered since ASpace does not actually store this field as a number.]
   -->
 
@@ -576,7 +508,7 @@ So, all that we need to do here
           <xsl:value-of select="replace(., 's \(', ' (')"/>
         </xsl:when>
         <!--any other irregular singluar/plural extent type names???-->
-        
+
         <!--otherwise, just go with what we've got -->
         <xsl:otherwise>
           <xsl:apply-templates/>
@@ -584,8 +516,8 @@ So, all that we need to do here
       </xsl:choose>
     </xsl:copy>
   </xsl:template>
-  
-  <xsl:template match="ead3:physdescstructured[normalize-space(ead3:quantity) eq '0'] 
+
+  <xsl:template match="ead3:physdescstructured[normalize-space(ead3:quantity) eq '0']
     | ead3:physdescstructured[lower-case(normalize-space(ead3:unittype)) eq 'see container summary']">
     <xsl:element name="physdesc" namespace="http://ead3.archivists.org/schema/">
       <xsl:value-of select="ead3:physfacet"/>
@@ -627,7 +559,7 @@ So, all that we need to do here
       </xsl:choose>
     </xsl:copy>
   </xsl:template>
-  
+
 
 
   <!-- silly hack to deal with the fact that ASpace won't allow notes over 65k.
@@ -637,7 +569,7 @@ So, all that we need to do here
     <xsl:variable name="grouping-element-name" select="local-name()"/>
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
-      <xsl:element name="head" namespace="urn:isbn:1-931666-22-9">
+      <xsl:element name="head" namespace="http://ead3.archivists.org/schema/">
         <xsl:value-of select="substring-after(ead3:head, ') ')"/>
       </xsl:element>
       <xsl:apply-templates select="ead3:* except ead3:head"/>
@@ -651,7 +583,12 @@ So, all that we need to do here
     for odd elements with that head element -->
 
   <!-- do we still need this?? -->
-  <xsl:template match="ead3:archdesc/ead3:did/ead3:origination[@label = 'source']"/>
+  <!-- no.  we're now going to keep the sources as is and display them in a control access section under a specific heading-->
+  <!-- <xsl:template match="ead3:archdesc/ead3:did/ead3:origination[@label = 'source']"/> -->
+  <!-- but we now need to remove empty controlaccess elements, since we've changed the aspace behavior of DUPLICATING every source in the EAD output.  for shame, aspace -->
+  <!-- normally we wouldn't delete an element like this, but since EAD requires the element to have children elements, we don't need to worry about any attributes, etc. -->
+  <!-- this also holds true for an empty controlacess element, which won't have any element matches, so we can eliminate both instances of empty controlaccess sections with the same xpath -->
+  <xsl:template match="ead3:controlaccess[every $x in * satisfies $x[@audience='internal']]"/>
 
 
   <xsl:template match="ead3:physdesc">
@@ -710,29 +647,10 @@ So, all that we need to do here
     <xsl:apply-templates/>
   </xsl:template>
 
-  <!-- here's a fun fact:  ASpace still has issues with exporting &s and stuff in EAD3,  and when it comes to DAOs, which get the titles exported in two places...
-    title attribute and the daodesc element, the daodesc element can get messed up.
-    here's an example:
-                  <dao actuate="onrequest" daotype="unknown"
-                href="http://hdl.handle.net/10079/digcoll/1193830"
-                linktitle="MT&amp;R International Councillors Meeting in Beijing, China with Nancy Kissinger, 2002 November 4-7"
-                show="new">
-                <descriptivenote>MT</descriptivenote>
-              </dao>
-     Because of this, we're going to strip those daodescs.
-     and for the Kissinger collections (which repeats the dao title as the archival object title)
-     we're going to need to replace the dang unittitle with the dao/@title since the unittitle in this case
-     is exported as:
-     <unittitle>MT</unittitle>.
-     Oi.
-
-  <xsl:template match="ead3:dao/ead3:descriptivenote"/>
-     -->
-
-  <!-- a very wacky hack to fix the dao title comparisons for the 2 kissiner finding aids, which include a date string as part of the dao title
+  <!-- a very wacky hack to fix the dao title comparisons for the 2 kissinger finding aids, which include a date string as part of the dao title
     after the last comma (which we strip out below) -->
   <xsl:template match="ead3:dao/ead3:descriptivenote/ead3:p/text()[last()][$finding-aid-identifier = ('mssa.ms.2004', 'mssa.ms.1980')]" priority="2">
-    <xsl:variable name="tokens" select="tokenize(string-join(., ' '), ', ')"/>
+    <xsl:variable name="tokens" select="tokenize(string-join(normalize-space(.), ' '), ', ')"/>
     <xsl:value-of select="$tokens[position() &lt; last()]" separator=", "/>
   </xsl:template>
 
@@ -743,11 +661,17 @@ So, all that we need to do here
     </xsl:attribute>
   </xsl:template>
 
-  <!-- for now, we're going to remove any thumbnail only style links-->
-  <xsl:template match="ead3:dao[@show='embed']"/>
+  <!-- for now, we're going to remove any thumbnail only style links.  adding a priority here, in case the embedded link is from preservica or kaltura.
+    REMOVING this, since we're now going to inlcoude daoset in the output.
+    UPDATE... and add daoset here somewhere, since we could group on dao/@altrender now.
+  <xsl:template match="ead3:dao[@show='embed']" priority="2"/>
+  -->
   <!-- also taking out staff-only dao links until we figure out what to do with those -->
+  <!-- should revisit since these could (and shoulb) be marked as unpublished if we don't want to display them -->
+  <!-- UPDATE...   only remove these if they are unpublished.  if they shouldn't be published, unpublish them.
   <xsl:template match="ead3:dao[contains(@href, 'preservica')]"/>
   <xsl:template match="ead3:dao[contains(@href, 'kaltura')]"/>
+  -->
 
   <!-- we want ead3:c elements in the final product, so if enumerated elements are exported by mistake,
     we'll change those here -->
@@ -756,46 +680,22 @@ So, all that we need to do here
       <xsl:apply-templates select="@*|node()"/>
     </xsl:element>
   </xsl:template>
-
-  <!-- we need to check on unitdatestructureds to see if we need to remove those and only process the unitdate that follows.
-    here's where we do that (until we can get ASpace updated to align better with EAD3).
-  this will no longer be necessary once the EAD3 exporter is updated (and possibly the EAD3 schema)
-  but keeping it in for now since it won't hurt anything. -->
-  <xsl:template match="ead3:unitdatestructured[following-sibling::*[1][local-name() eq 'unitdate']]">
-    <xsl:variable name="remove" select="mdc:remove-this-date(.)"/>
-    <xsl:if test="$remove eq false()">
-      <xsl:copy>
-        <xsl:apply-templates select="@*|node()"/>
-      </xsl:copy>
-    </xsl:if>
-  </xsl:template>
-
-  <!-- we're changing the EAD3 export options to make dealing with dates easier.  here's an example output:
-      <unitdatestructured unitdatetype="inclusive">
-        <daterange>
-          <fromdate standarddate="1961">1961</fromdate>
-          <todate standarddate="1993">1993</todate>
-        </daterange>
-        <unitdate unitdatetype="inclusive">date expression</unitdate>
-      </unitdatestructured>
-      as always, we'll let the date expression override the normalized dates for display purposes.
-      so, in this case, we remove the unitdatestructured element and replace it with the unitdate.
-      eventually, it would be great if EAD3 just had a unitdate element, defined the same way as unitdatestructured,
-      with the additional ability to have a display form of the date in another element, such as "displayform"
-  -->
+  
+  <!-- let's keep this hack around until we actually get the plugin updates into PROD.
+    and, once those are there, this template won't match anything any longer -->
   <xsl:template match="ead3:unitdatestructured[ead3:unitdate]" priority="2">
-    <xsl:apply-templates select="ead3:unitdate"/>
-  </xsl:template>
-  <!-- since we're only allowing normalized dates at the collection levels, we'll suppress any date expressions
-    during this step -->
-  <xsl:template match="ead3:archdesc/ead3:did/ead3:unitdatestructured[ead3:unitdate]" priority="3">
     <xsl:copy>
-      <xsl:apply-templates select="@* | * except ead3:unitdate"/>
+      <xsl:apply-templates select="@* except @altrender"/>
+      <xsl:attribute name="altrender">
+        <xsl:value-of select="ead3:unitdate"/>
+      </xsl:attribute>
+      <xsl:apply-templates select="ead3:daterange | ead3:dateset | ead3:datesingle"/>
     </xsl:copy>
   </xsl:template>
-  
-  <!-- ptr to ref 
-  this assumes that the ptr is directed to a component.  
+ 
+
+  <!-- ptr to ref
+  this assumes that the ptr is directed to a component.
   adjust after investigating the data, but eventually we can remove this feature since we'll be converting our ptr elements to ref elements.
   -->
   <xsl:template match="ead3:ptr[@target]">
@@ -806,16 +706,98 @@ So, all that we need to do here
       </xsl:call-template>
     </xsl:element>
   </xsl:template>
-  
+
   <xsl:template name="get-target-info">
     <xsl:param name="id-to-find"/>
     <xsl:apply-templates select="//*[@id = $id-to-find]/ead3:did/ead3:unittitle/(*|text())"/>
   </xsl:template>
-  
+
   <xsl:template match="ead3:ptr[@href]" priority="2">
     <xsl:element name="ref" namespace="http://ead3.archivists.org/schema/">
       <xsl:value-of select="@href"/>
     </xsl:element>
+  </xsl:template>
+  
+  <!-- note:  
+    persname/@role (and likely quite a few others) should be changed to something else...  like @localtype?
+    -->
+  <xsl:template match="@role">
+    <xsl:attribute name="linkrole">
+      <xsl:value-of select="."/>
+    </xsl:attribute>
+  </xsl:template>
+  
+  <!-- should re-join split title part elements, but for now
+    it's probably safest to just replace "lb" elements with a textual space
+ 
+  e.g.
+     <title localtype="simple" render="italic">
+                <part>Bumarap:</part>
+                <lb/>
+                <part>the Story of a Male Virgin</part>
+     </title>
+  there should only be one <part> element.
+  should be simple/safe to group adjacent elements
+  but i'm not sure if ASpace could ever export multiple part elements and we'd actually need to keep those separate.
+  because of that, let's go with a stupid space.
+  but we could just remove this rule once we delete those "lb"s from the database!
+  -->
+  <xsl:template match="ead3:title/ead3:lb">
+    <xsl:element name="part" namespace="http://ead3.archivists.org/schema/">
+      <xsl:text xml:space="preserve"> </xsl:text>
+    </xsl:element>
+  </xsl:template>
+  
+  <!-- 
+    another example problem:
+    
+                <title localtype="simple" render="italic">
+                  <emph render="italic">By-laws of the Hudson River Spathic Iron Ore Company</emph>
+                  <part/>
+                </title>
+                
+                <title localtype="simple" render="italic"><part>The Baron's</part><lb></lb><part>War</part></title>
+                
+     should check the logic of the render attributes and clean up data in the database,
+     but for now, let's just wrap any "emph" elements within a title within a part element and be done with.
+     the empty part shouldn't cause any harm, and that's just inserted by the ASpace EAD3 exporter since it doesn't know how to handle the "emph" element.
+     that said, we should be able to safely strip any empty part elements.
+    -->
+  <xsl:template match="ead3:corpname/ead3:emph | ead3:famname/ead3:emph
+    | ead3:function/ead3:emph | ead3:genreform/ead3:emph 
+    | ead3:geogname/ead3:emph | ead3:name/ead3:emph 
+    | ead3:occupation/ead3:emph | ead3:persname/ead3:emph 
+    | ead3:subject/ead3:emph | ead3:title/ead3:emph">
+    <xsl:element name="part" namespace="http://ead3.archivists.org/schema/">
+      <xsl:copy>
+        <xsl:apply-templates select="@* | node()"/>
+      </xsl:copy>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="ead3:part[not(node())]"/>
+  
+  <!-- what else do we need to account for here due to issues with database values and translation values in ASpace?
+    add this list to a map and just use a single template to handle it.-->
+  <xsl:template match="@source[. = 'Library of Congress Subject Headings']">
+    <xsl:attribute name="source" select="'lcsh'"/>
+  </xsl:template>
+  <xsl:template match="@source[. = 'Art and Architecture Thesaurus']">
+    <xsl:attribute name="source" select="'aat'"/>
+  </xsl:template>
+  
+  <xsl:template match="ead3:datesingle | ead3:fromdate | ead3:todate">
+    <xsl:copy>
+      <xsl:apply-templates select="@*"/>
+      <xsl:choose>
+        <xsl:when test="contains(., '-')">
+          <xsl:value-of select="mdc:iso-date-2-display-form(.)"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:copy>
   </xsl:template>
 
 </xsl:stylesheet>

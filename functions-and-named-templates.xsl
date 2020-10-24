@@ -7,62 +7,16 @@
     xmlns:mdc="http://mdc"
     xmlns:ead3="http://ead3.archivists.org/schema/" 
     exclude-result-prefixes="xs math mdc fox"
-    version="2.0">
+    version="3.0">
     
     <!-- also need to make sure that the top-level dates display if those are NOT normalized
         -->
-    
-    <xsl:function name="mdc:container-to-number" as="xs:decimal">
-        <xsl:param name="current-container" as="node()*"/>
-        <xsl:variable name="primary-container-number" select="if (contains($current-container, '-'))
-            then replace(substring-before($current-container, '-'), '\D', '')
-            else if (contains($current-container, '/')) then 
-            format-number(number(replace(substring-before($current-container, '/'), '\D', '')), '000000')
-            else replace($current-container, '\D', '')"/>
-        <xsl:variable name="primary-container-modify">
-            <xsl:choose>
-                <xsl:when test="matches($current-container, '\D')">
-                    <xsl:analyze-string select="$current-container" regex="(\D)(\s?)">
-                        <xsl:matching-substring>
-                            <xsl:value-of select="number(string-to-codepoints(upper-case(regex-group(1))))"/>
-                        </xsl:matching-substring>
-                    </xsl:analyze-string>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="00"/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-        <xsl:variable name="id-attribute" select="$current-container/@id"/>
-        <xsl:variable name="secondary-container-number">
-            <!-- changed this xpath slightly so as to ignore containers that start with a # -->
-            <xsl:value-of select="if (contains($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '-')
-                and matches($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '^\d')) then 
-                format-number(number(replace(substring-before($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '-'), '\D', '')), '000000')
-                else if (contains($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '/')) then 
-                format-number(number(replace(substring-before($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '/'), '\D', '')), '000000')
-                else if (string-length(replace($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '\D', '')) eq 0)
-                then '000000'
-                else if ($current-container/following-sibling::ead3:container[not(starts-with(., '#'))][@parent eq $id-attribute][1])
-                then format-number(number(replace($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '\D', '')), '000000')
-                else '000000'"/>
-        </xsl:variable>
-        <!-- could do this recursively, instead, but ASpace can only have container1,2,3 as a group... and i've
-            never seen more than that needed, anyway -->
-        <xsl:variable name="tertiary-container-number">
-            <xsl:value-of select="if (contains($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '-')
-                and matches($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '^\d'))  then 
-                format-number(number(replace(substring-before($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '-'), '\D', '')), '000000')
-                else if (contains($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '/')) then 
-                format-number(number(replace(substring-before($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '/'), '\D', '')), '000000')
-                else if (string-length(replace($current-container/following-sibling::ead3:container[@parent eq $id-attribute][1], '\D', '')) eq 0)
-                then '000000'
-                else if ($current-container/following-sibling::ead3:container[not(starts-with(., '#'))][@parent eq $id-attribute][2])
-                then format-number(number(replace($current-container/following-sibling::ead3:container[@parent eq $id-attribute][2], '\D', '')), '000000')
-                else '000000'"/>
-        </xsl:variable>
-        <xsl:value-of select="xs:decimal(concat($primary-container-number, '.', $primary-container-modify, $secondary-container-number, $tertiary-container-number))"/>
+    <!-- just used for the unittitle + dao/descriptivenote/p deep-equal tests -->
+    <xsl:function name="mdc:extract-text-no-spaces" as="xs:string">
+        <xsl:param name="input" as="node()"/>
+        <xsl:value-of select="replace(string-join($input//text()/normalize-space()), '\s', '')"/>
     </xsl:function>
+    
     
     <!-- header and footer templates (start)-->
     <xsl:template name="header-right">
@@ -180,6 +134,17 @@
         </fo:block>
     </xsl:template>
     <!-- archdesc named templates (end)-->
+    
+    <xsl:template name="combine-identifier-title-and-dates">
+        <xsl:if test="ead3:did/ead3:unitid/normalize-space()">
+            <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), '. ')"/>
+        </xsl:if>
+        <xsl:apply-templates select="ead3:did/ead3:unittitle"/>
+        <xsl:if test="ead3:did/ead3:unittitle and (ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate)">
+            <xsl:text>, </xsl:text>
+        </xsl:if>
+        <xsl:apply-templates select="ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate"/>
+    </xsl:template>
     
     <!-- dsc named templates (start)-->
     <xsl:template name="dsc-block-identifier-and-title">
@@ -318,7 +283,7 @@
             <xsl:attribute name="keep-together.within-column">always</xsl:attribute>
         </xsl:if>
         <xsl:choose>
-            <xsl:when test="$suppressInternalComponents eq false() and $audience eq 'internal'">
+            <xsl:when test="$suppressInternalComponentsInPDF eq false() and $audience eq 'internal'">
                 <xsl:attribute name="border-style">solid</xsl:attribute>
                 <xsl:attribute name="border-width">2px</xsl:attribute>
                 <xsl:attribute name="border-color">red</xsl:attribute>
@@ -524,17 +489,6 @@
                              </fo:basic-link>
                          </fo:wrapper>
                          <xsl:text>.</xsl:text>
-                     </fo:block>
-                 </xsl:when>
-                 <xsl:when test="$repository-code eq 'divinity'">
-                     <fo:block xsl:use-attribute-sets="paragraph">
-                         <xsl:text>To view manuscript and archival materials at the Yale Divinity Library, please submit the request form at </xsl:text>
-                             <fo:wrapper xsl:use-attribute-sets="ref">
-                                 <fo:basic-link external-destination="https://web.library.yale.edu/divinity/form/yale-divinity-library-mss-request-form">
-                                     <xsl:text>https://web.library.yale.edu/divinity/form/yale-divinity-library-mss-request-form</xsl:text>
-                                 </fo:basic-link>
-                             </fo:wrapper>
-                             <xsl:text>.</xsl:text>
                      </fo:block>
                  </xsl:when>
                  <xsl:when test="$repository-code eq 'mssa'">

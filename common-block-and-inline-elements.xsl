@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"
+  xmlns:mdc="http://mdc"
   xmlns:ead3="http://ead3.archivists.org/schema/" exclude-result-prefixes="xs ead3 fox"
   version="2.0">
 
@@ -21,7 +22,7 @@
     </xsl:copy>
   </xsl:template>
 
-  <!-- first attempt to remove linebreaks and whitespace from elements 
+  <!-- first attempt to remove linebreaks and whitespace from elements
     like title, which should only have a part child now, rather than mixed content.
   see https://www.loc.gov/ead/EAD3taglib/index.html#elem-part
   example encoding:
@@ -34,7 +35,7 @@
     The Fire in the Flint , galley...
   -->
   <xsl:template match="text()[../ead3:part]"/>
-  
+
 
   <!-- stand-alone block elements go here (not adding values like unittitle, however, since those will be handled differently
     a lot of these are handled differently as a LIST, however, when at the collection level.-->
@@ -42,16 +43,19 @@
     match="
       ead3:unitid | ead3:abstract | ead3:addressline | ead3:langmaterial | ead3:materialspec | ead3:origination | ead3:physdesc[not(@localtype = 'container_summary')]
       | ead3:physloc | ead3:repository"
-    mode="dsc">
-    <!-- add a call number header in front of unitid elements, and italicize physdesc notes 
-    removed keep-with-previous.within-page="always" 
+    mode="dsc" priority="2">
+    <!-- need to add an unpublish bit here, as well, i'd think -->
+    <!--  italicize physdesc notes
+    removed keep-with-previous.within-page="always"
     -->
     <fo:block>
       <xsl:choose>
+        <!-- let's not.  should we consider prepending the title with the unitid?  that's what was done in YFAD. 
         <xsl:when test="self::ead3:unitid">
           <fo:inline>Call Number: </fo:inline>
           <xsl:apply-templates/>
         </xsl:when>
+        -->
         <xsl:when test="self::ead3:physdesc">
           <fo:inline font-style="italic">
             <xsl:apply-templates/>
@@ -65,6 +69,15 @@
   </xsl:template>
 
   <!-- no need for so many labels, usually -->
+  <!-- time to update this due to how some of the "notes" are applied???
+    we have a lot of notes that need the header to display, but not the standard ASpace ones -->
+  <!-- e.g.   <scopecontent>
+                  <head>Interview Location</head>
+                  <p>London</p>
+               </scopecontent>
+   -->
+  <!-- and at the lower levels, we could just add this to the beginning of the same block.  
+    e.g. "Interview Location: London". -->
   <xsl:template match="ead3:head" mode="dsc"/>
 
   <!-- currently used in the adminstrative info section of the collection overview -->
@@ -103,19 +116,19 @@
   <xsl:template match="ead3:head" mode="toc">
     <xsl:apply-templates/>
   </xsl:template>
-  
+
   <xsl:template match="ead3:odd//ead3:p" mode="#all" priority="2">
     <fo:block xsl:use-attribute-sets="paragraph">
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>
-  
+
   <xsl:template match="ead3:p" mode="#all">
     <fo:block xsl:use-attribute-sets="paragraph">
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>
-  
+
   <xsl:template match="ead3:p" mode="dao" priority="2">
       <xsl:apply-templates/>
   </xsl:template>
@@ -125,13 +138,13 @@
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>
-  
+
 
   <!-- the deep-equal stuff in the next two templates allow us to superimpose the dao link with the unittitle
     when the two match -->
-  <xsl:template match="ead3:dao[@href]" mode="#all">
+  <xsl:template match="ead3:dao[not(@show='embed')][@href]" mode="#all">
     <xsl:choose>
-      <xsl:when test="deep-equal(ead3:descriptivenote/ead3:p//text()/normalize-space(), ../ead3:unittitle//text()/normalize-space())"/>
+      <xsl:when test="deep-equal(ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]), ../mdc:extract-text-no-spaces(ead3:unittitle[1]))"/>
       <xsl:otherwise>
         <fo:block>
           <fo:basic-link external-destination="url('{@href}')" xsl:use-attribute-sets="ref">
@@ -141,12 +154,36 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
-  <xsl:template match="ead3:unittitle[../ead3:dao]" mode="#all">
+  <xsl:template match="ead3:daoset/ead3:dao[not(@show='embed')][@href]" mode="#all" priority="5">
     <xsl:choose>
-      <xsl:when test="deep-equal(.//text()/normalize-space(), ../ead3:dao[1]/ead3:descriptivenote/ead3:p//text()/normalize-space())">
+      <xsl:when test="deep-equal(../ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]), ../../mdc:extract-text-no-spaces(ead3:unittitle[1]))"/>
+      <xsl:otherwise>
+        <fo:block>
+          <fo:basic-link external-destination="url('{@href}')" xsl:use-attribute-sets="ref">
+            <xsl:apply-templates select="../ead3:descriptivenote/ead3:p" mode="dao"/>
+          </fo:basic-link>
+        </fo:block>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="ead3:unittitle[../ead3:dao[not(@show='embed')]]" mode="#all">
+    <xsl:choose>
+      <xsl:when test="deep-equal(mdc:extract-text-no-spaces(.), ../ead3:dao[1]/ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]))">
         <fo:basic-link external-destination="url('{../ead3:dao[1]/@href}')" xsl:use-attribute-sets="ref">
           <xsl:apply-templates select="../ead3:dao[1]/ead3:descriptivenote/ead3:p" mode="dao"/>
+        </fo:basic-link>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <xsl:template match="ead3:unittitle[../ead3:daoset/ead3:dao[not(@show='embed')]]" mode="#all">
+    <xsl:choose>
+      <xsl:when test="deep-equal(mdc:extract-text-no-spaces(.), ../ead3:daoset[1]/ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]))">
+        <fo:basic-link external-destination="url('{../ead3:daoset[1]/ead3:dao[1]/@href}')" xsl:use-attribute-sets="ref">
+          <xsl:apply-templates select="../ead3:daoset[1]/ead3:descriptivenote/ead3:p" mode="dao"/>
         </fo:basic-link>
       </xsl:when>
       <xsl:otherwise>
@@ -157,6 +194,13 @@
 
   <xsl:template match="ead3:unitdatestructured" mode="#all">
     <xsl:apply-templates/>
+    <xsl:if test="position() ne last()">
+      <xsl:text>, </xsl:text>
+    </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="ead3:unitdatestructured[@altrender]" mode="#all" priority="2">
+    <xsl:value-of select="normalize-space(@altrender)"/>
     <xsl:if test="position() ne last()">
       <xsl:text>, </xsl:text>
     </xsl:if>
@@ -192,7 +236,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
+
   <xsl:template match="ead3:physdescstructured" mode="dsc">
     <fo:inline font-style="italic">
       <xsl:apply-templates/>
@@ -215,7 +259,7 @@
     </xsl:choose>
     </fo:inline>
   </xsl:template>
-  
+
   <xsl:template match="ead3:physdesc[@localtype = 'container_summary']" mode="collection-overview-table-row">
     <xsl:text> </xsl:text>
     <xsl:choose>
@@ -230,7 +274,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
+
   <!-- this is very Yale specific-->
   <xsl:template match="ead3:physdescstructured[ead3:unittype eq 'duration_HH:MM:SS.mmm']" mode="#all">
     <!-- change this to an inline block group? -->
@@ -255,20 +299,53 @@
   </xsl:template>
 
 
-  <!-- Block <list> Template -->
-  <xsl:template match="ead3:list" mode="#all">
+  <!-- Block <list> Template 
+  adding a priority here to ensure a match when it's an internal only note. -->
+  <xsl:template match="ead3:list" mode="#all" priority="2">
     <xsl:variable name="numeration-type" select="@numeration"/>
     <fo:list-block>
+      <xsl:if test="@audience='internal' and $suppressInternalComponentsInPDF eq false()">
+        <xsl:attribute name="border-right-width">1pt</xsl:attribute>
+        <xsl:attribute name="border-right-style">solid</xsl:attribute>
+        <xsl:attribute name="border-right-color">red</xsl:attribute>
+      </xsl:if>
       <xsl:apply-templates select="ead3:head | ead3:listhead" mode="list-header"/>
-      <xsl:apply-templates select="ead3:item | ead3:defitem">
+      <xsl:apply-templates select="ead3:item">
         <xsl:with-param name="numeration-type" select="$numeration-type"/>
       </xsl:apply-templates>
     </fo:list-block>
   </xsl:template>
+  
+  <xsl:template match="ead3:list[ead3:defitem]" mode="#all" priority="2">
+    <fo:list-block start-indent="5mm" provisional-distance-between-starts="40mm">
+      <xsl:if test="@audience='internal' and $suppressInternalComponentsInPDF eq false()">
+        <xsl:attribute name="border-right-width">1pt</xsl:attribute>
+        <xsl:attribute name="border-right-style">solid</xsl:attribute>
+        <xsl:attribute name="border-right-color">red</xsl:attribute>
+      </xsl:if>
+      <xsl:apply-templates select="ead3:head | ead3:listhead" mode="list-header"/>
+      <xsl:apply-templates select="ead3:defitem"/>
+    </fo:list-block>
+  </xsl:template>
+  
+  <xsl:template match="ead3:defitem">
+    <fo:list-item>
+      <fo:list-item-label>
+        <fo:block>
+          <xsl:apply-templates select="ead3:label"/>
+        </fo:block>
+      </fo:list-item-label>
+      <fo:list-item-body start-indent="body-start()" end-indent="5mm">
+        <fo:block>
+          <xsl:apply-templates select="ead3:item" mode="defitem"/>
+        </fo:block>
+      </fo:list-item-body>
+    </fo:list-item>
+  </xsl:template>
 
   <xsl:template match="ead3:item">
     <!-- valid options in EAD3 (although a few, like Armenian, would require a fair bit of work to support, I think):
-      armenian, decimal, decimal-leading-zero, georgian, inherit, lower-alpha, lower-greek, 
+      armenian, decimal, decimal-leading-zero, georgian, inherit, lower-alpha, lower-greek,
       lower-latin, lower-roman, upper-alpha, upper-latin, upper-roman
       options available in ASpace:
       null, arabic, lower-alpha, lower-roman, upper-alpha, upper-roman.
@@ -293,9 +370,9 @@
             <xsl:when test="$numeration-type eq 'upper-roman'">
               <xsl:number value="position()" format="I"/>
             </xsl:when>
-            <!-- uncomment to add a bullet. 
+            <!-- uncomment to add a bullet.
               this doesn't work well when other things have been added to the list item.
-              e.g. 'I first item', instead of 'first item'  
+              e.g. 'I first item', instead of 'first item'
             <xsl:otherwise>
               <xsl:text>&#x2022;</xsl:text>
             </xsl:otherwise>
@@ -374,7 +451,7 @@
               </fo:table-cell>
             </xsl:otherwise>
           </xsl:choose>
-        </fo:table-row>       
+        </fo:table-row>
       </fo:table-header>
       <fo:table-body>
         <xsl:apply-templates select="ead3:chronitem">
@@ -423,9 +500,12 @@
   </xsl:template>
 
   <!-- Block <table> Template -->
+  <!-- need to revisit these inherited table transformations, but previously i forgot to account for ead3:table/ead3:head, so here -->
   <xsl:template match="ead3:table" mode="#all">
+    <!-- probably only impacts one collection (music.mss.0028), but perhaps see about styling this better if/when there's time -->
+    <xsl:apply-templates select="ead3:head" mode="table-header"/>
     <fo:table xsl:use-attribute-sets="table">
-      <xsl:apply-templates/>
+      <xsl:apply-templates select="ead3:tgroup"/>
     </fo:table>
   </xsl:template>
 
@@ -563,15 +643,15 @@
       </xsl:when>
     </xsl:choose>
   </xsl:template>
-  
+
   <xsl:template match="ead3:lb">
     <fo:block/>
   </xsl:template>
-  
+
   <!-- dao stuff -->
-  
+
   <!-- example ASpace encoding:
-    
+
                      <dao actuate="onrequest"
                              daotype="unknown"
                              href="http://hdl.handle.net/10079/xwdbs31"
@@ -583,7 +663,7 @@
                            </descriptivenote>
                         </dao>
     -->
-  
+
   <xsl:template match="ead3:ref[@target]" mode="#all">
     <!-- not, not all of notes get IDs, but this will generally work as long as folks are linking to components.
     should update this later so that all IDs in the XML file wind up as linkable in the PDF -->
@@ -601,7 +681,7 @@
       </xsl:choose>
     </fo:basic-link>
   </xsl:template>
-  
+
   <!-- a ref has a target AND a href for some reason, we're going to use the external link instead.
     but we should add this to the schematron to error out -->
   <xsl:template match="ead3:ref[@href]" priority="2" mode="#all">
@@ -619,8 +699,8 @@
       </xsl:choose>
     </fo:basic-link>
   </xsl:template>
-  
-  
+
+
   <!--Render elements -->
   <!-- still need to add those font variants, etc. -->
   <xsl:template match="*[@render = 'bold'] | *[@altrender = 'bold']" mode="#all">
@@ -686,26 +766,53 @@
       <xsl:apply-templates/>
     </fo:inline>
   </xsl:template>
-  
+
   <!-- Formatting elements -->
   <xsl:template match="ead3:blockquote" mode="#all">
     <fo:block margin="4pt 18pt">
       <xsl:apply-templates/>
     </fo:block>
   </xsl:template>
-  
+
   <xsl:template match="ead3:emph[not(@render)] | ead3:title[not(@render)]" mode="#all">
     <fo:inline font-style="italic">
       <xsl:apply-templates/>
     </fo:inline>
   </xsl:template>
-  
-  
-  <!-- highlight unpublished notes -->
-  <xsl:template match="ead3:*[@audience='internal'][$suppressInternalComponents eq false()]" mode="collection-overview dsc">
+
+
+  <!-- highlight unpublished notes 
+  this doesn't work right now for lists, since it'll just output a red border 
+  around a blob of text, but i can change that later. -->
+  <xsl:template match="ead3:*[@audience='internal'][$suppressInternalComponentsInPDF eq false()]" mode="collection-overview dsc">
     <fo:block xsl:use-attribute-sets="unpublished">
       <xsl:apply-templates mode="#current"/>
     </fo:block>
+  </xsl:template>
+  
+  <xsl:template match="ead3:*[@relator]" mode="#all">
+    <xsl:apply-templates/>
+    <xsl:value-of select="concat(', ', key('relator-code', @relator, $cached-list-of-relators)/lower-case(label))"/>
+  </xsl:template>
+  
+  <xsl:template match="ead3:part[position() gt 1]" mode="#all">
+    <xsl:text> -- </xsl:text>
+    <xsl:apply-templates/>
+  </xsl:template>
+  
+  <xsl:template match="ead3:langmaterial/ead3:language | ead3:langmaterial/ead3:languageset">
+    <xsl:apply-templates/>
+    <xsl:if test="following-sibling::ead3:*[local-name() = ('language', 'languageset')]">
+      <xsl:text>; </xsl:text>
+    </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="ead3:script">
+    <xsl:if test="preceding-sibling::ead3:language[1]">
+      <xsl:text> </xsl:text>
+    </xsl:if>
+    <!-- add a translated value -->
+    <xsl:value-of select="concat('(', ., ' script)')"/>
   </xsl:template>
 
 </xsl:stylesheet>

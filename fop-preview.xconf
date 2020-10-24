@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <!-- NOTE: This is the version of the configuration -->
 <fop version="1.0">
-  <!-- added to support pdf-ua document creation -->
-  <accessibility>true</accessibility>
 
   <!-- Base URL for resolving relative URLs -->
   <base>./</base>
@@ -24,75 +22,43 @@
 
     <!-- what else do i need to add here, assuming this works?  -->
     <renderer mime="application/pdf">
-      <pdf-ua-mode>PDF/UA-1</pdf-ua-mode>
 
       <fonts>
         <!-- for fun icons, why not? -->
-        <font embed-url="config/fonts/FontAwesome/FontAwesome5_Free-Regular-400.otf">
+        <font embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/FontAwesome/FontAwesome5_Free-Regular-400.otf?raw=true">
           <font-triplet name="FontAwesomeRegular" style="normal" weight="normal"/>
         </font>
-        <font embed-url="config/fonts/FontAwesome/FontAwesome5_Free-Solid-900.otf">
+        <font embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/FontAwesome/FontAwesome5_Free-Solid-900.otf?raw=true">
           <font-triplet name="FontAwesomeSolid" style="normal" weight="normal"/>
         </font>
 
-        <font kerning="yes" embed-url="config/fonts/Mallory/Mallory-Book.otf">
-          <font-triplet name="Mallory" style="normal" weight="normal"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Mallory/Mallory-BookItalic.otf">
-          <font-triplet name="Mallory" style="italic" weight="normal"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Mallory/Mallory-Bold.otf">
-          <font-triplet name="Mallory" style="normal" weight="bold"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Mallory/Mallory-BoldItalic.otf">
-          <font-triplet name="Mallory" style="italic" weight="bold"/>
-        </font>
-
-        <!-- try out MP as well -->
-        <font kerning="yes" embed-url="config/fonts/Mallory/MalloryMP-Book.otf">
-          <font-triplet name="MalloryMP" style="normal" weight="normal"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Mallory/MalloryMP-BookItalic.otf">
-          <font-triplet name="MalloryMP" style="italic" weight="normal"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Mallory/MalloryMP-Bold.otf">
-          <font-triplet name="MalloryMP" style="normal" weight="bold"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Mallory/MalloryMP-BoldItalic.otf">
-          <font-triplet name="MalloryMP" style="italic" weight="bold"/>
-        </font>
-
-        <font kerning="yes" embed-url="config/fonts/Yale/YaleNew-Bold.otf">
-          <font-triplet name="Yale" style="normal" weight="bold"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Yale/YaleNew-Roman.otf">
-          <font-triplet name="Yale" style="normal" weight="normal"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Yale/YaleNew-BoldItalic.otf">
-          <font-triplet name="Yale" style="italic" weight="bold"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Yale/YaleNew-Italic.otf">
-          <font-triplet name="Yale" style="italic" weight="normal"/>
-        </font>
-
         <!--font for previews -->
-        <font kerning="yes" embed-url="config/fonts/Open_Sans/OpenSans-Regular.ttf">
+        <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Open_Sans/OpenSans-Regular.ttf?raw=true">
           <font-triplet name="Open_Sans" style="normal" weight="normal"/>
         </font>
-        <font kerning="yes" embed-url="config/fonts/Open_Sans/OpenSans-Bold.ttf">
+        <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Open_Sans/OpenSans-Bold.ttf?raw=true">
           <font-triplet name="Open_Sans" style="normal" weight="bold"/>
         </font>
-        <font kerning="yes" embed-url="config/fonts/OPen_Sans/OpenSans-BoldItalic.ttf">
+        <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Open_Sans/OpenSans-BoldItalic.ttf?raw=true">
           <font-triplet name="Open_Sans" style="italic" weight="bold"/>
         </font>
-        <font kerning="yes" embed-url="config/fonts/Open_Sans/OpenSans-Italic.ttf">
+        <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Open_Sans/OpenSans-Italic.ttf?raw=true">
           <font-triplet name="Open_Sans" style="italic" weight="normal"/>
         </font>
 
-        <!-- backup font -->
-        <font kerning="yes" embed-url="config/fonts/Arial/ARIALUNI.TTF">
-          <font-triplet name="ArialUnicode" style="normal" weight="normal"/>
+		<font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/NotoSans/NotoSans-Regular.ttf?raw=true">
+          <font-triplet name="NotoSans" style="normal" weight="normal"/>
         </font>
+        <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/NotoSans/NotoSans-Bold.ttf?raw=true">
+          <font-triplet name="NotoSans" style="normal" weight="bold"/>
+        </font>
+        <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/NotoSans/NotoSans-BoldItalic.ttf?raw=true">
+          <font-triplet name="NotoSans" style="italic" weight="bold"/>
+        </font>
+        <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/NotoSans/NotoSans-Italic.ttf?raw=true">
+          <font-triplet name="NotoSans" style="italic" weight="normal"/>
+        </font>
+
 
       </fonts>
 
