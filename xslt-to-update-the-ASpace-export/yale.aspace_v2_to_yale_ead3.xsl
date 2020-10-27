@@ -176,7 +176,17 @@
       </xsl:element>
       <xsl:element name="descriptivenote" namespace="http://ead3.archivists.org/schema/">
         <xsl:element name="p" namespace="http://ead3.archivists.org/schema/">
-          <xsl:text>CC0 1.0 Universal (CC0 1.0)</xsl:text>
+          <xsl:text>Finding aid description and metadata in Archives at Yale are licensed under a CC0 1.0 Universal (CC0 1.0) Public Domain Dedication. This means that anyone may copy, modify, and distribute this descriptive metadata without restriction or permission. The CC0 license is explained in full on the Creative Commons website: </xsl:text>
+          <xsl:element name="ref" namespace="http://ead3.archivists.org/schema/">
+            <xsl:attribute name="href" select="'https://creativecommons.org/publicdomain/zero/1.0/'"/>
+            <xsl:text>CC0 1.0 Universal (CC0 1.0) Public Domain Dedication</xsl:text>
+           </xsl:element>
+          <xsl:text>. More information is available on our </xsl:text> 
+          <xsl:element name="ref" namespace="http://ead3.archivists.org/schema/">
+            <xsl:attribute name="href" select="'https://archives.yale.edu/help'"/>
+            <xsl:text>Help page</xsl:text>
+          </xsl:element>
+          <xsl:text>.</xsl:text>
         </xsl:element>
       </xsl:element>
     </xsl:element>
