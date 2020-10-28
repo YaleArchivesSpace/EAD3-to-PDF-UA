@@ -84,8 +84,7 @@
   </xsl:param>
 
   <xsl:param name="include-cc0-rights-statement" as="xs:boolean">
-    <!-- need to get the okay from Peabody.  anyone else?-->
-    <xsl:value-of select="if ($repository = ('mssa', 'beinecke', 'divinity', 'music', 'med', 'arts', 'vrc', 'lwl', 'ycba')) then true() else false()"/>
+    <xsl:value-of select="if ($repository = ('mssa', 'beinecke', 'divinity', 'music', 'med', 'arts', 'vrc', 'lwl', 'ycba', 'ypl')) then true() else false()"/>
   </xsl:param>
 
   <!-- Repository Code.
