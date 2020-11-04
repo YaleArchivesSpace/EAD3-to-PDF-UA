@@ -33,6 +33,20 @@
         </font>
 
         <!--font for previews -->
+        <font embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Kurinto/KurintoText-Rg.ttf">
+          <font-triplet name="KurintoText" style="normal" weight="normal"/>
+        </font>
+        <font embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Kurinto/KurintoText-Bd.ttf">
+          <font-triplet name="KurintoText" style="normal" weight="bold"/>
+        </font>
+        <font embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Kurinto/KurintoText-BdIt.ttf">
+          <font-triplet name="KurintoText" style="italic" weight="bold"/>
+        </font>
+        <font embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Kurinto/KurintoText-It.ttf">
+          <font-triplet name="KurintoText" style="italic" weight="normal"/>
+        </font>
+
+        
         <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Open_Sans/OpenSans-Regular.ttf?raw=true">
           <font-triplet name="Open_Sans" style="normal" weight="normal"/>
         </font>
@@ -46,7 +60,7 @@
           <font-triplet name="Open_Sans" style="italic" weight="normal"/>
         </font>
 
-		<font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/NotoSans/NotoSans-Regular.ttf?raw=true">
+	  <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/NotoSans/NotoSans-Regular.ttf?raw=true">
           <font-triplet name="NotoSans" style="normal" weight="normal"/>
         </font>
         <font kerning="yes" embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/NotoSans/NotoSans-Bold.ttf?raw=true">

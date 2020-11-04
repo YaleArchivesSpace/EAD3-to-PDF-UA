@@ -76,13 +76,39 @@
         </font>
 
         <!--font for previews -->
+        <font embed-url="config/fonts/Kurinto/KurintoText-Rg.ttf">
+          <font-triplet name="KurintoText" style="normal" weight="normal"/>
+        </font>
+        <font embed-url="config/fonts/Kurinto/KurintoText-Bd.ttf">
+          <font-triplet name="KurintoText" style="normal" weight="bold"/>
+        </font>
+        <font embed-url="config/fonts/Kurinto/KurintoText-BdIt.ttf">
+          <font-triplet name="KurintoText" style="italic" weight="bold"/>
+        </font>
+        <font embed-url="config/fonts/Kurinto/KurintoText-It.ttf">
+          <font-triplet name="KurintoText" style="italic" weight="normal"/>
+        </font>
+        
+        <font embed-url="config/fonts/Kurinto/KurintoTextCJK-Rg.ttf">
+          <font-triplet name="KurintoTextCJK" style="normal" weight="normal"/>
+        </font>
+        <font embed-url="config/fonts/Kurinto/KurintoTextCJK-Bd.ttf">
+          <font-triplet name="KurintoTextCJK" style="normal" weight="bold"/>
+        </font>
+        <font embed-url="config/fonts/Kurinto/KurintoTextCJK-BdIt.ttf">
+          <font-triplet name="KurintoTextCJK" style="italic" weight="bold"/>
+        </font>
+        <font embed-url="config/fonts/Kurinto/KurintoTextCJK-It.ttf">
+          <font-triplet name="KurintoTextCJK" style="italic" weight="normal"/>
+        </font>
+        
         <font kerning="yes" embed-url="config/fonts/Open_Sans/OpenSans-Regular.ttf">
           <font-triplet name="Open_Sans" style="normal" weight="normal"/>
         </font>
         <font kerning="yes" embed-url="config/fonts/Open_Sans/OpenSans-Bold.ttf">
           <font-triplet name="Open_Sans" style="normal" weight="bold"/>
         </font>
-        <font kerning="yes" embed-url="config/fonts/OPen_Sans/OpenSans-BoldItalic.ttf">
+        <font kerning="yes" embed-url="config/fonts/Open_Sans/OpenSans-BoldItalic.ttf">
           <font-triplet name="Open_Sans" style="italic" weight="bold"/>
         </font>
         <font kerning="yes" embed-url="config/fonts/Open_Sans/OpenSans-Italic.ttf">
