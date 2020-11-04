@@ -1,0 +1,7 @@
+﻿# FAQ-Kurinto.txt
+# -*- encoding: UTF-8 -*-
+
+*** Kurinto Font Folio v2.196 [Full] - Frequently Asked Questions
+
+Please see the Frequently Asked Questions section of the Kurinto User's Guide
+(Kurinto_UserGuide.pdf) that is included in each release package.

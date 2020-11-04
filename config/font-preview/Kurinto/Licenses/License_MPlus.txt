@@ -1,0 +1,32 @@
+# License_MPlus.txt
+# -*- encoding: UTF-8 -*-
+
+The following text is the contents of the files:
+LICENSE_E and LICENSE_J
+extracted from the download package retrieved on April 21, 2020 from:
+https://osdn.net/projects/mplus-fonts/downloads/62344/mplus-TESTFLIGHT-063a.tar.xz/
+The text has been converted from its original encoding to Unicode UTF-8
+encoding.
+----------------
+
+M+ FONTS      Copyright (C) 2002-2019 M+ FONTS PROJECT
+-
+LICENSE_E
+
+These fonts are free software.
+Unlimited permission is granted to use, copy, and distribute them, with
+or without modification, either commercially or noncommercially.
+THESE FONTS ARE PROVIDED "AS IS" WITHOUT WARRANTY.
+
+http://mplus-fonts.osdn.jp
+
+
+M+ FONTS      Copyright (C) 2002-2019 M+ FONTS PROJECT
+-
+LICENSE_J
+
+これらのフォントはフリー（自由な）ソフトウエアです。
+あらゆる改変の有無に関わらず、また商業的な利用であっても、自由にご利用、
+複製、再配布することができますが、全て無保証とさせていただきます。
+
+http://mplus-fonts.osdn.jp
