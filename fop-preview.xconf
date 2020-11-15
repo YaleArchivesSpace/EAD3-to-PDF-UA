@@ -7,7 +7,10 @@
 
   <!-- Font Base URL for resolving relative font URLs -->
   <font-base>./</font-base>
-
+  
+  <!-- workaround to get fonts like NotoSans and Kurinto to load.  not sure why this is needed / the impact, but just doing this in preview mode. sounds like this will be updated in FOP eventually, as well. --> 
+  <complex-scripts disabled="true"/>
+  
   <!-- Source resolution in dpi (dots/pixels per inch) for determining the size of pixels in SVG and bitmap images, default: 72dpi -->
   <source-resolution>72</source-resolution>
   <!-- Target resolution in dpi (dots/pixels per inch) for specifying the target resolution for generated bitmaps, default: 72dpi -->
@@ -33,16 +36,16 @@
         </font>
 
         <!--font for previews -->
-        <font embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Kurinto/KurintoText-Rg.ttf">
+        <font embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Kurinto/KurintoText-Rg.ttf?raw=true">
           <font-triplet name="KurintoText" style="normal" weight="normal"/>
         </font>
-        <font embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Kurinto/KurintoText-Bd.ttf">
+        <font embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Kurinto/KurintoText-Bd.ttf?raw=true">
           <font-triplet name="KurintoText" style="normal" weight="bold"/>
         </font>
-        <font embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Kurinto/KurintoText-BdIt.ttf">
+        <font embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Kurinto/KurintoText-BdIt.ttf?raw=true">
           <font-triplet name="KurintoText" style="italic" weight="bold"/>
         </font>
-        <font embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Kurinto/KurintoText-It.ttf">
+        <font embed-url="https://github.com/YaleArchivesSpace/EAD3-to-PDF-UA/blob/master/config/font-preview/Kurinto/KurintoText-It.ttf?raw=true">
           <font-triplet name="KurintoText" style="italic" weight="normal"/>
         </font>
 
