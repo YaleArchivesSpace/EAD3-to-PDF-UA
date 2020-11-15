@@ -9,6 +9,9 @@
 
   <!-- Font Base URL for resolving relative font URLs -->
   <font-base>./</font-base>
+  
+  <!-- workaround to get fonts like NotoSans and Kurinto to load. not sure why this is needed / the impact, but it sounds like this will be updated in FOP eventually, as well. --> 
+  <complex-scripts disabled="true"/>
 
   <!-- Source resolution in dpi (dots/pixels per inch) for determining the size of pixels in SVG and bitmap images, default: 72dpi -->
   <source-resolution>72</source-resolution>
