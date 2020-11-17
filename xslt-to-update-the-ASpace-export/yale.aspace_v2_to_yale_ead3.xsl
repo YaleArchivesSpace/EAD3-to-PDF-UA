@@ -799,7 +799,8 @@ So, all that we need to do here
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
       <xsl:choose>
-        <xsl:when test="contains(., '-')">
+        <xsl:when test="contains(., '-') and not(parent::ead3:chronitem)">
+          <!-- should update this function to be more robust, but just didn't anticipate datesingle having year ranges, like 1800-1820-->
           <xsl:value-of select="mdc:iso-date-2-display-form(.)"/>
         </xsl:when>
         <xsl:otherwise>
