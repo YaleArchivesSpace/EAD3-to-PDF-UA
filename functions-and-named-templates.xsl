@@ -161,6 +161,8 @@
             <xsl:otherwise>
                 <xsl:apply-templates select="if (ead3:did/ead3:unittitle) then ead3:did/ead3:unittitle 
                     else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate" mode="dsc"/>
+                <!-- let's add a line break rather than a space. -->
+                <fo:block/>
                 <xsl:apply-templates select="ead3:did/ead3:unitid"/>
             </xsl:otherwise>
         </xsl:choose>
