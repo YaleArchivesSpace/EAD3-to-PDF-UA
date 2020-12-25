@@ -249,9 +249,7 @@
                         <fo:block-container margin-left="{$cell-margin}" id="{if (@id) then @id else generate-id(.)}">
                             <fo:block-container>
                                 <fo:block>
-                                    <xsl:apply-templates select="if (ead3:did/ead3:unittitle/normalize-space()) then ead3:did/ead3:unittitle
-                                        else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate"/>
-                                    <xsl:apply-templates select="ead3:did/ead3:unitid" mode="dsc"/>
+                                    <xsl:call-template name="dsc-block-identifier-and-title"/>
                                 </fo:block>
                                 <!-- still need to add the other did elements, and select an order -->
                                 <fo:block>
@@ -294,9 +292,7 @@
                         <fo:block-container margin-left="{$cell-margin}" id="{if (@id) then @id else generate-id(.)}">
                             <fo:block-container>
                                 <fo:block>
-                                    <xsl:apply-templates select="if (ead3:did/ead3:unittitle/normalize-space()) then ead3:did/ead3:unittitle
-                                        else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate"/>
-                                    <xsl:apply-templates select="ead3:did/ead3:unitid" mode="dsc"/>
+                                    <xsl:call-template name="dsc-block-identifier-and-title"/>
                                 </fo:block>
                                 <!-- still need to add the other did elements, and select an order -->
                                 <fo:block>
@@ -344,9 +340,7 @@
                         <fo:block-container margin-left="{$cell-margin}" id="{if (@id) then @id else generate-id(.)}">
                             <fo:block-container>
                                 <fo:block>
-                                    <xsl:apply-templates select="if (ead3:did/ead3:unittitle/normalize-space()) then ead3:did/ead3:unittitle
-                                        else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate"/>
-                                    <xsl:apply-templates select="ead3:did/ead3:unitid" mode="dsc"/>
+                                    <xsl:call-template name="dsc-block-identifier-and-title"/>
                                 </fo:block>
                                 <!-- still need to add the other did elements, and select an order -->
                                 <fo:block>
@@ -384,9 +378,7 @@
                         <fo:block-container margin-left="{$cell-margin}" id="{if (@id) then @id else generate-id(.)}">
                             <fo:block-container>
                                 <fo:block>
-                                    <xsl:apply-templates select="if (ead3:did/ead3:unittitle/normalize-space()) then ead3:did/ead3:unittitle
-                                        else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate"/>
-                                    <xsl:apply-templates select="ead3:did/ead3:unitid" mode="dsc"/>
+                                    <xsl:call-template name="dsc-block-identifier-and-title"/>
                                 </fo:block>
                                 <!-- still need to add the other did elements, and select an order -->
                                 <fo:block>

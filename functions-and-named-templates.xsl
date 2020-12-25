@@ -137,7 +137,7 @@
     
     <xsl:template name="combine-identifier-title-and-dates">
         <xsl:if test="ead3:did/ead3:unitid/normalize-space()">
-            <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), '. ')"/>
+            <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), ' ')"/>
         </xsl:if>
         <xsl:apply-templates select="ead3:did/ead3:unittitle"/>
         <xsl:if test="ead3:did/ead3:unittitle and (ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate)">
@@ -149,7 +149,7 @@
     <!-- dsc named templates (start)-->
     <xsl:template name="dsc-block-identifier-and-title">
         <xsl:if test="ead3:did/ead3:unitid/normalize-space()">
-            <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), '. ')"/>
+            <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), ' ')"/>
         </xsl:if>
         <xsl:apply-templates select="if (ead3:did/ead3:unittitle) then ead3:did/ead3:unittitle 
             else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate" mode="dsc"/>
