@@ -30,7 +30,9 @@
 
   <xsl:output method="xml" indent="yes" encoding="UTF-8" omit-xml-declaration="no"/>
   
+  <!--
   <xsl:include href="ead3-holdings-notes.xsl"/>
+  -->
 
   <!-- will pass false() when using this process to do staff-only PDF previews -->
   <xsl:param name="suppressInternalComponents" select="true()" as="xs:boolean"/>
