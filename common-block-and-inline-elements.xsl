@@ -34,7 +34,7 @@
   without removing the whitespace text node, then the above would result in:
     The Fire in the Flint , galley...
   -->
-  <xsl:template match="text()[../ead3:part]"/>
+  <xsl:template match="ead3:title/text()" priority="3" mode="#all"/>
 
 
   <!-- stand-alone block elements go here (not adding values like unittitle, however, since those will be handled differently

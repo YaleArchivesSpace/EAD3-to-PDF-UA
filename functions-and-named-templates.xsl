@@ -136,8 +136,9 @@
     <!-- archdesc named templates (end)-->
     
     <xsl:template name="combine-identifier-title-and-dates">
+        <xsl:apply-templates select="ead3:did/ead3:unitid"/>
         <xsl:if test="ead3:did/ead3:unitid/normalize-space()">
-            <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), '. ')"/>
+            <xsl:text> </xsl:text>
         </xsl:if>
         <xsl:apply-templates select="ead3:did/ead3:unittitle"/>
         <xsl:if test="ead3:did/ead3:unittitle and (ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate)">
@@ -148,11 +149,23 @@
     
     <!-- dsc named templates (start)-->
     <xsl:template name="dsc-block-identifier-and-title">
-        <xsl:if test="ead3:did/ead3:unitid/normalize-space()">
-            <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), '. ')"/>
-        </xsl:if>
-        <xsl:apply-templates select="if (ead3:did/ead3:unittitle) then ead3:did/ead3:unittitle 
-            else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate" mode="dsc"/>
+        <xsl:choose>
+            <xsl:when test="(@level = $levels-to-include-in-toc) or (@otherlevel = otherlevels-to-include-in-toc)">
+                <xsl:apply-templates select="ead3:did/ead3:unitid"/>
+                <xsl:if test="ead3:did/ead3:unitid/normalize-space()">
+                    <xsl:text> </xsl:text>
+                </xsl:if>
+                <xsl:apply-templates select="if (ead3:did/ead3:unittitle) then ead3:did/ead3:unittitle 
+                    else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate" mode="dsc"/> 
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:apply-templates select="if (ead3:did/ead3:unittitle) then ead3:did/ead3:unittitle 
+                    else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate" mode="dsc"/>
+                <!-- let's add a line break rather than a space. -->
+                <fo:block/>
+                <xsl:apply-templates select="ead3:did/ead3:unitid"/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
     <!-- still neeed options for when dates and/or containers aren't present in a table -->
