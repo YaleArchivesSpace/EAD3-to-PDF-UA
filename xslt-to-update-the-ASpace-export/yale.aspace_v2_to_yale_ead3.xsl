@@ -26,7 +26,7 @@
   xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mdc="http://www.local-functions/mdc"
   exclude-result-prefixes="xsl ead3 mdc xsi"
-  version="2.0">
+  version="3.0">
 
   <xsl:output method="xml" indent="yes" encoding="UTF-8" omit-xml-declaration="no"/>
   
