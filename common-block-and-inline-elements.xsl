@@ -142,9 +142,12 @@
 
   <!-- the deep-equal stuff in the next two templates allow us to superimpose the dao link with the unittitle
     when the two match -->
-  <xsl:template match="ead3:dao[not(@show='embed')][@href]" mode="#all">
+  <xsl:template match="ead3:dao[not(@show='embed')][@href][ead3:descriptivenote/ead3:p]" mode="#all">
     <xsl:choose>
-      <xsl:when test="deep-equal(ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]), ../mdc:extract-text-no-spaces(ead3:unittitle[1]))"/>
+      <xsl:when test="../ead3:unittitle and deep-equal(ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]), ../mdc:extract-text-no-spaces(ead3:unittitle[1]))"/>
+      <!-- should i add something to compare descriptivenote/p with a unitdate element?  or do a combine-title-and-date function here???
+              for now, we'll just compare titles with titles.
+      -->
       <xsl:otherwise>
         <fo:block>
           <fo:basic-link external-destination="url('{@href}')" xsl:use-attribute-sets="ref">
@@ -154,9 +157,9 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  <xsl:template match="ead3:daoset/ead3:dao[not(@show='embed')][@href]" mode="#all" priority="5">
+  <xsl:template match="ead3:daoset/ead3:dao[not(@show='embed')][@href][ead3:descriptivenote/ead3:p]" mode="#all" priority="5">
     <xsl:choose>
-      <xsl:when test="deep-equal(../ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]), ../../mdc:extract-text-no-spaces(ead3:unittitle[1]))"/>
+      <xsl:when test="../../ead3:unittitle and deep-equal(../ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]), ../../mdc:extract-text-no-spaces(ead3:unittitle[1]))"/>
       <xsl:otherwise>
         <fo:block>
           <fo:basic-link external-destination="url('{@href}')" xsl:use-attribute-sets="ref">

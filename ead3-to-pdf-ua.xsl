@@ -44,9 +44,10 @@
           check that the use of "modes" is consistent and makes sense. it doesn't right now, so...
 
 		  future dev:
-		  - upgrade to FOP 2.3
+		  - upgrade to FOP 2.5
 		  - test out request links, passing last-updated-date info so as to ensure the data that's passed is up-to-date.
 		  - add another section (or linked file) that's a flattened container list sorted by box number?  probably better to serve this up as an Excel or CSV file, but could work here, too.
+		  - add a folder-label ouptput option.  better than mail merge, and folks can convert to Word if post-transform edits are desired.
 
 		  - maybe update so that this process won't only expect files to be produced by ASpace (e.g. nested control access sections, multiple DSC elements, etc.)
 
