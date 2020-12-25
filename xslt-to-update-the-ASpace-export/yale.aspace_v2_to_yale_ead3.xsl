@@ -34,6 +34,8 @@
 
   <!-- will pass false() when using this process to do staff-only PDF previews -->
   <xsl:param name="suppressInternalComponents" select="true()" as="xs:boolean"/>
+  
+  <xsl:param name="unitid-trailing-punctuation" select="'.'"/>
 
   <xsl:variable name="finding-aid-identifier" select="ead3:ead/ead3:control/ead3:recordid[1]"/>
   <xsl:variable name="holding-repository" select="ead3:ead/ead3:archdesc/ead3:did/ead3:repository[1]"/>
@@ -450,19 +452,25 @@
   those should be the only unitids exported with an invalid @type attribute, so just remove 'em.
   should also take care of "local_surrogate_call_number"... but will check that out once we have examples in place from MSSA.
   -->
-  <xsl:template match="ead3:unitid[@type]" priority="2"/>
+  <xsl:template match="ead3:unitid[@type]" priority="3"/>
 
   <!-- MDC:  new additions for new data-entry rules in ArchivesSpace !!! -->
-  <xsl:template match="ead3:*[@level = 'series']/ead3:did/ead3:unitid[matches(., '^\d+$')]">
+  <xsl:template match="ead3:*[@level = 'series']/ead3:did/ead3:unitid[matches(., '^\d+$')]" priority="2">
     <xsl:variable name="roman-numeral">
       <xsl:number value="." format="I"/>
     </xsl:variable>
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
-      <xsl:value-of select="concat('Series ', $roman-numeral)"/>
+      <xsl:value-of select="concat('Series ', $roman-numeral, $unitid-trailing-punctuation)"/>
     </xsl:copy>
   </xsl:template>
-
+  
+  <xsl:template match="ead3:*[@level = 'subseries']/ead3:did/ead3:unitid[not(matches(normalize-space(.), '^subseries', 'i'))][not(ends-with(normalize-space(.), $unitid-trailing-punctuation))]" priority="2">
+    <xsl:copy>
+      <xsl:apply-templates select="@*"/>
+      <xsl:value-of select="concat('Subseries ', normalize-space(.), $unitid-trailing-punctuation)"/>
+    </xsl:copy>
+  </xsl:template>
 
   <!-- ArchivesSpace Extent subrecords, EAD3 style (which is much easier to handle than EAD2002 style):  let's deal with 'em.
 

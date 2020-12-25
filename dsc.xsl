@@ -137,7 +137,7 @@
                     <fo:marker marker-class-name="continued-header-text">
                         <fo:inline>
                             <xsl:if test="ead3:did/ead3:unitid/normalize-space()">
-                                <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), '. ')"/>
+                                <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), ' ')"/>
                             </xsl:if>
                             <xsl:choose>
                                 <!-- bad hack to deal with really-long series titles. think of another way to handle this with FOP -->
