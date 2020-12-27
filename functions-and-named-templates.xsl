@@ -9,6 +9,9 @@
     exclude-result-prefixes="xs math mdc fox"
     version="3.0">
     
+    <xsl:param name="unitid-trailing-punctuation" select="'.'"/>
+    <xsl:variable name="unitid-separator" select="concat($unitid-trailing-punctuation, ' ')"/>
+    
     <!-- also need to make sure that the top-level dates display if those are NOT normalized
         -->
     <!-- just used for the unittitle + dao/descriptivenote/p deep-equal tests -->
@@ -138,7 +141,7 @@
     <xsl:template name="combine-identifier-title-and-dates">
         <xsl:apply-templates select="ead3:did/ead3:unitid"/>
         <xsl:if test="ead3:did/ead3:unitid/normalize-space()">
-            <xsl:text> </xsl:text>
+            <xsl:value-of select="$unitid-separator"/>
         </xsl:if>
         <xsl:apply-templates select="ead3:did/ead3:unittitle"/>
         <xsl:if test="ead3:did/ead3:unittitle and (ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate)">
@@ -153,7 +156,7 @@
             <xsl:when test="(@level = $levels-to-include-in-toc) or (@otherlevel = otherlevels-to-include-in-toc)">
                 <xsl:apply-templates select="ead3:did/ead3:unitid"/>
                 <xsl:if test="ead3:did/ead3:unitid/normalize-space()">
-                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="$unitid-separator"/>
                 </xsl:if>
                 <xsl:apply-templates select="if (ead3:did/ead3:unittitle) then ead3:did/ead3:unittitle 
                     else ead3:did/ead3:unitdatestructured | ead3:did/ead3:unitdate" mode="dsc"/> 
@@ -351,15 +354,17 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
+        <!-- rewrite this.  second and third last sequences return the same values, and should be no need to do the hacky string-stuff, especially once we upgrade to xslt3 (nor now, but...) -->
         <xsl:variable name="ancestor-sequence">
             <xsl:sequence select="string-join(
                 for $ancestor in ancestor::*[ead3:did][ancestor::ead3:dsc] return 
-                if ($ancestor/ead3:did/ead3:unitid/not(ends-with(normalize-space(), '.'))
-                and $ancestor/lower-case(@level) eq 'series') 
-                then concat($ancestor/ead3:did/ead3:unitid/normalize-space(), '. ', $ancestor/ead3:did/ead3:unittitle/normalize-space())
-                else if (ends-with($ancestor/ead3:did/ead3:unitid/normalize-space(), '.'))
+                if ($ancestor/ead3:did/ead3:unitid/not(ends-with(normalize-space(), $unitid-trailing-punctuation))
+                and $ancestor/lower-case(@level) = ('series', 'subseries')) 
+                then concat($ancestor/ead3:did/ead3:unitid/normalize-space(), $unitid-separator, $ancestor/ead3:did/ead3:unittitle/normalize-space())
+                else if (ends-with($ancestor/ead3:did/ead3:unitid/normalize-space(), $unitid-trailing-punctuation))
                 then concat($ancestor/ead3:did/ead3:unitid/normalize-space(), ' ', $ancestor/ead3:did/ead3:unittitle/normalize-space())
-                else if ($ancestor/ead3:did/ead3:unitid/normalize-space()) then concat($ancestor/ead3:did/ead3:unitid/normalize-space(), ' ', $ancestor/ead3:did/ead3:unittitle/normalize-space())
+                else if ($ancestor/ead3:did/ead3:unitid/normalize-space())
+                then concat($ancestor/ead3:did/ead3:unitid/normalize-space(), ' ', $ancestor/ead3:did/ead3:unittitle/normalize-space())
                 else $ancestor/ead3:did/ead3:unittitle/normalize-space()
                 , 'xx*****yz')"/>
         </xsl:variable>

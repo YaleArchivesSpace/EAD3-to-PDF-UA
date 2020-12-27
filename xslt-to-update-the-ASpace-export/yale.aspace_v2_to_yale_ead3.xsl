@@ -35,8 +35,6 @@
   <!-- will pass false() when using this process to do staff-only PDF previews -->
   <xsl:param name="suppressInternalComponents" select="true()" as="xs:boolean"/>
   
-  <xsl:param name="unitid-trailing-punctuation" select="'.'"/>
-
   <xsl:variable name="finding-aid-identifier" select="ead3:ead/ead3:control/ead3:recordid[1]"/>
   <xsl:variable name="holding-repository" select="ead3:ead/ead3:archdesc/ead3:did/ead3:repository[1]"/>
 
@@ -461,14 +459,14 @@
     </xsl:variable>
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
-      <xsl:value-of select="concat('Series ', $roman-numeral, $unitid-trailing-punctuation)"/>
+      <xsl:value-of select="concat('Series ', $roman-numeral)"/>
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="ead3:*[@level = 'subseries']/ead3:did/ead3:unitid[not(matches(normalize-space(.), '^subseries', 'i'))][not(ends-with(normalize-space(.), $unitid-trailing-punctuation))]" priority="2">
+  <xsl:template match="ead3:*[@level = 'subseries']/ead3:did/ead3:unitid[not(matches(normalize-space(.), '^subseries', 'i'))]" priority="2">
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
-      <xsl:value-of select="concat('Subseries ', normalize-space(.), $unitid-trailing-punctuation)"/>
+      <xsl:value-of select="concat('Subseries ', normalize-space(.))"/>
     </xsl:copy>
   </xsl:template>
 
