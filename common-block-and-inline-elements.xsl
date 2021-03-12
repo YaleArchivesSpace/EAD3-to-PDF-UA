@@ -739,8 +739,9 @@
     </fo:inline>
   </xsl:template>
   <xsl:template match="*[@render = 'doublequote'] | *[@altrender = 'doublequote']" mode="#all">
-    <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>"<xsl:apply-templates/>" </xsl:template>
-  <xsl:template match="*[@render = 'italic'] | *[@altrender = 'italic']">
+    <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>"<xsl:apply-templates/>"
+  </xsl:template>
+  <xsl:template match="*[@render = 'italic'] | *[@altrender = 'italic']" mode="#all">
     <fo:inline font-style="italic">
       <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>
       <xsl:apply-templates/>
@@ -748,7 +749,7 @@
   </xsl:template>
   <xsl:template match="*[@render = 'singlequote'] | *[@altrender = 'singlequote']" mode="#all">
     <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>'<xsl:apply-templates/>' </xsl:template>
-  <xsl:template match="*[@render = 'smcaps'] | *[@altrender = 'smcaps']">
+  <xsl:template match="*[@render = 'smcaps'] | *[@altrender = 'smcaps']" mode="#all">
     <fo:inline font-variant="small-caps">
       <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>
       <xsl:apply-templates/>
