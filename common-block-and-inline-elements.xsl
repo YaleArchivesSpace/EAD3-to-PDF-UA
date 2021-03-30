@@ -182,7 +182,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  <xsl:template match="ead3:unittitle[../ead3:daoset/ead3:dao[not(@show='embed')]]" mode="#all">
+  <xsl:template match="ead3:unittitle[../ead3:daoset/ead3:dao[not(@show='embed')]]" mode="#all" priority="2">
     <xsl:choose>
       <xsl:when test="deep-equal(mdc:extract-text-no-spaces(.), ../ead3:daoset[1]/ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]))">
         <fo:basic-link external-destination="url('{../ead3:daoset[1]/ead3:dao[1]/@href}')" xsl:use-attribute-sets="ref">
