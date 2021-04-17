@@ -196,6 +196,10 @@
   </xsl:template>
 
   <xsl:template match="ead3:unitdatestructured" mode="#all">
+    <!-- should add a schematron rule to ensure that we never have multiple bulk dates, but for now.... -->
+    <xsl:if test="@unitdatetype eq 'bulk'">
+      <xsl:value-of select="$bulk-date-prefix-text"/>
+    </xsl:if>
     <xsl:apply-templates/>
     <xsl:if test="position() ne last()">
       <xsl:text>, </xsl:text>

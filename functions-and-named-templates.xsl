@@ -9,7 +9,7 @@
     exclude-result-prefixes="xs math mdc fox"
     version="3.0">
     
-    <xsl:param name="unitid-trailing-punctuation" select="'.'"/>
+    <xsl:param name="unitid-trailing-punctuation" select="':'"/>
     <xsl:variable name="unitid-separator" select="concat($unitid-trailing-punctuation, ' ')"/>
     
     <!-- also need to make sure that the top-level dates display if those are NOT normalized
@@ -341,28 +341,26 @@
                             the component might only have a unitdate.  later, we'll filter this out of the sequence-of-series list of titles. -->
                 <xsl:when test="not(ead3:did/ead3:unittitle[normalize-space()])">
                     <xsl:if test="$immediate-ancestor[ead3:did/ead3:unitid]">
-                        <xsl:value-of select="concat($immediate-ancestor/ead3:did/ead3:unitid[not(@audience='internal')][1], ' ')"/>
+                        <xsl:value-of select="concat($immediate-ancestor/ead3:did/ead3:unitid[not(@audience='internal')][1], $unitid-separator)"/>
                     </xsl:if>
                     <xsl:value-of select="$immediate-ancestor/ead3:did/ead3:unittitle[1]"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:if test="normalize-space(ead3:did/ead3:unitid[not(@audience='internal')][1])">
                         <xsl:value-of select="normalize-space(ead3:did/ead3:unitid[not(@audience='internal')][1])"/>
-                        <xsl:text> </xsl:text>
+                        <xsl:value-of select="$unitid-separator"/>
                     </xsl:if>
                     <xsl:value-of select="normalize-space(ead3:did/ead3:unittitle[1])"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <!-- rewrite this.  second and third last sequences return the same values, and should be no need to do the hacky string-stuff, especially once we upgrade to xslt3 (nor now, but...) -->
+        <!-- rewrite this.   should be no need to do the hacky string-stuff, especially once we upgrade to xslt3 (nor now, but...) -->
         <xsl:variable name="ancestor-sequence">
             <xsl:sequence select="string-join(
                 for $ancestor in ancestor::*[ead3:did][ancestor::ead3:dsc] return 
                 if ($ancestor/ead3:did/ead3:unitid/not(ends-with(normalize-space(), $unitid-trailing-punctuation))
                 and $ancestor/lower-case(@level) = ('series', 'subseries')) 
                 then concat($ancestor/ead3:did/ead3:unitid/normalize-space(), $unitid-separator, $ancestor/ead3:did/ead3:unittitle/normalize-space())
-                else if (ends-with($ancestor/ead3:did/ead3:unitid/normalize-space(), $unitid-trailing-punctuation))
-                then concat($ancestor/ead3:did/ead3:unitid/normalize-space(), ' ', $ancestor/ead3:did/ead3:unittitle/normalize-space())
                 else if ($ancestor/ead3:did/ead3:unitid/normalize-space())
                 then concat($ancestor/ead3:did/ead3:unitid/normalize-space(), ' ', $ancestor/ead3:did/ead3:unittitle/normalize-space())
                 else $ancestor/ead3:did/ead3:unittitle/normalize-space()

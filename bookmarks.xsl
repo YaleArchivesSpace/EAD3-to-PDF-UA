@@ -76,8 +76,9 @@
             <!-- keeping as is for now, though we should add a test to ensure we always have a unittitle.
                 i tried adding the dates, and it looks way too cluttered in the bookmarks section, i think -->
             <fo:bookmark-title>
-                <xsl:if test="ead3:did/ead3:unitid/normalize-space()">
-                    <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), '. ')"/>
+                <xsl:value-of select="ead3:did/ead3:unitid/normalize-space()"/>
+                <xsl:if test="ead3:did/ead3:unitid[not(ends-with(normalize-space(), $unitid-trailing-punctuation))]">
+                    <xsl:value-of select="$unitid-separator"/>
                 </xsl:if>
                 <xsl:value-of select="ead3:did/ead3:unittitle/normalize-space()"/>
             </fo:bookmark-title>
