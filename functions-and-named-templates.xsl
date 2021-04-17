@@ -9,7 +9,7 @@
     exclude-result-prefixes="xs math mdc fox"
     version="3.0">
     
-    <xsl:param name="unitid-trailing-punctuation" select="'.'"/>
+    <xsl:param name="unitid-trailing-punctuation" select="':'"/>
     <xsl:variable name="unitid-separator" select="concat($unitid-trailing-punctuation, ' ')"/>
     
     <!-- also need to make sure that the top-level dates display if those are NOT normalized
