@@ -17,7 +17,7 @@
     <!-- just used for the unittitle + dao/descriptivenote/p deep-equal tests -->
     <xsl:function name="mdc:extract-text-no-spaces" as="xs:string">
         <xsl:param name="input" as="node()"/>
-        <xsl:value-of select="replace(string-join($input//text()/normalize-space()), '\s', '')"/>
+        <xsl:value-of select="replace(string-join($input//text()/normalize-space(), ' '), '\s', '')"/>
     </xsl:function>
     
     

@@ -739,7 +739,8 @@
     </fo:inline>
   </xsl:template>
   <xsl:template match="*[@render = 'doublequote'] | *[@altrender = 'doublequote']" mode="#all">
-    <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>"<xsl:apply-templates/>" </xsl:template>
+    <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>"<xsl:apply-templates/>"
+  </xsl:template>
   <xsl:template match="*[@render = 'italic'] | *[@altrender = 'italic']" mode="#all">
     <fo:inline font-style="italic">
       <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>
