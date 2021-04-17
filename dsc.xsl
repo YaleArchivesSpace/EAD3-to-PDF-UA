@@ -136,8 +136,9 @@
                 <xsl:when test="parent::ead3:dsc and  (@level = ('series', 'collection', 'recordgrp') or @otherlevel = $otherlevels-to-force-a-page-break-and-process-before-a-table)">
                     <fo:marker marker-class-name="continued-header-text">
                         <fo:inline>
-                            <xsl:if test="ead3:did/ead3:unitid/normalize-space()">
-                                <xsl:value-of select="concat(ead3:did/ead3:unitid/normalize-space(), ' ')"/>
+                            <xsl:value-of select="ead3:did/ead3:unitid/normalize-space()"/>
+                            <xsl:if test="ead3:did/ead3:unitid[not(ends-with(normalize-space(), $unitid-trailing-punctuation))]">
+                                <xsl:value-of select="$unitid-separator"/>
                             </xsl:if>
                             <xsl:choose>
                                 <!-- bad hack to deal with really-long series titles. think of another way to handle this with FOP -->
@@ -148,7 +149,6 @@
                                     <xsl:apply-templates select="ead3:did/ead3:unittitle[1]"/>
                                 </xsl:otherwise>
                             </xsl:choose>
-
                         </fo:inline>
                     </fo:marker>
                 </xsl:when>
