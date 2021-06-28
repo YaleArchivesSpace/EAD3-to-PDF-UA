@@ -118,6 +118,10 @@
         </xsl:if> 
     </xsl:variable>
     
+    <xsl:variable name="all-digital-instances">
+        <xsl:copy-of select="//ead:did/ead:daoset | //ead:did/ead:dao"/>
+    </xsl:variable>
+    
     <xsl:template name="container-summary">
         <xsl:param name="containers"/>
         <xsl:for-each select="$containers/*">
@@ -138,21 +142,27 @@
         </xsl:for-each>
     </xsl:template>
     
-    <xsl:template match="ead:controlnote[$all-containers/container-list/*]">
+    <xsl:template match="ead:controlnote[$all-containers/container-list/*] | ead:controlnote[$all-digital-instances/*]">
         <xsl:copy>
             <xsl:apply-templates select="@*|node()"/>
         </xsl:copy>
         <xsl:call-template name="create-holdings-notes">
             <xsl:with-param name="all-containers" select="$all-containers"/>
         </xsl:call-template>
+        <xsl:call-template name="create-digital-note">
+            <xsl:with-param name="all-digital-instances" select="$all-digital-instances"/>
+        </xsl:call-template>
     </xsl:template>
     
-    <xsl:template match="ead:filedesc[not(ead:notestmt)][$all-containers/container-list/*]">
+    <xsl:template match="ead:filedesc[not(ead:notestmt)][$all-containers/container-list/*] | ead:filedesc[not(ead:notestmt)][$all-digital-instances/*]">
         <xsl:copy>
             <xsl:apply-templates select="@*|node()"/>
             <xsl:element name="notestmt" namespace="http://ead3.archivists.org/schema/">
                 <xsl:call-template name="create-holdings-notes">
                     <xsl:with-param name="all-containers" select="$all-containers"/>
+                </xsl:call-template>
+                <xsl:call-template name="create-digital-note">
+                    <xsl:with-param name="all-digital-instances" select="$all-digital-instances"/>
                 </xsl:call-template>
             </xsl:element>
         </xsl:copy>
@@ -176,5 +186,38 @@
             </xsl:call-template>       
         </xsl:element>
     </xsl:template>
+    
+    <!-- clean this up, but you get the idea, right? -->
+    <xsl:template name="create-digital-note">
+        <xsl:param name="all-digital-instances"/>
+        <xsl:variable name="digital-object-count" select="count($all-digital-instances/*)"/>
+        <xsl:variable name="digital-files-count" select="sum($all-digital-instances/*/*[@linktitle]/xs:integer(substring-before(@linktitle, ' ')))"/>
+        <xsl:variable name="object-text" select="if ($digital-object-count eq 1) then 'digital object.' else 'digital objects.'"/>
+        <xsl:variable name="object-file-text" select="if ($digital-object-count eq 1) then 'that object' else 'those objects'"/>
+        <xsl:if test="$digital-object-count">
+            <xsl:element name="controlnote" namespace="http://ead3.archivists.org/schema/">
+                <xsl:attribute name="localtype" select="'digital'"/>
+                <xsl:element name="p" namespace="http://ead3.archivists.org/schema/">
+                    <xsl:text>This collection contains </xsl:text>
+                    <xsl:element name="num" namespace="http://ead3.archivists.org/schema/">
+                        <xsl:attribute name="localtype" select="'objects'"/>
+                        <xsl:attribute name="altrender" select="$digital-object-count"/>
+                        <xsl:value-of select="format-number($digital-object-count, '#,###')"/>
+                    </xsl:element>
+                    <xsl:value-of select="' published ' || $object-text"/>
+                    <xsl:if test="$digital-files-count">
+                        <xsl:value-of select="' And ' || $object-file-text || ' are comprised of '"/>
+                        <xsl:element name="num" namespace="http://ead3.archivists.org/schema/">
+                            <xsl:attribute name="localtype" select="'files'"/>
+                            <xsl:attribute name="altrender" select="$digital-files-count"/>
+                            <xsl:value-of select="format-number($digital-files-count, '#,###')"/>
+                        </xsl:element>
+                        <xsl:text> digital files.</xsl:text>
+                    </xsl:if>
+                </xsl:element>
+            </xsl:element>
+        </xsl:if>
+    </xsl:template>
+   
     
 </xsl:stylesheet>
