@@ -191,7 +191,8 @@
     <xsl:template name="create-digital-note">
         <xsl:param name="all-digital-instances"/>
         <xsl:variable name="digital-object-count" select="count($all-digital-instances/*)"/>
-        <xsl:variable name="digital-files-count" select="sum($all-digital-instances/*/*[@linktitle]/xs:integer(substring-before(@linktitle, ' ')))"/>
+        <!-- restrict to Beiencke for now, since these are the only File URIs that have captions with file totals.... so far -->
+        <xsl:variable name="digital-files-count" select="if ($repository eq 'beinecke') then sum($all-digital-instances/*/*[@linktitle][@show eq 'embed']/xs:integer(substring-before(@linktitle, ' '))) else null"/>
         <xsl:variable name="object-text" select="if ($digital-object-count eq 1) then 'digital object.' else 'digital objects.'"/>
         <xsl:variable name="object-file-text" select="if ($digital-object-count eq 1) then 'that object' else 'those objects'"/>
         <xsl:if test="$digital-object-count">
