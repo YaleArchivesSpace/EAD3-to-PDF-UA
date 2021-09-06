@@ -106,12 +106,12 @@
         <sch:rule context="ead3:head">
             <sch:report test="lower-case(.) = 'typecollection'">
                 Please verity that this finding aid does not contain a note that should remain unpublished.
-                The note, "<value-of select=".."/>," contains a head element that usually indicates 
+                The note, "<sch:value-of select=".."/>," contains a head element that usually indicates 
                 that this note is a staff-only Preservica note.
             </sch:report>
             <sch:report test="contains(lower-case(.), 'samma')">
                 Please verity that this finding aid does not contain a note that should remain unpublished.
-                The note, "<value-of select=".."/>," contains a head element that includes the word "Samma", 
+                The note, "<sch:value-of select=".."/>," contains a head element that includes the word "Samma", 
                 which typically indicate that the note is meant to be internal-only.
             </sch:report>
         </sch:rule>
