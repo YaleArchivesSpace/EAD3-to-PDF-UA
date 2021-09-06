@@ -84,7 +84,7 @@
   </xsl:param>
 
   <xsl:param name="include-cc0-rights-statement" as="xs:boolean">
-    <xsl:value-of select="if ($repository = ('mssa', 'beinecke', 'divinity', 'music', 'med', 'arts', 'vrc', 'lwl', 'ycba', 'ypl')) then true() else false()"/>
+    <xsl:value-of select="if ($repository = ('mssa', 'beinecke', 'divinity', 'music', 'oham', 'med', 'arts', 'vrc', 'lwl', 'ycba', 'ypl')) then true() else false()"/>
   </xsl:param>
 
   <!-- Repository Code.
@@ -132,6 +132,13 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:param>
+
+  <xsl:template match="/">
+    <xsl:processing-instruction name="xml-model">
+      <xsl:text>href="https://raw.githubusercontent.com/YaleArchivesSpace/EAD3-to-PDF-UA/master/ead3-yale.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:text>
+    </xsl:processing-instruction>
+    <xsl:apply-templates select="@* | node()"/>
+  </xsl:template>
 
   <!-- standard identity template -->
   <xsl:template match="@* | node()" mode="#default copy">
