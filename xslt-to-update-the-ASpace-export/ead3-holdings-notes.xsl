@@ -2,9 +2,20 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ead="http://ead3.archivists.org/schema/"
     xmlns:mdc="http://mdc/local-functions" xmlns:map="http://www.w3.org/2005/xpath-functions/map"
+    xmlns:j="http://www.w3.org/2005/xpath-functions"
     exclude-result-prefixes="xs ead mdc map" version="3.0">
     
     <!-- depends on yale.aspace_v2_to_yale_ead3.xsl, right now at least, for $repository variable -->
+    
+    <xsl:variable name="bib" select="ead:ead/ead:control/ead:otherrecordid[matches(@localtype, 'bib', 'i')]"/>
+    
+    <xsl:variable name="uri" select="'https://libapp.library.yale.edu/VoySearch/GetBibItem?bibid=' || $bib"/>
+    
+    <xsl:variable name="bib-xml">
+            <!-- this second function is needed for some of the invalid  JSON provided by the Voyager API.
+                let's see if we can't fix that at the source... barring that, find out what other null values might be supplied that result in invalid JSON -->
+            <xsl:copy-of select="unparsed-text($uri) => replace(',\n,', ',') => json-to-xml()"/>
+    </xsl:variable>
     
     <xsl:param name="valid-top-container-types" select="('box', 'folder', 'item', 'volume', 'reel', 'file')"/>
     
@@ -170,6 +181,24 @@
     
     <xsl:template name="create-holdings-notes">
         <xsl:param name="all-containers"/>
+        <!-- add to new template? -->
+        <xsl:if test="$bib-xml/j:map">
+            <xsl:variable name="aspace-container-count" select="count($all-containers//ead:container)"/>
+            <xsl:variable name="voyager-container-count" select="count($bib-xml//j:array[@key='items']/j:map[j:string[@key='barcodestatus'] eq 'Active'])"/>
+            <xsl:element name="controlnote" namespace="http://ead3.archivists.org/schema/">
+                <xsl:attribute name="localtype" select="'aspace-voyager'"/>
+                <xsl:element name="p" namespace="http://ead3.archivists.org/schema/">
+                    <xsl:value-of select="'ASpace:  ' || $aspace-container-count"/>
+                </xsl:element>
+                <xsl:element name="p" namespace="http://ead3.archivists.org/schema/">
+                    <xsl:value-of select="'Voyager: ' || $voyager-container-count"/>
+                </xsl:element>
+                <xsl:element name="p" namespace="http://ead3.archivists.org/schema/">
+                    <xsl:value-of select="'Celebrate: ' || (if ($aspace-container-count eq $voyager-container-count) then 'Yes' else 'N' || string-join((1 to $aspace-container-count)!'o'))"/>
+                </xsl:element>
+            </xsl:element>
+        </xsl:if>
+        
         <xsl:for-each select="$all-containers/container-list/*">
             <xsl:call-template name="holdings-note">
                 <xsl:with-param name="type" select="local-name()"/>
