@@ -133,6 +133,13 @@
     </xsl:choose>
   </xsl:param>
 
+  <xsl:template match="/">
+    <xsl:processing-instruction name="xml-model">
+      <xsl:text>href="https://raw.githubusercontent.com/YaleArchivesSpace/EAD3-to-PDF-UA/dev/ead3-yale.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:text>
+    </xsl:processing-instruction>
+    <xsl:apply-templates select="@* | node()"/>
+  </xsl:template>
+
   <!-- standard identity template -->
   <xsl:template match="@* | node()" mode="#default copy">
     <xsl:copy>
