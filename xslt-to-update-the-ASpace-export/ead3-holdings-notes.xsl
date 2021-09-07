@@ -182,7 +182,7 @@
     <xsl:template name="create-holdings-notes">
         <xsl:param name="all-containers"/>
         <!-- add to new template? -->
-        <xsl:if test="$bib-xml/j:map">
+        <xsl:if test="$bib-xml/j:map and not($repository = ('mssa', 'ypm'))">
             <xsl:variable name="aspace-container-count" select="count($all-containers//ead:container)"/>
             <xsl:variable name="voyager-container-count" select="count($bib-xml//j:array[@key='items']/j:map[j:string[@key='barcodestatus'] eq 'Active'])"/>
             <xsl:element name="controlnote" namespace="http://ead3.archivists.org/schema/">
@@ -194,7 +194,7 @@
                     <xsl:value-of select="'Voyager: ' || $voyager-container-count"/>
                 </xsl:element>
                 <xsl:element name="p" namespace="http://ead3.archivists.org/schema/">
-                    <xsl:value-of select="'Celebrate: ' || (if ($aspace-container-count eq $voyager-container-count) then 'Yes' else 'N' || string-join((1 to $aspace-container-count)!'o'))"/>
+                    <xsl:value-of select="'Celebrate: ' || (if ($aspace-container-count eq $voyager-container-count) then 'Yes' else 'N' || string-join((1 to abs(($aspace-container-count - $voyager-container-count))) ! 'o'))"/>
                 </xsl:element>
             </xsl:element>
         </xsl:if>
