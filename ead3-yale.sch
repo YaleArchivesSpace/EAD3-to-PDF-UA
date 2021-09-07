@@ -78,8 +78,8 @@
             <sch:assert test="ead3:did/ead3:container
                 or ancestor::ead3:c/ead3:did/ead3:container
                 or descendant::*[matches(normalize-space(.), '^stored in:|^in:|^see:', 'i')]
-                or ead3:accessrestrict/@altrender = $local-access-restriction-types-that-do-not-require-containers
-                or ancestor::ead3:c[ead3:accessrestrict/@altrender]/ead3:accessrestrict/@altrender = $local-access-restriction-types-that-do-not-require-containers
+                or ead3:accessrestrict/@localtype = $local-access-restriction-types-that-do-not-require-containers
+                or ancestor::ead3:c[ead3:accessrestrict/@localtype]/ead3:accessrestrict/@localtype = $local-access-restriction-types-that-do-not-require-containers
                 or ead3:did//ead3:dao">
                 Hold up. This terminal component appears to be missing a container, a properly formatted cross-reference note, a published digital object, or a local access restriction type that would indicate
                 that this level of description does not require a container. Sound about right?
