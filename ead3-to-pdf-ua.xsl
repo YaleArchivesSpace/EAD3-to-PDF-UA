@@ -44,7 +44,7 @@
           check that the use of "modes" is consistent and makes sense. it doesn't right now, so...
 
 		  future dev:
-		  - upgrade to FOP 2.5
+		  - upgrade to FOP 2.6
 		  - test out request links, passing last-updated-date info so as to ensure the data that's passed is up-to-date.
 		  - add another section (or linked file) that's a flattened container list sorted by box number?  probably better to serve this up as an Excel or CSV file, but could work here, too.
 		  - add a folder-label ouptput option.  better than mail merge, and folks can convert to Word if post-transform edits are desired.
@@ -70,10 +70,10 @@
 
     <!-- global parameters -->
     <xsl:param name="primary-language-of-finding-aid" select="'en'"/>
-    <xsl:param name="primary-font-for-pdf" select="'Mallory'"/>
+    <xsl:param name="primary-font-for-pdf" select="'NotoSansDisplay'"/>
     <xsl:param name="serif-font" select="'Yale'"/>
-    <xsl:param name="sans-serif-font" select="'Mallory'"/>
-    <xsl:param name="backup-font" select="'ArialUnicode'"/>
+    <xsl:param name="sans-serif-font" select="'NotoSansDisplay'"/>
+    <xsl:param name="backup-fonts" select="('NotoNaskhArabic', 'KurintoText', 'SourceHanSerifSC', 'SourceHanSerifTC', 'SourceHanSerifJ', 'SourceHanSerifK', 'ArialUnicode')"/>
     <xsl:param name="default-font-size" select="'10pt'"/>
     <!-- will pass false() when using this process to do staff-only PDF previews -->
     <xsl:param name="suppressInternalComponentsInPDF" select="true()" as="xs:boolean"/>
@@ -146,7 +146,7 @@
 
     <!--========== PAGE SETUP =======-->
     <xsl:template match="/">
-        <fo:root xml:lang="{$primary-language-of-finding-aid}" font-family="{$primary-font-for-pdf}, {$backup-font}" font-size="{$default-font-size}">
+        <fo:root xml:lang="{$primary-language-of-finding-aid}" font-family="{string-join(($primary-font-for-pdf, $backup-fonts), ',')}" font-size="{$default-font-size}">
             <fo:layout-master-set>
                 <xsl:call-template name="define-page-masters"/>
                 <xsl:call-template name="define-page-sequences"/>

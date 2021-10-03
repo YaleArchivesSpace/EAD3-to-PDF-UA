@@ -134,8 +134,7 @@
     </xsl:attribute-set>
 
     <xsl:attribute-set name="header-serif">
-        <!-- should be some sugary syntax for this, but concat works -->
-        <xsl:attribute name="font-family" select="concat($serif-font, ', ', $backup-font)"/>
+        <xsl:attribute name="font-family" select="string-join(($serif-font, $backup-fonts), ',')"/>
     </xsl:attribute-set>
 
     <xsl:attribute-set name="white-font">
