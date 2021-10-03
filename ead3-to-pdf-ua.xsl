@@ -73,7 +73,7 @@
     <xsl:param name="primary-font-for-pdf" select="'NotoSansDisplay'"/>
     <xsl:param name="serif-font" select="'Yale'"/>
     <xsl:param name="sans-serif-font" select="'NotoSansDisplay'"/>
-    <xsl:param name="backup-fonts" select="('NotoNaskhArabic', 'KurintoText', 'SourceHanSerifSC', 'SourceHanSerifTC', 'SourceHanSerifJ', 'SourceHanSerifK', 'ArialUnicode')"/>
+    <xsl:param name="backup-fonts" select="('KurintoText', 'NotoNaskhArabic', 'SourceHanSerifSC', 'SourceHanSerifTC', 'SourceHanSerifJ', 'SourceHanSerifK', 'ArialUnicode')"/>
     <xsl:param name="default-font-size" select="'10pt'"/>
     <!-- will pass false() when using this process to do staff-only PDF previews -->
     <xsl:param name="suppressInternalComponentsInPDF" select="true()" as="xs:boolean"/>
