@@ -24,7 +24,7 @@
                         xmlns:xmp="http://ns.adobe.com/xap/1.0/">
                         <!-- XMP properties go here -->
                         <!-- should figure out a way to get the FOP version another way, even if i just add it to a config file -->
-                        <xmp:CreatorTool>Apache FOP 2.2</xmp:CreatorTool>
+                        <xmp:CreatorTool>Apache FOP 2.6</xmp:CreatorTool>
                     </rdf:Description>
                     <rdf:Description rdf:about=""
                         xmlns:pdf="http://ns.adobe.com/pdf/1.3/">

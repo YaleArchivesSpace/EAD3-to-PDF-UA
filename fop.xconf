@@ -10,9 +10,6 @@
   <!-- Font Base URL for resolving relative font URLs -->
   <font-base>./</font-base>
   
-  <!-- workaround to get fonts like NotoSans and Kurinto to load. not sure why this is needed / the impact, but it sounds like this will be updated in FOP eventually, as well. --> 
-  <complex-scripts disabled="true"/>
-
   <!-- Source resolution in dpi (dots/pixels per inch) for determining the size of pixels in SVG and bitmap images, default: 72dpi -->
   <source-resolution>72</source-resolution>
   <!-- Target resolution in dpi (dots/pixels per inch) for specifying the target resolution for generated bitmaps, default: 72dpi -->
@@ -20,7 +17,7 @@
 
   <!-- Default page-height and page-width, in case value is specified as auto -->
   <default-page-settings height="11.00in" width="8.50in"/>
-
+  
   <!-- Information for specific renderers -->
   <!-- Uses renderer mime type for renderers -->
   <renderers>
@@ -38,33 +35,7 @@
           <font-triplet name="FontAwesomeSolid" style="normal" weight="normal"/>
         </font>
 
-        <font kerning="yes" embed-url="config/fonts/Mallory/Mallory-Book.otf">
-          <font-triplet name="Mallory" style="normal" weight="normal"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Mallory/Mallory-BookItalic.otf">
-          <font-triplet name="Mallory" style="italic" weight="normal"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Mallory/Mallory-Bold.otf">
-          <font-triplet name="Mallory" style="normal" weight="bold"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Mallory/Mallory-BoldItalic.otf">
-          <font-triplet name="Mallory" style="italic" weight="bold"/>
-        </font>
-
-        <!-- try out MP as well -->
-        <font kerning="yes" embed-url="config/fonts/Mallory/MalloryMP-Book.otf">
-          <font-triplet name="MalloryMP" style="normal" weight="normal"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Mallory/MalloryMP-BookItalic.otf">
-          <font-triplet name="MalloryMP" style="italic" weight="normal"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Mallory/MalloryMP-Bold.otf">
-          <font-triplet name="MalloryMP" style="normal" weight="bold"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Mallory/MalloryMP-BoldItalic.otf">
-          <font-triplet name="MalloryMP" style="italic" weight="bold"/>
-        </font>
-
+        <!-- Yale fonts for headers -->
         <font kerning="yes" embed-url="config/fonts/Yale/YaleNew-Bold.otf">
           <font-triplet name="Yale" style="normal" weight="bold"/>
         </font>
@@ -77,54 +48,80 @@
         <font kerning="yes" embed-url="config/fonts/Yale/YaleNew-Italic.otf">
           <font-triplet name="Yale" style="italic" weight="normal"/>
         </font>
-
-        <!--font for previews -->
-        <font embed-url="config/fonts/Kurinto/KurintoText-Rg.ttf">
+        
+        <!-- primary font, replacing Mallory due to ligature issues (likely not the font's issue, but I don't have another version of those files -->
+        <font kerning="yes" embed-url="config/fonts/Noto_Sans_Display/NotoSansDisplay-Italic-VariableFont_wdth,wght.ttf">
+          <font-triplet name="NotoSansDisplay" style="italic" weight="normal"/>
+        </font>
+        <font kerning="yes" embed-url="config/fonts/Noto_Sans_Display/NotoSansDisplay-Italic-VariableFont_wdth,wght.ttf">
+          <font-triplet name="NotoSansDisplay" style="italic" weight="bold"/>
+        </font>
+        <font kerning="yes" embed-url="config/fonts/Noto_Sans_Display/NotoSansDisplay-VariableFont_wdth,wght.ttf">
+          <font-triplet name="NotoSansDisplay" style="normal" weight="normal"/>
+        </font>
+        <font kerning="yes" embed-url="config/fonts/Noto_Sans_Display/NotoSansDisplay-VariableFont_wdth,wght.ttf">
+          <font-triplet name="NotoSansDisplay" style="normal" weight="bold"/>
+        </font>
+        
+        <!-- A few more languages, since we don't have a standard way yet of referencing languages/scripts of description in ASpace...
+        but could use the EAD3 foreign element in notes, perhaps. -->
+        <!-- Arabic -->
+        <font kerning="yes"  embed-url="config/fonts/Noto_Naskh_Arabic/NotoNaskhArabic-VariableFont_wght.ttf">
+          <font-triplet name="NotoNaskhArabic" style="normal" weight="normal"/>
+        </font>
+        <font kerning="yes" embed-url="config/fonts/Noto_Naskh_Arabic/NotoNaskhArabic-VariableFont_wght.ttf">
+          <font-triplet name="NotoNaskhArabic" style="normal" weight="bold"/>
+        </font>
+        
+        <!-- CJK -->
+        <font kerning="yes" embed-url="config/fonts/SourceHanSerif/SourceHanSerifSC-Bold.otf">
+          <font-triplet name="SourceHanSerifSC" style="normal" weight="bold"/>
+        </font>
+        <font kerning="yes" embed-url="config/fonts/SourceHanSerif/SourceHanSerifSC-Regular.otf">
+          <font-triplet name="SourceHanSerifSC" style="normal" weight="normal"/>
+        </font>
+        
+        <font kerning="yes" embed-url="config/fonts/SourceHanSerif/SourceHanSerifTC-Bold.otf">
+          <font-triplet name="SourceHanSerifTC" style="normal" weight="bold"/>
+        </font>
+        <font kerning="yes" embed-url="config/fonts/SourceHanSerif/SourceHanSerifTC-Regular.otf">
+          <font-triplet name="SourceHanSerifTC" style="normal" weight="normal"/>
+        </font>
+        
+        <font kerning="yes" embed-url="config/fonts/SourceHanSerif/SourceHanSerifJ-Bold.otf">
+          <font-triplet name="SourceHanSerifJ" style="normal" weight="bold"/>
+        </font>
+        <font kerning="yes" embed-url="config/fonts/SourceHanSerif/SourceHanSerifJ-Regular.otf">
+          <font-triplet name="SourceHanSerifJ" style="normal" weight="normal"/>
+        </font>
+        
+        <font kerning="yes" embed-url="config/fonts/SourceHanSerif/SourceHanSerifK-Bold.otf">
+          <font-triplet name="SourceHanSerifK" style="normal" weight="bold"/>
+        </font>
+        <font kerning="yes" embed-url="config/fonts/SourceHanSerif/SourceHanSerifK-Regular.otf">
+          <font-triplet name="SourceHanSerifK" style="normal" weight="normal"/>
+        </font>
+        
+        <!-- Kurinto -->
+        <font kerning="yes" embed-url="config/fonts/Kurinto/KurintoText-Rg.ttf">
           <font-triplet name="KurintoText" style="normal" weight="normal"/>
         </font>
-        <font embed-url="config/fonts/Kurinto/KurintoText-Bd.ttf">
+        <font kerning="yes" embed-url="config/fonts/Kurinto/KurintoText-Bd.ttf">
           <font-triplet name="KurintoText" style="normal" weight="bold"/>
         </font>
-        <font embed-url="config/fonts/Kurinto/KurintoText-BdIt.ttf">
+        <font kerning="yes" embed-url="config/fonts/Kurinto/KurintoText-BdIt.ttf">
           <font-triplet name="KurintoText" style="italic" weight="bold"/>
         </font>
-        <font embed-url="config/fonts/Kurinto/KurintoText-It.ttf">
+        <font kerning="yes" embed-url="config/fonts/Kurinto/KurintoText-It.ttf">
           <font-triplet name="KurintoText" style="italic" weight="normal"/>
         </font>
-        
-        <font embed-url="config/fonts/Kurinto/KurintoTextCJK-Rg.ttf">
-          <font-triplet name="KurintoTextCJK" style="normal" weight="normal"/>
-        </font>
-        <font embed-url="config/fonts/Kurinto/KurintoTextCJK-Bd.ttf">
-          <font-triplet name="KurintoTextCJK" style="normal" weight="bold"/>
-        </font>
-        <font embed-url="config/fonts/Kurinto/KurintoTextCJK-BdIt.ttf">
-          <font-triplet name="KurintoTextCJK" style="italic" weight="bold"/>
-        </font>
-        <font embed-url="config/fonts/Kurinto/KurintoTextCJK-It.ttf">
-          <font-triplet name="KurintoTextCJK" style="italic" weight="normal"/>
-        </font>
-        
-        <font kerning="yes" embed-url="config/fonts/Open_Sans/OpenSans-Regular.ttf">
-          <font-triplet name="Open_Sans" style="normal" weight="normal"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Open_Sans/OpenSans-Bold.ttf">
-          <font-triplet name="Open_Sans" style="normal" weight="bold"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Open_Sans/OpenSans-BoldItalic.ttf">
-          <font-triplet name="Open_Sans" style="italic" weight="bold"/>
-        </font>
-        <font kerning="yes" embed-url="config/fonts/Open_Sans/OpenSans-Italic.ttf">
-          <font-triplet name="Open_Sans" style="italic" weight="normal"/>
-        </font>
-
-        <!-- backup font -->
+              
+        <!-- last chance -->
         <font kerning="yes" embed-url="config/fonts/Arial/ARIALUNI.TTF">
           <font-triplet name="ArialUnicode" style="normal" weight="normal"/>
         </font>
 
       </fonts>
-
 
     </renderer>
 
