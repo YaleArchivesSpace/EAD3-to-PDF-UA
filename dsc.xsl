@@ -5,7 +5,9 @@
     xmlns:mdc="http://mdc"
     xmlns:ead3="http://ead3.archivists.org/schema/" exclude-result-prefixes="xs ead3 fox mdc"
     version="2.0">
-
+    
+    <xsl:import href="aeon-links.xsl"/>
+    
     <!-- this file is imported by "ead3-to-pdf-ua.xsl" -->
 
     <!-- to do:
@@ -26,21 +28,6 @@
     <xsl:param name="dsc-first-c-levels-to-process-before-a-table" select="('series', 'collection', 'fonds', 'recordgrp')"/>
     <xsl:param name="levels-to-force-a-page-break" select="('series', 'collection', 'fonds', 'recordgrp')"/>
     <xsl:param name="otherlevels-to-force-a-page-break-and-process-before-a-table" select="('accession', 'acquisition')"/>
-
-    <!-- new function... might move elsewhere, but adding it here for now since it's only called on containers -->
-    <xsl:function name="mdc:find-the-ultimate-parent-id" as="xs:string">
-        <!-- given that there can be multiple parent/id pairings, this occasionally recursive function will find and select the top container ID attribute, which will be used to do the groupings, rather than depenidng on entirely document order -->
-        <xsl:param name="current-container" as="node()"/>
-        <xsl:variable name="parent" select="$current-container/@parent"/>
-        <xsl:choose>
-            <xsl:when test="not ($parent)">
-                <xsl:value-of select="$current-container/@id"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:sequence select="mdc:find-the-ultimate-parent-id($current-container/preceding-sibling::ead3:container[@id eq $parent])"/>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:function>
     
     <!-- not worrying about multiple DSC sections.  ASpace can only export 1 DSC -->
     <xsl:template match="ead3:dsc">
@@ -106,11 +93,22 @@
         <!-- do a second grouping based on the container grouping's primary localtype (i.e. box, volume, reel, etc.)
             then add a custom sort, or just sort those alphabetically -->
         <xsl:variable name="container-groupings">
-            <xsl:for-each-group select="ead3:did/ead3:container" group-by="mdc:find-the-ultimate-parent-id(.)">
-                <container-group>
-                    <xsl:apply-templates select="current-group()" mode="copy"/>
-                </container-group>
-            </xsl:for-each-group>
+            <xsl:choose>
+                <xsl:when test="ead3:did[ead3:container[2]][not(ead3:container/@parent)]">
+                    <xsl:for-each-group select="ead3:did/ead3:container" group-by="lower-case(@localtype)">
+                        <container-group component-url="{../../@altrender}" component-title="{substring(../ead3:unittitle[1], 1, 26)}" preceding-box-altrenders='{distinct-values(preceding::ead3:did/ead3:container/@altrender)}' ancestor-access-restrictions='{distinct-values(tokenize(ancestor::ead3:accessrestrict/@localtype, " "))}' series='{ancestor::ead3:c[@level="series" or @otherlevel="accession"][1]/ead3:did/normalize-space(ead3:unitid)}'>
+                            <xsl:apply-templates select="current-group()" mode="copy"/>
+                        </container-group>
+                    </xsl:for-each-group>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:for-each-group select="ead3:did/ead3:container" group-by="mdc:find-the-ultimate-parent-id(.)">
+                        <container-group component-url="{../../@altrender}" component-title="{substring(../ead3:unittitle[1], 1, 26)}" preceding-box-altrenders='{distinct-values(preceding::ead3:did/ead3:container/@altrender)}' ancestor-access-restrictions='{distinct-values(tokenize(ancestor::ead3:accessrestrict/@localtype, " "))}' series='{ancestor::ead3:c[@level="series" or @otherlevel="accession"][1]/ead3:did/normalize-space(ead3:unitid)}'>
+                            <xsl:apply-templates select="current-group()" mode="copy"/>
+                        </container-group>
+                    </xsl:for-each-group> 
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:variable>
         <xsl:variable name="containers-sorted-by-localtype">
             <xsl:for-each-group select="$container-groupings/container-group" group-by="ead3:container[1]/@localtype">
@@ -118,7 +116,9 @@
                 <!-- i don't use this element for anything right now, but it could be used, if
                     additional grouping in the presentation was desired -->
                 <xsl:element name="{current-grouping-key()}">
-                    <xsl:apply-templates select="current-group()" mode="copy"/>
+                    <xsl:apply-templates select="current-group()" mode="copy">
+                        <xsl:sort select="mdc:top-container-to-number(.)"/>
+                    </xsl:apply-templates>
                 </xsl:element>
             </xsl:for-each-group>
         </xsl:variable>
@@ -200,18 +200,32 @@
         <xsl:param name="depth"/> <!-- e.g. c01 = 0, c02 = 1, etc. -->
         <xsl:param name="column-types"/>
         <xsl:variable name="cell-margin" select="concat(xs:string($depth * 8), 'pt')"/> <!-- e.g. 0, 8pt for c02, 16pt for c03, etc.-->
+        <!-- should change this so that we don't repeat the definition of this variable, but oh well -->
         <xsl:variable name="container-groupings">
-            <xsl:for-each-group select="ead3:did/ead3:container" group-by="mdc:find-the-ultimate-parent-id(.)">
-                <container-group>
-                    <xsl:apply-templates select="current-group()" mode="copy"/>
-                </container-group>
-            </xsl:for-each-group>
+            <xsl:choose>
+                <xsl:when test="ead3:did[ead3:container[2]][not(ead3:container/@parent)]">
+                    <xsl:for-each-group select="ead3:did/ead3:container" group-by="lower-case(@localtype)">
+                        <container-group component-url="{../../@altrender}" component-title="{substring(../ead3:unittitle[1], 1, 26)}" preceding-box-altrenders='{distinct-values(preceding::ead3:did/ead3:container/@altrender)}' ancestor-access-restrictions='{distinct-values(tokenize(ancestor::ead3:accessrestrict/@localtype, " "))}' series='{ancestor::ead3:c[@level="series" or @otherlevel="accession"][1]/ead3:did/normalize-space(ead3:unitid)}'>
+                            <xsl:apply-templates select="current-group()" mode="copy"/>
+                        </container-group>
+                    </xsl:for-each-group>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:for-each-group select="ead3:did/ead3:container" group-by="mdc:find-the-ultimate-parent-id(.)">
+                        <container-group component-url="{../../@altrender}" component-title="{substring(../ead3:unittitle[1], 1, 26)}" preceding-box-altrenders='{distinct-values(preceding::ead3:did/ead3:container/@altrender)}' ancestor-access-restrictions='{distinct-values(tokenize(ancestor::ead3:accessrestrict/@localtype, " "))}' series='{ancestor::ead3:c[@level="series" or @otherlevel="accession"][1]/ead3:did/normalize-space(ead3:unitid)}'>
+                            <xsl:apply-templates select="current-group()" mode="copy"/>
+                        </container-group>
+                    </xsl:for-each-group> 
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:variable>
         <xsl:variable name="containers-sorted-by-localtype">
             <xsl:for-each-group select="$container-groupings/container-group" group-by="ead3:container[1]/@localtype">
                 <xsl:sort select="current-grouping-key()" data-type="text"/>
                 <xsl:element name="{current-grouping-key()}">
-                    <xsl:apply-templates select="current-group()" mode="copy"/>
+                    <xsl:apply-templates select="current-group()" mode="copy">
+                        <xsl:sort select="mdc:top-container-to-number(.)"/>
+                    </xsl:apply-templates>
                 </xsl:element>
             </xsl:for-each-group>
         </xsl:variable>
@@ -411,44 +425,15 @@
     </xsl:template>
 
     <xsl:template match="ead3:container">
+        <!-- Remember:  we've added a "container-grouping" element as the parent
+        e.g. *:box/*container-grouping/ead3:container-->
+        
         <xsl:variable name="container-lower-case" select="lower-case(@localtype)"/>
-        <!-- removed box from here for now.  seeing if it looks less busy without it. -->
-        <xsl:variable name="use-fontawesome" as="xs:boolean">
-            <xsl:value-of select="if ($container-lower-case = ('volume', 'item_barcode')) then true() else false()"/>
-        </xsl:variable>
-        <xsl:variable name="container-abbr">
-            <xsl:value-of select="if ($container-lower-case = ('box', 'folder')) then concat(substring($container-lower-case, 1, 1), '.')
-                else if ($container-lower-case eq 'volume') then 'vol.'
-                else ''"/>
-        </xsl:variable>
-        <xsl:choose>
-            <xsl:when test="$use-fontawesome eq false()">
-                <fo:inline color="#4A4A4A">
-                    <xsl:if test="$container-abbr/normalize-space()">
-                        <xsl:attribute name="alt-text" namespace="http://xmlgraphics.apache.org/fop/extensions" select="$container-lower-case"/>
-                    </xsl:if>
-                    <xsl:value-of select="if ($container-abbr/normalize-space()) then $container-abbr else $container-lower-case"/>
-                </fo:inline>
-            </xsl:when>
-            <xsl:otherwise>
-                <fo:inline font-family="FontAwesomeSolid" color="#4A4A4A">
-                    <xsl:value-of select="if ($container-lower-case eq 'box') then '&#xf187; '
-                        else if ($container-lower-case eq 'folder') then '&#xf07b; '
-                        else if ($container-lower-case eq 'volume') then '&#xf02d; '
-                        else if ($container-lower-case eq 'item_barcode') then '&#xf02a;'
-                        else '&#xf0a0; '"/>
-                </fo:inline>
-                <fo:inline color="#4A4A4A">
-                    <xsl:if test="$container-abbr/normalize-space()">
-                        <xsl:attribute name="alt-text" namespace="http://xmlgraphics.apache.org/fop/extensions" select="$container-lower-case"/>
-                    </xsl:if>
-                    <xsl:value-of select="if ($container-lower-case eq 'item_barcode') then ''
-                        else if ($container-abbr/normalize-space()) then $container-abbr
-                        else $container-lower-case"/>
-                </fo:inline>
-            </xsl:otherwise>
-        </xsl:choose>
-        <xsl:text> </xsl:text>
+   
+        <xsl:call-template name="get-container-prefix-info">
+            <xsl:with-param name="container-lower-case" select="$container-lower-case"/>
+        </xsl:call-template>
+        
         <!-- and here's where we print out the actual container indicator... and since barcodes could extend the margin without having a space for a newline, we'll make those smaller, at 7pt. -->
         <xsl:choose>
             <xsl:when test="$container-lower-case eq 'item_barcode'">
@@ -465,6 +450,56 @@
         <xsl:if test="position() ne last()">
             <xsl:text>, </xsl:text>
         </xsl:if>
+        
     </xsl:template>
 
+    <xsl:template match="ead3:container" mode="collapse-containers">
+        <xsl:param name="first-container-in-range" select="."/>
+        <xsl:variable name="current-container" select="."/>
+        <xsl:variable name="next-container" select="following-sibling::ead3:container[1]"/>
+        
+        <xsl:choose>
+            <!-- e.g. end of the line, regardless of ranges (but still might need to output a range) -->
+            <xsl:when test="not(following-sibling::ead3:container)">
+                    <xsl:value-of select="if ($first-container-in-range eq $current-container)
+                        then $current-container
+                        else concat($first-container-in-range, '&#x2013;', $current-container)"/>
+            </xsl:when>
+            <!-- e.g. 6, 6a, 6b, 6c, 7 (could also handle a rule here to condense 6a-6c)
+      perhaps: when has a remainder plus floor of current = floor of next. -->
+            <xsl:when test="mdc:top-container-to-number($current-container) mod 1 gt 0
+                and mdc:top-container-to-number($next-container) mod 1 gt 0
+                and (floor(mdc:top-container-to-number($current-container)) eq floor(mdc:top-container-to-number($next-container)))">
+                <xsl:apply-templates select="$next-container" mode="#current">
+                    <xsl:with-param name="first-container-in-range" select="$first-container-in-range"/>
+                    <xsl:with-param name="current-container" select="$next-container"/>
+                </xsl:apply-templates>
+            </xsl:when>
+            <!-- e.g. 1, 2, 3, 4, 5, 6, 8
+        when we're at 1 -5, we just want to keep going.
+      -->
+            <xsl:when test="mdc:top-container-to-number($current-container) + 1 eq mdc:top-container-to-number($next-container)">
+                <xsl:apply-templates select="$next-container" mode="#current">
+                    <xsl:with-param name="first-container-in-range" select="$first-container-in-range"/>
+                    <xsl:with-param name="current-container" select="$next-container"/>
+                </xsl:apply-templates>
+            </xsl:when>
+            <!-- e.g. in the above example, let's say we get to 6.
+      -->
+            <xsl:when test="mdc:top-container-to-number($current-container) + 1 ne mdc:top-container-to-number($next-container)">
+                <xsl:value-of select="if ($first-container-in-range eq $current-container)
+                        then $current-container
+                        else concat($first-container-in-range, '&#x2013;', $current-container)"/>
+                <xsl:if test="following-sibling::ead3:container">
+                    <!-- should paramertize the separator, but this is fine for now -->
+                    <xsl:text>, </xsl:text>
+                    <xsl:apply-templates select="$next-container" mode="#current">
+                        <xsl:with-param name="first-container-in-range" select="$next-container"/>
+                        <xsl:with-param name="current-container" select="$next-container"/>
+                    </xsl:apply-templates>
+                </xsl:if>
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>
+    
 </xsl:stylesheet>

@@ -57,26 +57,6 @@
 
   </xsl:function>
 
-  <xsl:function name="mdc:top-container-to-number" as="xs:decimal">
-    <xsl:param name="current-container" as="node()*"/>
-    <xsl:variable name="primary-container-number" select="if (contains($current-container, '-')) then replace(substring-before($current-container, '-'), '\D', '') else replace($current-container, '\D', '')"/>
-    <xsl:variable name="primary-container-modify">
-      <xsl:choose>
-        <xsl:when test="matches($current-container, '\D')">
-          <xsl:analyze-string select="$current-container" regex="(\D)(\s?)">
-            <xsl:matching-substring>
-              <xsl:value-of select="number(string-to-codepoints(upper-case(regex-group(1))))"/>
-            </xsl:matching-substring>
-          </xsl:analyze-string>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:value-of select="00"/>
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <xsl:value-of select="xs:decimal(concat($primary-container-number, '.', $primary-container-modify))"/>
-  </xsl:function>
-
 
   <!-- Repository Parameter -->
   <xsl:param name="repository">
@@ -85,52 +65,6 @@
 
   <xsl:param name="include-cc0-rights-statement" as="xs:boolean">
     <xsl:value-of select="if ($repository = ('mssa', 'beinecke', 'divinity', 'music', 'oham', 'med', 'arts', 'vrc', 'lwl', 'ycba', 'ypl')) then true() else false()"/>
-  </xsl:param>
-
-  <!-- Repository Code.
-  make sure that these are all in ASpace, and then remove from here -->
-  <xsl:param name="repository_code">
-    <xsl:choose>
-      <!-- MSSA choice -->
-      <xsl:when test="$repository = 'mssa'">
-        <xsl:text>US-CtY</xsl:text>
-      </xsl:when>
-      <!-- BRBL choice -->
-      <xsl:when test="$repository = 'beinecke'">
-        <xsl:text>US-CtY-BR</xsl:text>
-      </xsl:when>
-      <!-- Divinity choice -->
-      <xsl:when test="$repository = 'divinity'">
-        <xsl:text>US-CtY-D</xsl:text>
-      </xsl:when>
-      <!-- Music choice -->
-      <xsl:when test="$repository = 'music'">
-        <xsl:text>US-CtY-Mus</xsl:text>
-      </xsl:when>
-      <!-- Medical choice -->
-      <xsl:when test="$repository = 'med'">
-        <xsl:text>US-CtY-M</xsl:text>
-      </xsl:when>
-      <!-- Arts choice -->
-      <xsl:when test="$repository = 'arts'">
-        <xsl:text>US-CtY-A</xsl:text>
-      </xsl:when>
-      <!-- VRC choice -->
-      <xsl:when test="$repository = 'vrc'">
-        <xsl:text>US-CtY-A</xsl:text>
-      </xsl:when>
-      <!-- YCBA choice -->
-      <xsl:when test="$repository = 'ycba'">
-        <xsl:text>US-CtY-BA</xsl:text>
-      </xsl:when>
-      <!-- Walpole choice -->
-      <xsl:when test="$repository = 'lwl'">
-        <xsl:text>US-CtY-LWL</xsl:text>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:text>US-CtY</xsl:text>
-      </xsl:otherwise>
-    </xsl:choose>
   </xsl:param>
 
   <xsl:template match="/">
@@ -313,101 +247,10 @@
     <xsl:attribute name="parent" select="if ($component-id)  then concat($component-id, '_c', $parent-position) else generate-id(../preceding-sibling::ead3:container[1][@id])"/>
   </xsl:template>
 
-  <!-- let's make top-container ranges, if the component has nothing but top containers -->
-  <xsl:template match="ead3:did[ead3:container[2]][not(ead3:container/@parent)]">
-    <xsl:copy>
-      <xsl:apply-templates select="@*|node() except ead3:container"/>
-      <xsl:variable name="containers-sorted-by-localtype">
-        <xsl:for-each-group
-          select="ead3:container"
-          group-by="if (@localtype eq '') then 'box' else lower-case(@localtype)">
-          <xsl:sort select="current-grouping-key()" data-type="text"/>
-          <xsl:element name="{current-grouping-key()}">
-            <xsl:apply-templates select="current-group()">
-              <xsl:sort select="mdc:top-container-to-number(.)"/>
-            </xsl:apply-templates>
-          </xsl:element>
-        </xsl:for-each-group>
-      </xsl:variable>
-      <!--
-      our variable will be structured like so:
-        box
-          container 1
-          container 2
-        carton
-          container 1
-          container 3
-        @localtype
-          container N
-          etc.
-        -->
-      <xsl:apply-templates select="$containers-sorted-by-localtype/*" mode="container-fun"/>
-    </xsl:copy>
-  </xsl:template>
-
-  <xsl:template match="*" mode="container-fun">
-    <!--now we've got one more container children, which need to be condensed into ranges -->
-      <xsl:apply-templates select="ead3:container[1]" mode="container-fun"/>
-  </xsl:template>
-
-  <!--
-           but really should be (can handle that in the PDF tranformation bit):
-           1-2, 2a-2c, 4-8, 9-11
-           1
-  -->
-  <xsl:template match="ead3:container" mode="container-fun">
-    <xsl:param name="first-container-in-range" select="."/>
-    <xsl:variable name="current-container" select="."/>
-    <xsl:variable name="next-container" select="following-sibling::ead3:container[1]"/>
-    <xsl:choose>
-      <!-- e.g. end of the line, regardless of ranges (but still might need to output a range) -->
-      <xsl:when test="not(following-sibling::ead3:container)">
-        <xsl:copy>
-          <xsl:apply-templates select="@localtype"/>
-          <xsl:attribute name="id" select="generate-id()"/>
-          <xsl:value-of select="if ($first-container-in-range eq $current-container)
-            then $current-container
-            else concat($first-container-in-range, '&#x2013;', $current-container)"/>
-        </xsl:copy>
-      </xsl:when>
-      <!-- e.g. 6, 6a, 6b, 6c, 7 (could also handle a rule here to condense 6a-6c)
-      perhaps: when has a remainder plus floor of current = floor of next. -->
-      <xsl:when test="mdc:top-container-to-number($current-container) mod 1 gt 0
-        and mdc:top-container-to-number($next-container) mod 1 gt 0
-        and (floor(mdc:top-container-to-number($current-container)) eq floor(mdc:top-container-to-number($next-container)))">
-        <xsl:apply-templates select="$next-container" mode="#current">
-          <xsl:with-param name="first-container-in-range" select="$first-container-in-range"/>
-          <xsl:with-param name="current-container" select="$next-container"/>
-        </xsl:apply-templates>
-      </xsl:when>
-      <!-- e.g. 1, 2, 3, 4, 5, 6, 8
-        when we're at 1 -5, we just want to keep going.
-      -->
-      <xsl:when test="mdc:top-container-to-number($current-container) + 1 eq mdc:top-container-to-number($next-container)">
-            <xsl:apply-templates select="$next-container" mode="#current">
-              <xsl:with-param name="first-container-in-range" select="$first-container-in-range"/>
-              <xsl:with-param name="current-container" select="$next-container"/>
-            </xsl:apply-templates>
-      </xsl:when>
-      <!-- e.g. in the above example, let's say we get to 6.
-      -->
-      <xsl:when test="mdc:top-container-to-number($current-container) + 1 ne mdc:top-container-to-number($next-container)">
-        <xsl:copy>
-          <xsl:apply-templates select="@localtype"/>
-          <xsl:attribute name="id" select="generate-id()"/>
-          <xsl:value-of select="if ($first-container-in-range eq $current-container)
-            then $current-container
-            else concat($first-container-in-range, '&#x2013;', $current-container)"/>
-        </xsl:copy>
-        <xsl:if test="following-sibling::ead3:container">
-          <xsl:apply-templates select="$next-container" mode="#current">
-            <xsl:with-param name="first-container-in-range" select="$next-container"/>
-            <xsl:with-param name="current-container" select="$next-container"/>
-          </xsl:apply-templates>
-        </xsl:if>
-      </xsl:when>
-    </xsl:choose>
-  </xsl:template>
+  <!-- removed container ranges bit.
+    keep as is.  in the xsl-fo part, we can create 
+    the condense range, as needed for display
+    -->
 
 
   <!--aspace exports empty type/localtype attributes on containers that don't have a container type.

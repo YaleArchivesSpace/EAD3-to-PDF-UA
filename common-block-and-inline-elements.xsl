@@ -792,7 +792,7 @@
   <!-- highlight unpublished notes 
   this doesn't work right now for lists, since it'll just output a red border 
   around a blob of text, but i can change that later. -->
-  <xsl:template match="ead3:*[@audience='internal'][$suppressInternalComponentsInPDF eq false()]" mode="collection-overview dsc">
+  <xsl:template match="ead3:*[@audience='internal'][$suppressInternalComponentsInPDF eq false()][not($office-of-origin-request)]" mode="collection-overview dsc">
     <fo:block xsl:use-attribute-sets="unpublished">
       <xsl:apply-templates mode="#current"/>
     </fo:block>
