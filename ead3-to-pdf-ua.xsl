@@ -114,6 +114,9 @@
     <xsl:param name="logo-location" select="''" as="xs:string"/>
     
     <xsl:param name="bulk-date-prefix-text" select="'bulk '" as="xs:string"/>
+    
+    <!-- Yale-specific param.  Used with Aeon links, and also to ensure that unpublished components, if kept, don't get highlighted in red -->
+    <xsl:param name="office-of-origin-request" select="false()" as="xs:boolean"/>
 
     <!-- document-based variables -->
     <xsl:variable name="unpublished-draft" select="if ($suppressInternalComponentsInPDF eq false() and (ead3:ead/@audience='internal' or ead3:ead/ead3:archdesc/@audience='internal')) then true() else false()"/>
@@ -132,6 +135,7 @@
     <xsl:variable name="handle-link" select="if ($finding-aid-identifier/@instanceurl/normalize-space()) then $finding-aid-identifier/@instanceurl/normalize-space()
         else concat('http://hdl.handle.net/10079/fa/', normalize-space($finding-aid-identifier))"/>
     <xsl:variable name="holding-repository" select="ead3:ead/ead3:archdesc/ead3:did/ead3:repository[1]"/>
+    <xsl:variable name="resource-url" select="ead3:ead/ead3:archdesc/@altrender"/>
     <!-- do i need a variable for the repository code, or can we trust that the repository names won't be edited in ASpace?
     probably shouldn't trust that... so....-->
     <xsl:variable name="repository-code" select="ead3:ead/ead3:control/ead3:recordid[1]/substring-before(., '.')"/>

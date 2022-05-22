@@ -208,5 +208,17 @@
         <xsl:attribute name="border-style">solid</xsl:attribute>
         <xsl:attribute name="border-color">red</xsl:attribute>
     </xsl:attribute-set>
+    
+    <xsl:attribute-set name="request.block">
+        <xsl:attribute name="border-width">1pt</xsl:attribute>
+        <xsl:attribute name="border-style">solid</xsl:attribute>
+        <xsl:attribute name="border-color">#D3D3D3</xsl:attribute>
+        <xsl:attribute name="fox:border-radius">4pt 8pt</xsl:attribute>
+        <xsl:attribute name="padding">4pt</xsl:attribute>
+        <xsl:attribute name="text-align">center</xsl:attribute>
+        <xsl:attribute name="margin-bottom">10pt</xsl:attribute>
+        <xsl:attribute name="margin-top">10pt</xsl:attribute>
+        <xsl:attribute name="font-size">7pt</xsl:attribute>
+    </xsl:attribute-set>
 
 </xsl:stylesheet>
