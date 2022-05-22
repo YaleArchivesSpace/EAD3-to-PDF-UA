@@ -8,6 +8,8 @@
     
     <!-- depends on yale.aspace_v2_to_yale_ead3.xsl, right now at least, for $repository variable -->
     
+    <xsl:param name="query-voyager" select="false()" as="xs:boolean"/>
+    
     <xsl:variable name="bib" select="ead:ead/ead:control/ead:otherrecordid[matches(@localtype, 'bib', 'i')]/normalize-space()"/>
     
     <xsl:variable name="uri" select="'https://libapp.library.yale.edu/VoySearch/GetBibItem?bibid=' || $bib"/>
@@ -15,15 +17,17 @@
     <xsl:variable name="bib-xml">
             <!-- this second function is needed for some of the invalid  JSON provided by the Voyager API.
                 let's see if we can't fix that at the source... barring that, find out what other null values might be supplied that result in invalid JSON -->
-        <xsl:try>
-            <xsl:copy-of select="unparsed-text($uri) => replace('(,\n){1,9}', ',') => json-to-xml()"/>
-            <xsl:catch errors="*">
-                <xsl:message>
-                    JSON response failed for <xsl:value-of select="$uri"/>.
-                    Error: <xsl:value-of select="$err:description"/>
-                </xsl:message>
-            </xsl:catch>
-        </xsl:try>
+        <xsl:if test="$query-voyager">
+            <xsl:try>
+                <xsl:copy-of select="unparsed-text($uri) => replace('(,\n){1,9}', ',') => json-to-xml()"/>
+                <xsl:catch errors="*">
+                    <xsl:message>
+                        JSON response failed for <xsl:value-of select="$uri"/>.
+                        Error: <xsl:value-of select="$err:description"/>
+                    </xsl:message>
+                </xsl:catch>
+            </xsl:try>
+        </xsl:if>
     </xsl:variable>
     
     <xsl:param name="valid-top-container-types" select="('box', 'folder', 'item', 'volume', 'reel', 'file')"/>
