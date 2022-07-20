@@ -173,7 +173,7 @@
   <xsl:template match="ead3:unittitle[../ead3:dao[not(@show='embed')]]" mode="#all">
     <xsl:choose>
       <xsl:when test="deep-equal(mdc:extract-text-no-spaces(.), ../ead3:dao[1]/ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]))">
-        <fo:basic-link external-destination="url('{../ead3:dao[1]/@href}')" xsl:use-attribute-sets="ref">
+        <fo:basic-link external-destination="url('{../ead3:dao[not(@show='embed')][1]/@href}')" xsl:use-attribute-sets="ref">
           <xsl:apply-templates select="../ead3:dao[1]/ead3:descriptivenote/ead3:p" mode="dao"/>
         </fo:basic-link>
       </xsl:when>
@@ -185,7 +185,7 @@
   <xsl:template match="ead3:unittitle[../ead3:daoset/ead3:dao[not(@show='embed')]]" mode="#all" priority="2">
     <xsl:choose>
       <xsl:when test="deep-equal(mdc:extract-text-no-spaces(.), ../ead3:daoset[1]/ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]))">
-        <fo:basic-link external-destination="url('{../ead3:daoset[1]/ead3:dao[1]/@href}')" xsl:use-attribute-sets="ref">
+        <fo:basic-link external-destination="url('{../ead3:daoset[1]/ead3:dao[not(@show='embed')][1]/@href}')" xsl:use-attribute-sets="ref">
           <xsl:apply-templates select="../ead3:daoset[1]/ead3:descriptivenote/ead3:p" mode="dao"/>
         </fo:basic-link>
       </xsl:when>
@@ -792,7 +792,7 @@
   <!-- highlight unpublished notes 
   this doesn't work right now for lists, since it'll just output a red border 
   around a blob of text, but i can change that later. -->
-  <xsl:template match="ead3:*[@audience='internal'][$suppressInternalComponentsInPDF eq false()]" mode="collection-overview dsc">
+  <xsl:template match="ead3:*[@audience='internal'][$suppressInternalComponentsInPDF eq false()][not($office-of-origin-request)]" mode="collection-overview dsc">
     <fo:block xsl:use-attribute-sets="unpublished">
       <xsl:apply-templates mode="#current"/>
     </fo:block>

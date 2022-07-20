@@ -21,6 +21,41 @@
     </xsl:function>
     
     
+    <xsl:function name="mdc:find-the-ultimate-parent-id" as="xs:string">
+        <!-- given that there can be multiple parent/id pairings, this occasionally recursive function will find and select the top container ID attribute, which will be used to do the groupings, rather than depending on entirely document order -->
+        <xsl:param name="current-container" as="node()"/>
+        <xsl:variable name="parent" select="$current-container/@parent"/>
+        <xsl:choose>
+            <xsl:when test="not ($parent)">
+                <xsl:value-of select="$current-container/@id"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="mdc:find-the-ultimate-parent-id($current-container/preceding-sibling::ead3:container[@id eq $parent])"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+    
+    <xsl:function name="mdc:top-container-to-number" as="xs:decimal">
+        <xsl:param name="current-container" as="node()*"/>
+        <xsl:variable name="primary-container-number" select="if (contains($current-container, '-')) then replace(substring-before($current-container, '-'), '\D', '') else replace($current-container, '\D', '')"/>
+        <xsl:variable name="primary-container-modify">
+            <xsl:choose>
+                <xsl:when test="matches($current-container, '\D')">
+                    <xsl:analyze-string select="$current-container" regex="(\D)(\s?)">
+                        <xsl:matching-substring>
+                            <xsl:value-of select="number(string-to-codepoints(upper-case(regex-group(1))))"/>
+                        </xsl:matching-substring>
+                    </xsl:analyze-string>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="00"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:value-of select="xs:decimal(concat($primary-container-number, '.', $primary-container-modify))"/>
+    </xsl:function>
+    
+    
     <!-- header and footer templates (start)-->
     <xsl:template name="header-right">
         <fo:block text-align="right" font-size="9pt">
@@ -395,21 +430,84 @@
     
     <xsl:template name="container-layout">
         <xsl:param name="containers-sorted-by-localtype"/>
+        <fo:block>
+            <xsl:apply-templates select="$containers-sorted-by-localtype/*/container-group"/>
+        </fo:block> 
+    </xsl:template>
+    
+    <xsl:template match="container-group">
         <xsl:choose>
-            <!-- the middle step, i.e. *, in these cases is the localtype (e.g. box, volume, etc.) -->
-            <xsl:when test="count($containers-sorted-by-localtype/*/container-group) gt 1">
-                <xsl:for-each select="$containers-sorted-by-localtype/*/container-group">
-                    <fo:block xsl:use-attribute-sets="container-grouping">
-                        <xsl:apply-templates/>
-                    </fo:block> 
-                </xsl:for-each>                
+            <!-- when more than one container per group, let's collapse the range for the display -->
+            <xsl:when test="not(ead3:container/@parent) and ead3:container[2]">
+                <xsl:for-each select="ead3:container[1]">
+                    <xsl:call-template name="get-container-prefix-info">
+                        <xsl:with-param name="container-lower-case" select="lower-case(@localtype)"/>
+                    </xsl:call-template>
+                </xsl:for-each>
+                <xsl:apply-templates select="ead3:container[1]" mode="collapse-containers"/>
             </xsl:when>
             <xsl:otherwise>
-                <fo:block>
-                    <xsl:apply-templates select="$containers-sorted-by-localtype/*/container-group"/>
-                </fo:block> 
+                <xsl:apply-templates/>
             </xsl:otherwise>
         </xsl:choose>
+        
+        <!-- new request box link feature -->        
+        <xsl:choose>
+            <xsl:when test="$request-link-for-distinct-type eq 'component' and $include-Aeon-link eq true()">
+                <xsl:for-each select="ead3:container[not(@parent)]">
+                    <xsl:call-template name="add-aeon-link"/>
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:when test="$include-Aeon-link eq true()">
+                <xsl:for-each select="ead3:container[not(@parent)][not(contains(../@preceding-box-altrenders, @altrender))]">
+                    <xsl:call-template name="add-aeon-link"/>
+                </xsl:for-each>
+            </xsl:when>
+        </xsl:choose>
+        
+    </xsl:template>
+    
+    <xsl:template name="get-container-prefix-info">
+        <xsl:param name="container-lower-case"/>
+        
+        <!-- removed box from here for now.  seeing if it looks less busy without it. -->
+        <xsl:variable name="use-fontawesome" as="xs:boolean">
+            <xsl:value-of select="if ($container-lower-case = ('volume', 'item_barcode')) then true() else false()"/>
+        </xsl:variable>
+        <xsl:variable name="container-abbr">
+            <xsl:value-of select="if ($container-lower-case = ('box', 'folder')) then concat(substring($container-lower-case, 1, 1), '.')
+                else if ($container-lower-case eq 'volume') then 'vol.'
+                else ''"/>
+        </xsl:variable>
+        
+        <xsl:choose>
+            <xsl:when test="$use-fontawesome eq false()">
+                <fo:inline color="#4A4A4A">
+                    <xsl:if test="$container-abbr/normalize-space()">
+                        <xsl:attribute name="alt-text" namespace="http://xmlgraphics.apache.org/fop/extensions" select="$container-lower-case"/>
+                    </xsl:if>
+                    <xsl:value-of select="if ($container-abbr/normalize-space()) then $container-abbr else $container-lower-case"/>
+                </fo:inline>
+            </xsl:when>
+            <xsl:otherwise>
+                <fo:inline font-family="FontAwesomeSolid" color="#4A4A4A">
+                    <xsl:value-of select="if ($container-lower-case eq 'box') then '&#xf187; '
+                        else if ($container-lower-case eq 'folder') then '&#xf07b; '
+                        else if ($container-lower-case eq 'volume') then '&#xf02d; '
+                        else if ($container-lower-case eq 'item_barcode') then '&#xf02a;'
+                        else '&#xf0a0; '"/>
+                </fo:inline>
+                <fo:inline color="#4A4A4A">
+                    <xsl:if test="$container-abbr/normalize-space()">
+                        <xsl:attribute name="alt-text" namespace="http://xmlgraphics.apache.org/fop/extensions" select="$container-lower-case"/>
+                    </xsl:if>
+                    <xsl:value-of select="if ($container-lower-case eq 'item_barcode') then ''
+                        else if ($container-abbr/normalize-space()) then $container-abbr
+                        else $container-lower-case"/>
+                </fo:inline>
+            </xsl:otherwise>
+        </xsl:choose>
+        <xsl:text> </xsl:text>   
     </xsl:template>
     
     

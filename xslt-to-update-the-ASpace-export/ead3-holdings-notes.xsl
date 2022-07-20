@@ -8,6 +8,8 @@
     
     <!-- depends on yale.aspace_v2_to_yale_ead3.xsl, right now at least, for $repository variable -->
     
+    <xsl:param name="query-voyager" select="false()" as="xs:boolean"/>
+    
     <xsl:variable name="bib" select="ead:ead/ead:control/ead:otherrecordid[matches(@localtype, 'bib', 'i')]/normalize-space()"/>
     
     <xsl:variable name="uri" select="'https://libapp.library.yale.edu/VoySearch/GetBibItem?bibid=' || $bib"/>
@@ -15,15 +17,17 @@
     <xsl:variable name="bib-xml">
             <!-- this second function is needed for some of the invalid  JSON provided by the Voyager API.
                 let's see if we can't fix that at the source... barring that, find out what other null values might be supplied that result in invalid JSON -->
-        <xsl:try>
-            <xsl:copy-of select="unparsed-text($uri) => replace('(,\n){1,9}', ',') => json-to-xml()"/>
-            <xsl:catch errors="*">
-                <xsl:message>
-                    JSON response failed for <xsl:value-of select="$uri"/>.
-                    Error: <xsl:value-of select="$err:description"/>
-                </xsl:message>
-            </xsl:catch>
-        </xsl:try>
+        <xsl:if test="$query-voyager">
+            <xsl:try>
+                <xsl:copy-of select="unparsed-text($uri) => replace('(,\n){1,9}', ',') => json-to-xml()"/>
+                <xsl:catch errors="*">
+                    <xsl:message>
+                        JSON response failed for <xsl:value-of select="$uri"/>.
+                        Error: <xsl:value-of select="$err:description"/>
+                    </xsl:message>
+                </xsl:catch>
+            </xsl:try>
+        </xsl:if>
     </xsl:variable>
     
     <xsl:param name="valid-top-container-types" select="('box', 'folder', 'item', 'volume', 'reel', 'file')"/>
@@ -139,7 +143,7 @@
     </xsl:variable>
     
     <xsl:variable name="all-digital-instances">
-        <xsl:copy-of select="//ead:did/ead:daoset | //ead:did/ead:dao"/>
+        <xsl:copy-of select="//ead:did/ead:daoset[not(@audience='internal')] | //ead:did/ead:dao[not(@audience='internal')]"/>
     </xsl:variable>
     
     <xsl:template name="container-summary">
@@ -229,8 +233,7 @@
     <xsl:template name="create-digital-note">
         <xsl:param name="all-digital-instances"/>
         <xsl:variable name="digital-object-count" select="count($all-digital-instances/*)"/>
-        <!-- restrict to Beiencke for now, since these are the only File URIs that have captions with file totals.... so far -->
-        <xsl:variable name="digital-files-count" select="if ($repository eq 'beinecke') then sum($all-digital-instances/*/*[@linktitle][@show eq 'embed']/xs:integer(substring-before(@linktitle, ' '))) else null"/>
+        <xsl:variable name="digital-files-count" select="sum($all-digital-instances/*/*[@role eq 'text-json'][@linktitle][@show eq 'embed']/xs:integer(substring-before(@linktitle, ' ')))"/>
         <xsl:variable name="object-text" select="if ($digital-object-count eq 1) then 'digital object.' else 'digital objects.'"/>
         <xsl:variable name="object-file-text" select="if ($digital-object-count eq 1) then 'that object' else 'those objects'"/>
         <xsl:if test="$digital-object-count">
