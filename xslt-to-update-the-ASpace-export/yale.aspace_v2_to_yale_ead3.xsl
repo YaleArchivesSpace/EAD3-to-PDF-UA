@@ -527,7 +527,7 @@ So, all that we need to do here
   </xsl:template>
 
   <!-- for now, we're going to remove any thumbnail only style links.  adding a priority here, in case the embedded link is from preservica or kaltura.
-    REMOVING this, since we're now going to inlcoude daoset in the output.
+    REMOVING this, since we're now going to include daoset in the output.
     UPDATE... and add daoset here somewhere, since we could group on dao/@altrender now.
   <xsl:template match="ead3:dao[@show='embed']" priority="2"/>
   -->
@@ -537,6 +537,9 @@ So, all that we need to do here
   <xsl:template match="ead3:dao[contains(@href, 'preservica')]"/>
   <xsl:template match="ead3:dao[contains(@href, 'kaltura')]"/>
   -->
+  
+  <!-- new hack to combat the possibility of a published digital object, with mutiple unpublished file URI subrecords in ASpace -->
+  <xsl:template match="ead3:daoset[every $d in ead3:dao satisfies $d/@audience eq 'internal']"/>
 
   <!-- we want ead3:c elements in the final product, so if enumerated elements are exported by mistake,
     we'll change those here -->
