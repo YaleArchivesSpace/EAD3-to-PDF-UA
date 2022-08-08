@@ -96,14 +96,14 @@
             <xsl:choose>
                 <xsl:when test="ead3:did[ead3:container[2]][not(ead3:container/@parent)]">
                     <xsl:for-each-group select="ead3:did/ead3:container" group-by="lower-case(@localtype)">
-                        <container-group component-url="{../../@altrender}" component-title="{substring(ancestor::ead3:did[ead3:unittitle][1]/ead3:unittitle[1], 1, 26)}" preceding-box-altrenders='{distinct-values(preceding::ead3:did/ead3:container/@altrender)}' ancestor-access-restrictions='{distinct-values(tokenize(ancestor::ead3:accessrestrict/@localtype, " "))}' series='{ancestor::ead3:c[@level="series" or @otherlevel="accession"][1]/ead3:did/normalize-space(ead3:unitid)}'>
+                        <container-group component-url="{../../@altrender}" component-title="{substring(ancestor::ead3:c[ead3:did/ead3:unittitle][1]/ead3:did/ead3:unittitle[1], 1, 26)}" preceding-box-altrenders='{distinct-values(preceding::ead3:did/ead3:container/@altrender)}' ancestor-access-restrictions='{distinct-values(tokenize(ancestor::ead3:accessrestrict/@localtype, " "))}' series='{ancestor::ead3:c[@level="series" or @otherlevel="accession"][1]/ead3:did/normalize-space(ead3:unitid)}'>
                             <xsl:apply-templates select="current-group()" mode="copy"/>
                         </container-group>
                     </xsl:for-each-group>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:for-each-group select="ead3:did/ead3:container" group-by="mdc:find-the-ultimate-parent-id(.)">
-                        <container-group component-url="{../../@altrender}" component-title="{substring(ancestor::ead3:did[ead3:unittitle][1]/ead3:unittitle[1], 1, 26)}" preceding-box-altrenders='{distinct-values(preceding::ead3:did/ead3:container/@altrender)}' ancestor-access-restrictions='{distinct-values(tokenize(ancestor::ead3:accessrestrict/@localtype, " "))}' series='{ancestor::ead3:c[@level="series" or @otherlevel="accession"][1]/ead3:did/normalize-space(ead3:unitid)}'>
+                        <container-group component-url="{../../@altrender}" component-title="{substring(ancestor::ead3:c[ead3:did/ead3:unittitle][1]/ead3:did/ead3:unittitle[1], 1, 26)}" preceding-box-altrenders='{distinct-values(preceding::ead3:did/ead3:container/@altrender)}' ancestor-access-restrictions='{distinct-values(tokenize(ancestor::ead3:accessrestrict/@localtype, " "))}' series='{ancestor::ead3:c[@level="series" or @otherlevel="accession"][1]/ead3:did/normalize-space(ead3:unitid)}'>
                             <xsl:apply-templates select="current-group()" mode="copy"/>
                         </container-group>
                     </xsl:for-each-group> 
@@ -205,14 +205,14 @@
             <xsl:choose>
                 <xsl:when test="ead3:did[ead3:container[2]][not(ead3:container/@parent)]">
                     <xsl:for-each-group select="ead3:did/ead3:container" group-by="lower-case(@localtype)">
-                        <container-group component-url="{../../@altrender}" component-title="{substring(ancestor::ead3:did[ead3:unittitle][1]/ead3:unittitle[1], 1, 26)}" preceding-box-altrenders='{distinct-values(preceding::ead3:did/ead3:container/@altrender)}' ancestor-access-restrictions='{distinct-values(tokenize(ancestor::ead3:accessrestrict/@localtype, " "))}' series='{ancestor::ead3:c[@level="series" or @otherlevel="accession"][1]/ead3:did/normalize-space(ead3:unitid)}'>
+                        <container-group component-url="{../../@altrender}" component-title="{substring(ancestor::ead3:c[ead3:did/ead3:unittitle][1]/ead3:did/ead3:unittitle[1], 1, 26)}" preceding-box-altrenders='{distinct-values(preceding::ead3:did/ead3:container/@altrender)}' ancestor-access-restrictions='{distinct-values(tokenize(ancestor::ead3:accessrestrict/@localtype, " "))}' series='{ancestor::ead3:c[@level="series" or @otherlevel="accession"][1]/ead3:did/normalize-space(ead3:unitid)}'>
                             <xsl:apply-templates select="current-group()" mode="copy"/>
                         </container-group>
                     </xsl:for-each-group>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:for-each-group select="ead3:did/ead3:container" group-by="mdc:find-the-ultimate-parent-id(.)">
-                        <container-group component-url="{../../@altrender}" component-title="{substring(ancestor::ead3:did[ead3:unittitle][1]/ead3:unittitle[1], 1, 26)}" preceding-box-altrenders='{distinct-values(preceding::ead3:did/ead3:container/@altrender)}' ancestor-access-restrictions='{distinct-values(tokenize(ancestor::ead3:accessrestrict/@localtype, " "))}' series='{ancestor::ead3:c[@level="series" or @otherlevel="accession"][1]/ead3:did/normalize-space(ead3:unitid)}'>
+                        <container-group component-url="{../../@altrender}" component-title="{substring(ancestor::ead3:c[ead3:did/ead3:unittitle][1]/ead3:did/ead3:unittitle[1], 1, 26)}" preceding-box-altrenders='{distinct-values(preceding::ead3:did/ead3:container/@altrender)}' ancestor-access-restrictions='{distinct-values(tokenize(ancestor::ead3:accessrestrict/@localtype, " "))}' series='{ancestor::ead3:c[@level="series" or @otherlevel="accession"][1]/ead3:did/normalize-space(ead3:unitid)}'>
                             <xsl:apply-templates select="current-group()" mode="copy"/>
                         </container-group>
                     </xsl:for-each-group> 
