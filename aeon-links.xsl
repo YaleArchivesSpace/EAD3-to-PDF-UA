@@ -63,16 +63,16 @@
     <xsl:variable name="aeon-base-URL">
         <xsl:choose>
             <xsl:when test="$repository-code eq 'beinecke' and $production-or-test-Aeon eq 'test'">
-                <xsl:value-of select="'https://aeon-test-brbl.library.yale.edu/aeon.dll?Action=10&amp;Form=20'"/>
+                <xsl:value-of select="'https://aeon-test.library.yale.edu/aeon.dll?Action=10&amp;Form=20'"/>
             </xsl:when>
             <xsl:when test="$repository-code eq 'beinecke' and $production-or-test-Aeon eq 'prod'">
-                <xsl:value-of select="'https://aeon-brbl.library.yale.edu/aeon.dll?Action=10&amp;Form=20'"/>
+                <xsl:value-of select="'https://aeon.library.yale.edu/aeon.dll?Action=10&amp;Form=20'"/>
             </xsl:when>
             <xsl:when test="not($repository-code eq 'beinecke') and $production-or-test-Aeon eq 'test'">
-                <xsl:value-of select="'https://aeon-test-mssa.library.yale.edu/aeon.dll?Action=10&amp;Form=20'"/>
+                <xsl:value-of select="'https://aeon-test.library.yale.edu/aeon.dll?Action=10&amp;Form=20'"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="'https://aeon-mssa.library.yale.edu/aeon.dll?Action=10&amp;Form=20'"/>
+                <xsl:value-of select="'https://aeon.library.yale.edu/aeon.dll?Action=10&amp;Form=20'"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
