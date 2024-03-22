@@ -187,7 +187,7 @@
 
         <!-- test and see if i need to use encode-for-uri -->
             <fo:block xsl:use-attribute-sets="request.block">
-                <fo:basic-link external-destination="url({$link})" xsl:use-attribute-sets="ref">
+                <fo:basic-link external-destination="{$link}" xsl:use-attribute-sets="ref">
                     <xsl:value-of select="if ($request-link-for-distinct-type eq 'component' and following::ead3:container[@parent][1])
                         then string-join(($request-link-text, upper-case(following::ead3:container[@parent][1]/@localtype), following::ead3:container[@parent][1]), ' ')
                         else string-join(($request-link-text, upper-case(@localtype), .), ' ')"/>  
