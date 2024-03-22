@@ -27,7 +27,7 @@
                     <xsl:text>ART</xsl:text>
                 </xsl:when>
                 <xsl:when test="$repository-code = 'beinecke'">
-                    <xsl:text>BEI</xsl:text>
+                    <xsl:text>BRBL</xsl:text>
                 </xsl:when>
                 <xsl:when test="$repository-code = 'divinity'">
                     <xsl:text>DIV</xsl:text>
@@ -55,7 +55,7 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <xsl:value-of select="'&amp;site=' || $repo-to-site-code"/>
+        <xsl:value-of select="'&amp;Site=' || $repo-to-site-code"/>
     </xsl:variable>
    
     <xsl:variable name="aspace-base-URL" select="if ($production-or-test-Aeon eq 'test') then 'https://testarchivesspace.library.yale.edu/api/' else 'https://archivesspace.library.yale.edu/api/'"/>
@@ -63,16 +63,16 @@
     <xsl:variable name="aeon-base-URL">
         <xsl:choose>
             <xsl:when test="$repository-code eq 'beinecke' and $production-or-test-Aeon eq 'test'">
-                <xsl:value-of select="'https://aeon-test-brbl.library.yale.edu/aeon.dll?Action=10&amp;Form=20'"/>
+                <xsl:value-of select="'https://aeon-test.library.yale.edu/aeon.dll?Action=10&amp;Form=20'"/>
             </xsl:when>
             <xsl:when test="$repository-code eq 'beinecke' and $production-or-test-Aeon eq 'prod'">
-                <xsl:value-of select="'https://aeon-brbl.library.yale.edu/aeon.dll?Action=10&amp;Form=20'"/>
+                <xsl:value-of select="'https://aeon.library.yale.edu/aeon.dll?Action=10&amp;Form=20'"/>
             </xsl:when>
             <xsl:when test="not($repository-code eq 'beinecke') and $production-or-test-Aeon eq 'test'">
-                <xsl:value-of select="'https://aeon-test-mssa.library.yale.edu/aeon.dll?Action=10&amp;Form=20'"/>
+                <xsl:value-of select="'https://aeon-test.library.yale.edu/aeon.dll?Action=10&amp;Form=20'"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="'https://aeon-mssa.library.yale.edu/aeon.dll?Action=10&amp;Form=20'"/>
+                <xsl:value-of select="'https://aeon.library.yale.edu/aeon.dll?Action=10&amp;Form=20'"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
@@ -96,7 +96,7 @@
     <xsl:variable name="aeon-value">
         <xsl:choose>
             <xsl:when test="$repository-code eq 'beinecke'">
-                <xsl:value-of select="'&amp;Value=GenericRequestORBIS'"/>
+                <xsl:value-of select="'&amp;Value=GenericRequestManuscript'"/>
             </xsl:when>
             <xsl:when test="$office-of-origin-request">
                 <xsl:value-of select="'&amp;Value=GenericRequestOrigin'"/>
@@ -112,9 +112,9 @@
     
     <xsl:variable name="aeon-collection-title" select="'&amp;ItemTitle=' || $collection-title"/>
     
-    <xsl:variable name="aeon-collection-item-info-12" select="'&amp;ItemInfo12=' || $collection-title"/>
+    <xsl:variable name="aeon-collection-title-custom-field" select="'&amp;CollectionTitle=' || $collection-title"/>
     
-    <xsl:variable name="aeon-ead-id" select="'&amp;ItemInfo14=' || $finding-aid-identifier"/>
+    <xsl:variable name="aeon-ead-id" select="'&amp;RootRecordURI=' || $finding-aid-identifier"/>
     
     <xsl:variable name="aeon-citation" select="'&amp;ItemCitation=' || /ead3:ead/ead3:archdesc/ead3:prefercite/normalize-space(ead3:p[1])"/>
 
@@ -145,13 +145,13 @@
               
         <xsl:variable name="aeon-item-volume"  select="'&amp;ItemVolume=' || concat(upper-case(substring(@localtype,1,1)), substring(@localtype,2)) || ' ' || normalize-space(.)"/>
         
-        <xsl:variable name="aeon-restricted" select="'&amp;ItemInfo1=' || (if (../@ancestor-access-restrictions) then 'Y' else 'N')"/>
+        <xsl:variable name="aeon-restricted" select="'&amp;TopContainerRestriction=' || (if (../@ancestor-access-restrictions) then 'Y' else 'N')"/>
         
         <xsl:variable name="aeon-reference-number" select="if (@containerid) then '&amp;ReferenceNumber=' || @containerid else ''"/>
         
         <xsl:variable name="aeon-sub-location" select="if (@encodinganalog) then '&amp;SubLocation=' || @encodinganalog else ''"/>
         
-        <xsl:variable name="aeon-location-uri" select="if (normalize-space($location-url)) then '&amp;ItemInfo11=' || $location-url else ''"/>
+        <xsl:variable name="aeon-location-uri" select="if (normalize-space($location-url)) then '&amp;LocationURI=' || $location-url else ''"/>
         
         <xsl:variable name="aeon-location">
             <xsl:if test="normalize-space($location-url)">
@@ -159,13 +159,13 @@
             </xsl:if>
         </xsl:variable>
         
-        <xsl:variable name="aeon-access-restriction-types" select="if (normalize-space(../@ancestor-access-restrictions)) then ('&amp;ItemInfo8=' || string-join(../@ancestor-access-restrictions, ';')) else ''"/>
+        <xsl:variable name="aeon-access-restriction-types" select="if (normalize-space(../@ancestor-access-restrictions)) then ('&amp;RestrictionCode=' || string-join(../@ancestor-access-restrictions, ';')) else ''"/>
         
-        <xsl:variable name="aeon-series-id" select="if (normalize-space(../@series)) then ('&amp;ItemIssue=' || ../@series) else ''"/>
+        <xsl:variable name="aeon-series-id" select="if (normalize-space(../@series)) then ('&amp;ItemSeries=' || ../@series) else ''"/>
         
         <xsl:variable name="aeon-folder" select="if ($request-link-for-distinct-type eq 'component'
                 and following::ead3:container[@parent][1])
-            then '&amp;ItemEdition='
+            then '&amp;ItemFolder='
             || upper-case(substring(following::ead3:container[@parent][1]/@localtype,1,1))
             || substring(following::ead3:container[@parent][1]/@localtype,2)
             || ' '
@@ -182,7 +182,7 @@
         />
 
   
-        <xsl:variable name="link" select="$aeon-base-URL || $aeon-value || $aeon-site || $aeon-document-type || '&amp;SystemID=PDF' || $aeon-call-number || $aeon-citation || $aeon-ead-id || $aeon-access-restriction-types || $aeon-collection-title || $aeon-collection-item-info-12 || $aeon-item-volume || $aeon-location || $aeon-location-uri || $aeon-reference-number
+        <xsl:variable name="link" select="$aeon-base-URL || $aeon-value || $aeon-site || $aeon-document-type || '&amp;SystemID=PDF' || $aeon-call-number || $aeon-citation || $aeon-ead-id || $aeon-access-restriction-types || $aeon-collection-title || $aeon-collection-title-custom-field || $aeon-item-volume || $aeon-location || $aeon-location-uri || $aeon-reference-number
             || $aeon-request-uri || $aeon-restricted || $aeon-series-id || $aeon-sub-location || $aeon-folder || $export-timestamp"/>
 
         <!-- test and see if i need to use encode-for-uri -->
