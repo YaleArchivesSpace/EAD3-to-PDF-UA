@@ -27,7 +27,7 @@
                     <xsl:text>ART</xsl:text>
                 </xsl:when>
                 <xsl:when test="$repository-code = 'beinecke'">
-                    <xsl:text>BEI</xsl:text>
+                    <xsl:text>BRBL</xsl:text>
                 </xsl:when>
                 <xsl:when test="$repository-code = 'divinity'">
                     <xsl:text>DIV</xsl:text>
@@ -55,7 +55,7 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <xsl:value-of select="'&amp;site=' || $repo-to-site-code"/>
+        <xsl:value-of select="'&amp;Site=' || $repo-to-site-code"/>
     </xsl:variable>
    
     <xsl:variable name="aspace-base-URL" select="if ($production-or-test-Aeon eq 'test') then 'https://testarchivesspace.library.yale.edu/api/' else 'https://archivesspace.library.yale.edu/api/'"/>
@@ -96,7 +96,7 @@
     <xsl:variable name="aeon-value">
         <xsl:choose>
             <xsl:when test="$repository-code eq 'beinecke'">
-                <xsl:value-of select="'&amp;Value=GenericRequestORBIS'"/>
+                <xsl:value-of select="'&amp;Value=GenericRequestManuscript'"/>
             </xsl:when>
             <xsl:when test="$office-of-origin-request">
                 <xsl:value-of select="'&amp;Value=GenericRequestOrigin'"/>
