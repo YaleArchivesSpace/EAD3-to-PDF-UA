@@ -112,9 +112,9 @@
     
     <xsl:variable name="aeon-collection-title" select="'&amp;ItemTitle=' || $collection-title"/>
     
-    <xsl:variable name="aeon-collection-title-custom-field" select="'&amp;CollectionTitle=' || $collection-title"/>
+    <xsl:variable name="aeon-collection-title-custom-field" select="'&amp;Transaction.CustomFields.CollectionTitle=' || $collection-title"/>
     
-    <xsl:variable name="aeon-ead-id" select="'&amp;RootRecordURI=' || $finding-aid-identifier"/>
+    <xsl:variable name="aeon-ead-id" select="'&amp;Transaction.CustomFields.RootRecordURI=' || $finding-aid-identifier"/>
     
     <xsl:variable name="aeon-citation" select="'&amp;ItemCitation=' || /ead3:ead/ead3:archdesc/ead3:prefercite/normalize-space(ead3:p[1])"/>
 
@@ -145,13 +145,13 @@
               
         <xsl:variable name="aeon-item-volume"  select="'&amp;ItemVolume=' || concat(upper-case(substring(@localtype,1,1)), substring(@localtype,2)) || ' ' || normalize-space(.)"/>
         
-        <xsl:variable name="aeon-restricted" select="'&amp;TopContainerRestriction=' || (if (../@ancestor-access-restrictions) then 'Y' else 'N')"/>
+        <xsl:variable name="aeon-restricted" select="'&amp;Transaction.CustomFields.TopContainerRestriction=' || (if (../@ancestor-access-restrictions) then 'Y' else 'N')"/>
         
         <xsl:variable name="aeon-reference-number" select="if (@containerid) then '&amp;ReferenceNumber=' || @containerid else ''"/>
         
         <xsl:variable name="aeon-sub-location" select="if (@encodinganalog) then '&amp;SubLocation=' || @encodinganalog else ''"/>
         
-        <xsl:variable name="aeon-location-uri" select="if (normalize-space($location-url)) then '&amp;LocationURI=' || $location-url else ''"/>
+        <xsl:variable name="aeon-location-uri" select="if (normalize-space($location-url)) then '&amp;Transaction.CustomFields.LocationURI=' || $location-url else ''"/>
         
         <xsl:variable name="aeon-location">
             <xsl:if test="normalize-space($location-url)">
@@ -161,11 +161,11 @@
         
         <xsl:variable name="aeon-access-restriction-types" select="if (normalize-space(../@ancestor-access-restrictions)) then ('&amp;RestrictionCode=' || string-join(../@ancestor-access-restrictions, ';')) else ''"/>
         
-        <xsl:variable name="aeon-series-id" select="if (normalize-space(../@series)) then ('&amp;ItemSeries=' || ../@series) else ''"/>
+        <xsl:variable name="aeon-series-id" select="if (normalize-space(../@series)) then ('&amp;Transaction.CustomFields.ItemSeries=' || ../@series) else ''"/>
         
         <xsl:variable name="aeon-folder" select="if ($request-link-for-distinct-type eq 'component'
                 and following::ead3:container[@parent][1])
-            then '&amp;ItemFolder='
+            then '&amp;Transaction.CustomFields.ItemFolder='
             || upper-case(substring(following::ead3:container[@parent][1]/@localtype,1,1))
             || substring(following::ead3:container[@parent][1]/@localtype,2)
             || ' '
